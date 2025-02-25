@@ -5,6 +5,9 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import PatientInfoScreen from "../screens/PatientInfoScreen";
+import AppointmentScreen from "../screens/AppointmentScreen";
+import ProgramsScreen from "../screens/ProgramsScreen";
+import ResultsScreen from "../screens/ResultsScreen";
 
 const Stack = createStackNavigator();
 
@@ -15,7 +18,10 @@ const AppNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="PatientInfo" component={PatientInfoScreen} /> 
+        <Stack.Screen name="Informacion" component={PatientInfoScreen} />
+        <Stack.Screen name="TusCitas" component={AppointmentScreen} />
+        <Stack.Screen name="TusProgramas" component={ProgramsScreen} />
+        <Stack.Screen name="Resultados" component={ResultsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

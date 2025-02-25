@@ -5,11 +5,6 @@ import colors from "../themes/colors";
 
 const RegisterScreen = ({ navigation }: any) => {
   const [documentNumber, setDocumentNumber] = useState("");
-  const [documentType, setDocumentType] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [department, setDepartment] = useState("");
-  const [city, setCity] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -24,48 +19,6 @@ const RegisterScreen = ({ navigation }: any) => {
         keyboardType="numeric"
         value={documentNumber}
         onChangeText={setDocumentNumber}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Tipo de documento"
-        placeholderTextColor={colors.accent}
-        value={documentType}
-        onChangeText={setDocumentType}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        placeholderTextColor={colors.accent}
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Número de teléfono"
-        placeholderTextColor={colors.accent}
-        keyboardType="phone-pad"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Departamento"
-        placeholderTextColor={colors.accent}
-        value={department}
-        onChangeText={setDepartment}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Ciudad"
-        placeholderTextColor={colors.accent}
-        value={city}
-        onChangeText={setCity}
       />
 
       <TextInput

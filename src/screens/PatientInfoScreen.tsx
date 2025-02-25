@@ -8,11 +8,16 @@ const PatientInfoScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       {/* Botón para regresar al menú */}
       <View style={styles.header}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <MaterialIcons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
-        </View>
-      
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Icono de perfil centrado */}
+      <View style={styles.profileIconContainer}>
+        <MaterialIcons name="account-circle" size={100} color={colors.primary} />
+      </View>
+
       {/* Información del Paciente */}
       <View style={styles.infoContainer}>
         <Text style={styles.label}><Text style={styles.bold}>Nombre:</Text> Pablo Pérez Gómez</Text>
@@ -34,30 +39,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    padding: 20,  
-    paddingTop: 20, 
+    padding: 20,
+    paddingTop: 20,
   },
-    header: {
-        alignItems: "flex-start",
-        padding: 15,
-        marginTop: 30,
-        marginBottom: 50,
-    },
+  header: {
+    alignItems: "flex-start",
+    padding: 15,
+    marginTop: 30,
+    marginBottom: 20, 
+  },
   backButton: {
-    top: 30, 
+    top: 30,
     backgroundColor: colors.primary,
     padding: 10,
-    borderRadius: 50, 
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
     elevation: 5,
+  },
+  profileIconContainer: {
+    alignItems: "center",
+    margin: 40, 
   },
   infoContainer: {
     alignSelf: "center",
     backgroundColor: "#F5F5F5",
     padding: 15,
     borderRadius: 10,
-    width: "90%",
+    width: "95%",
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 10,
     color: "#333",
   },
