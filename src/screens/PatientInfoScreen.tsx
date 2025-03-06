@@ -38,7 +38,7 @@ const PatientInfoScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     padding: 20,
     paddingTop: 20,
   },
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     alignSelf: "center",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: colors.background,
     padding: 15,
     borderRadius: 10,
     width: "95%",

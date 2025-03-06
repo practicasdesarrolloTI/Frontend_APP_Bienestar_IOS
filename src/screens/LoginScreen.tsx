@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity  } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import CustomButton from "../components/CustomButton";
 import colors from "../themes/colors";
 
@@ -37,8 +44,8 @@ const LoginScreen = ({ navigation }: any) => {
         title="Iniciar Sesión"
         onPress={() => navigation.navigate("Home")}
       />
-{/* Navegación a la pantalla de registro */}
-<TouchableOpacity onPress={() => navigation.navigate("Register")}>
+      {/* Navegación a la pantalla de registro */}
+      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
         <Text style={styles.registerText}>¿No tienes cuenta? Regístrate</Text>
       </TouchableOpacity>
     </View>
@@ -50,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     padding: 20,
   },
   logo: {
@@ -74,11 +81,13 @@ const styles = StyleSheet.create({
     color: "#333",
     borderWidth: 1,
     borderColor: colors.accent,
+    fontSize: 16,
   },
   registerText: {
     marginTop: 15,
     color: colors.secondary,
     fontWeight: "bold",
+    fontSize: 15,
   },
 });
 

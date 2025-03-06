@@ -26,7 +26,7 @@ const ProgramsScreen = ({ navigation }: any) => {
           <MaterialIcons name="arrow-back" size={24} color={"white"} />
         </TouchableOpacity>
       </View>
-
+ <Text style={styles.title}>Tus Programas</Text>
       {/* Lista de Programas */}
       <FlatList
         data={programas}
@@ -59,13 +59,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   header: {
     alignItems: "flex-start",
     padding: 15,
     marginTop: 30,
     marginBottom: 40, 
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: colors.primary,
   },
   backButton: {
     top: 30,
@@ -77,12 +84,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   card: {
-    backgroundColor: "#F5F5F5",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
+    backgroundColor: colors.background,
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: colors.preto,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },

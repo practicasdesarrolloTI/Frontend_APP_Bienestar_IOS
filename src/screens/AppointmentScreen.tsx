@@ -21,10 +21,6 @@ const AppointmentScreen = ({ navigation }: any) => {
     { id: "4", fecha: "2024-04-05", hora: "09:00 AM", especialidad: "Oftalmología", programa: "Salud Visual", medico: "Dr. Pérez", estado: "Pendiente" },
     { id: "5", fecha: "2024-04-12", hora: "11:15 AM", especialidad: "Pediatría", programa: "Vacunación Infantil", medico: "Dra. Gómez", estado: "Completada" },
     { id: "6", fecha: "2024-04-18", hora: "01:00 PM", especialidad: "Psicología", programa: "Terapia Cognitiva", medico: "Dr. Herrera", estado: "Pendiente" },
-    { id: "7", fecha: "2024-04-25", hora: "04:30 PM", especialidad: "Nutrición", programa: "Plan de Alimentación", medico: "Dra. Rojas", estado: "Completada" },
-    { id: "8", fecha: "2024-05-03", hora: "10:45 AM", especialidad: "Ginecología", programa: "Control Prenatal", medico: "Dra. López", estado: "Pendiente" },
-    { id: "9", fecha: "2024-05-10", hora: "03:00 PM", especialidad: "Ortopedia", programa: "Rehabilitación Postural", medico: "Dr. Castro", estado: "Completada" },
-    { id: "10", fecha: "2024-05-17", hora: "07:30 AM", especialidad: "Medicina General", programa: "Chequeo Anual", medico: "Dr. Silva", estado: "Pendiente" },
   ]);
 
   return (
@@ -35,7 +31,7 @@ const AppointmentScreen = ({ navigation }: any) => {
           <MaterialIcons name="arrow-back" size={24} color={"white"} />
         </TouchableOpacity>
       </View>
-
+<Text style={styles.title}>Tus Citas</Text>
       {/* Lista de Citas */}
       <FlatList
         data={citas}
@@ -65,13 +61,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   header: {
     alignItems: "flex-start",
     padding: 15,
     marginTop: 30,
     marginBottom: 40, 
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: colors.primary,
   },
   backButton: {
     top: 30,
@@ -83,12 +86,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   card: {
-    backgroundColor: "#F5F5F5",
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
+    backgroundColor: colors.background,
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: colors.preto,
+    shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },

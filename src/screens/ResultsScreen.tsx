@@ -26,7 +26,7 @@ const ResultsScreen = ({ navigation }: any) => {
           <MaterialIcons name="arrow-back" size={24} color={"white"} />
         </TouchableOpacity>
       </View>
-
+<Text style={styles.title}>Tus Resultados</Text>
       {/* Lista de Resultados */}
       <FlatList
         data={resultados}
@@ -64,13 +64,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   header: {
     alignItems: "flex-start",
     padding: 15,
     marginTop: 30,
     marginBottom: 40, 
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: colors.primary,
   },
   backButton: {
     top: 30,
@@ -82,7 +89,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   card: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: colors.background,
     padding: 20,
     borderRadius: 10,
     marginBottom: 15,

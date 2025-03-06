@@ -15,8 +15,8 @@ const menuItems = [
   { id: "2", name: "Tus citas", icon: "event", screen: "TusCitas" },
   { id: "3", name: "Tus programas", icon: "assignment", screen: "TusProgramas" },
   { id: "4", name: "Resultados", icon: "fact-check" , screen: "Resultados"},
-  { id: "5", name: "Medicamentos", icon: "medication" },
-  { id: "6", name: "Autocuidado", icon: "self-improvement" },
+  { id: "5", name: "Medicamentos", icon: "medication", screen: "Medicamentos" },
+  { id: "6", name: "Autocuidado", icon: "self-improvement", screen: "Autocuidado" },
 ];
 
 const HomeScreen = ({ navigation }: any) => {
@@ -67,7 +67,7 @@ const HomeScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     justifyContent: "center",
     padding: 20,
   },

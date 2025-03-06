@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: colors.white,
     padding: 20,
   },
   title: {
@@ -72,11 +72,13 @@ const styles = StyleSheet.create({
     color: "#333",
     borderWidth: 1,
     borderColor: colors.primary,
+    fontSize: 16,
   },
   loginText: {
     marginTop: 15,
     color: colors.secondary,
     fontWeight: "bold",
+    fontSize: 15,
   },
 });
 
