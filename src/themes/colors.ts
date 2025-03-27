@@ -1,10 +1,11 @@
 
 const Colors = {
-    primary: '#80006A',
+    primary: '#7f076a',
     secondary: '#FF5F3F',
+    selected: '#e02702',
     background: '#F5F5F5',
     lightGray: '#ED7D7D7',
-    accent: '#A65C99',
+    accent: '#505377',
     white: '#FFFFFF',
     softOrange: '#FFB5A6',
     softYellow: '#FFFABF',

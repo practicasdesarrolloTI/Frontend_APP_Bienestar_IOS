@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors"; 
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
+import { fetchPrograms } from "../services/programService";
+
+type Props = NativeStackScreenProps<RootStackParamList, "TusProgramas">;
 
 type Programa = {
   id: string;
@@ -12,11 +17,16 @@ type Programa = {
   estado: string;
 };
 
-const ProgramsScreen = ({ navigation }: any) => {
-  const [programas, setProgramas] = useState<Programa[]>([
-    { id: "1", fechaInscripcion: "02/02/2020", nombrePrograma: "Ruta Riesgo Cardiovascular", medico: "Juan Pablo Vargas", fechaProximaCita: "05/07/2025", estado: "Pendiente" },
-    { id: "2", fechaInscripcion: "15/03/2023", nombrePrograma: "Ruta de P Y M Vejez", medico: "María Camila Gómez", fechaProximaCita: "05/08/2025", estado: "Pendiente" }
-  ]);
+const ProgramsScreen : React.FC<Props> =({ navigation} ) => {
+  const [programas, setProgramas] = useState<Programa[]>([]);
+  
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchPrograms();
+      setProgramas(data);
+    };
+    loadData();
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import colors from "../themes/colors";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
+import { fetchMedicaments } from "../services/medicamentService";
+
+type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
 type Medicamento = {
   id: string;
@@ -18,44 +22,16 @@ type Medicamento = {
   estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
-const MedicamentScreen = ({ navigation }: any) => {
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([
-    {
-      id: "1",
-      nombre: "Losartán 50mg",
-      fechaOrden: "2024-02-10",
-      medico: "Dr. Juan Pérez",
-      estado: "Pendiente",
-    },
-    {
-      id: "2",
-      nombre: "Metformina 850mg",
-      fechaOrden: "2024-03-12",
-      medico: "Dra. María Gómez",
-      estado: "Reformulado",
-    },
-    {
-      id: "3",
-      nombre: "Ibuprofeno 600mg",
-      fechaOrden: "2024-04-05",
-      medico: "Dr. Carlos Mendoza",
-      estado: "Descargado",
-    },
-    {
-      id: "4",
-      nombre: "Omeprazol 20mg",
-      fechaOrden: "2024-05-15",
-      medico: "Dra. Luisa Herrera",
-      estado: "Pendiente",
-    },
-    {
-      id: "5",
-      nombre: "Paracetamol 500mg",
-      fechaOrden: "2024-06-20",
-      medico: "Dr. Samuel Pérez",
-      estado: "Reformulado",
-    },
-  ]);
+const MedicamentScreen: React.FC<Props> =({ navigation} ) => {
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+    
+    useEffect(() => {
+        const loadData = async () => {
+          const data = await fetchMedicaments();
+          setMedicamentos(data);
+        };
+        loadData();
+      }, []);
 
   return (
     <View style={styles.container}>

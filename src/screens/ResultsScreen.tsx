@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors"; 
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
+import { fetchResults } from "../services/resultService";
+
+type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;
 
 type Resultado = {
   id: string;
@@ -11,12 +16,16 @@ type Resultado = {
   programa: string;
 };
 
-const ResultsScreen = ({ navigation }: any) => {
-  const [resultados, setResultados] = useState<Resultado[]>([
-    { id: "1", fechaRealizacion: "10 de marzo 2024", examen: "Hemograma Completo", estado: "Disponible", programa: "Chequeo General" },
-    { id: "2", fechaRealizacion: "15 de marzo 2024", examen: "Radiografía de Tórax", estado: "Pendiente", programa: "Neumología" },
-    { id: "3", fechaRealizacion: "20 de marzo 2024", examen: "Prueba de Glucosa", estado: "Disponible", programa: "Diabetes" }
-  ]);
+const ResultsScreen: React.FC<Props> =({ navigation} ) => {
+  const [resultados, setResultados] = useState<Resultado[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchResults();
+      setResultados(data);
+    };
+    loadData();
+  }, []);
 
   return (
     <View style={styles.container}>

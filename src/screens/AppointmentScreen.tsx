@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors"; 
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
+import { fetchAppointments } from "../services/appointmentService";
+
+type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
 
 type Cita = {
   id: string;
@@ -13,16 +18,16 @@ type Cita = {
   estado: string;
 };
 
-const AppointmentScreen = ({ navigation }: any) => {
-  const [citas, setCitas] = useState<Cita[]>([
-    { id: "1", fecha: "2024-03-10", hora: "10:00 AM", especialidad: "Cardiología", programa: "Prevención de Infartos", medico: "Dr. García", estado: "Pendiente" },
-    { id: "2", fecha: "2024-03-15", hora: "02:00 PM", especialidad: "Dermatología", programa: "Cuidado de la Piel", medico: "Dra. Martínez", estado: "Completada" },
-    { id: "3", fecha: "2024-03-20", hora: "08:30 AM", especialidad: "Neurología", programa: "Control de Migrañas", medico: "Dr. Ramírez", estado: "Pendiente" },
-    { id: "4", fecha: "2024-04-05", hora: "09:00 AM", especialidad: "Oftalmología", programa: "Salud Visual", medico: "Dr. Pérez", estado: "Pendiente" },
-    { id: "5", fecha: "2024-04-12", hora: "11:15 AM", especialidad: "Pediatría", programa: "Vacunación Infantil", medico: "Dra. Gómez", estado: "Completada" },
-    { id: "6", fecha: "2024-04-18", hora: "01:00 PM", especialidad: "Psicología", programa: "Terapia Cognitiva", medico: "Dr. Herrera", estado: "Pendiente" },
-  ]);
+const AppointmentScreen: React.FC<Props> =({ navigation} ) => {
+  const [citas, setCitas] = useState<Cita[]>([]);
 
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchAppointments();
+      setCitas(data);
+    };
+    loadData();
+  }, []);
   return (
     <View style={styles.container}>
       {/* Botón para regresar */}
