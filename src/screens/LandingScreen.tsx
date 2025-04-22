@@ -13,6 +13,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
+import Header from "../components/Header";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Landing">;
 
@@ -24,15 +25,17 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor={colors.primary}
         translucent={false}
       />
-
-      <View style={styles.header}>
-      <Image
-          source={require("../../assets/logomecuidosinletra.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-      </View>
-
+      <Header
+        title=""
+        rightComponent={
+          <Image
+            source={require("../../assets/logomecuidosinletra.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        }
+      />
+      
       <View style={styles.container}>
         <Image
           source={require("../../assets/imagenmuestra2.png")}
@@ -75,26 +78,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 30,
   },
-  header: {
-    width: "100%",
-    backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logo: { 
+  
+  logo: {
     height: 35,
     marginVertical: 15,
     tintColor: colors.white,
   },
   text: {
-    fontSize: 16,
+    fontSize: 17,
     textAlign: "center",
     color: colors.preto,
     marginBottom: 5,
     marginTop: 30,
   },
   body: {
-    fontFamily: fonts.body,
+    fontFamily: fonts.subtitle,
   },
   italic: {
     fontFamily: fonts.italic,
@@ -114,9 +112,8 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    fontFamily: fonts.body,
+    fontSize: 20,
+    fontFamily: fonts.title,
   },
   registerButton: {
     borderWidth: 1.5,
@@ -128,9 +125,8 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: colors.primary,
-    fontSize: 18,
-    fontWeight: "bold",
-    fontFamily: fonts.body,
+    fontSize: 20,
+    fontFamily: fonts.title,
   },
 });
 

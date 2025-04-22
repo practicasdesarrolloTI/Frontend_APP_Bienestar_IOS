@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+//Dejar solo las pendientes
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  Platform,
+  Alert,
+} from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
-import colors from "../themes/colors"; 
+import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { fetchAppointments } from "../services/appointmentService";
+import LoadingScreen from "../components/LoadingScreen";
+import { fonts } from "../themes/fonts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import EmptyState from "../components/EmptyState";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
 
@@ -18,68 +34,126 @@ type Cita = {
   estado: string;
 };
 
-const AppointmentScreen: React.FC<Props> =({ navigation} ) => {
+const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   const [citas, setCitas] = useState<Cita[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await fetchAppointments();
-      setCitas(data);
+      try {
+        const tipoDocumento =
+          (await AsyncStorage.getItem("tipoDocumento")) ?? "";
+        const numeroDocumento = (await AsyncStorage.getItem("documento")) ?? "";
+
+        const data = await fetchAppointments(tipoDocumento, numeroDocumento);
+
+        // Formateamos los datos según el tipo `Cita`
+        const citasFormateadas = data.map((item: any, index: number) => ({
+          id: index.toString(),
+          fecha: item.fecha_cita?.split(" ")[0] || "",
+          hora: item.fecha_cita?.split(" ")[1]?.slice(0, 5) || "",
+          especialidad: item.Especialidad || "",
+          programa: item.programa || "—",
+          medico: item.nombre_medico || "",
+          estado: item.estado || "",
+        }));
+
+        setCitas(citasFormateadas);
+      } catch (error) {
+       console.error("Error al cargar citas:", error);
+      } finally {
+        setLoading(false);
+      }
     };
+
     loadData();
   }, []);
+
+  const citasFiltradas = citas.filter((cita) => cita.estado === "Pendiente");
+  const citasOrdenadas = citasFiltradas.sort((a, b) => {
+    const fechaA = new Date(a.fecha);
+    const fechaB = new Date(b.fecha);
+    return fechaA.getTime() - fechaB.getTime();
+  });
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
   return (
-    <View style={styles.container}>
-      {/* Botón para regresar */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color={"white"} />
-        </TouchableOpacity>
-      </View>
-<Text style={styles.title}>Tus Citas</Text>
-      {/* Lista de Citas */}
-      <FlatList
-        data={citas}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.text}>
-              <MaterialIcons name="date-range" size={16} /> {item.fecha} -- <FontAwesome5 name="clock" size={16} /> {item.hora}
-            </Text>
-            <Text style={styles.text}>
-              <FontAwesome5 name="user-md" size={16} /> {item.medico}
-            </Text>
-            <Text style={styles.text}>
-              <MaterialIcons name="medical-services" size={16} /> {item.especialidad}
-            </Text>
-            <Text style={[styles.status, item.estado === "Pendiente" ? styles.pending : styles.completed]}>
-              {item.estado}
-            </Text>
-          </View>
-        )}
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={colors.primary}
+        translucent={false}
       />
-    </View>
+
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.replace("Home")}>
+          <MaterialIcons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Citas</Text>
+      </View>
+
+      <View style={styles.container}>
+        {/* Lista de Citas */}
+        {citasOrdenadas.length === 0 ? (
+          <EmptyState message="No tienes citas agendadas por el momento." />
+        ) : (
+          <FlatList
+            data={citasOrdenadas}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Text style={styles.text}>
+                  <Text style={styles.label}>Fecha: </Text>
+                  {item.fecha} {item.hora}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.label}>Médico: </Text> {item.medico}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.label}>Especialidad: </Text>{" "}
+                  {item.especialidad}
+                </Text>
+                <Text
+                  style={[
+                    styles.status,
+                    item.estado === "Pendiente"
+                      ? styles.pending
+                      : styles.completed,
+                  ]}
+                >
+                  {item.estado}
+                </Text>
+              </View>
+            )}
+          />
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: colors.white,
+    padding: 30,
+    backgroundColor: colors.background,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
-    alignItems: "flex-start",
-    padding: 15,
-    marginTop: 30,
-    marginBottom: 40, 
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    color: colors.primary,
+    width: "100%",
+    height: 70,
+    backgroundColor: colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    justifyContent: "flex-start",
+    gap: 16,
   },
   backButton: {
     top: 30,
@@ -90,28 +164,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     elevation: 5,
   },
+  title: {
+    fontSize: 24,
+    fontFamily: fonts.title,
+    color: colors.white,
+  },
   card: {
-    backgroundColor: colors.background,
-    padding: 15,
+    backgroundColor: colors.white,
+    padding: 20,
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: colors.preto,
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 1,
   },
   text: {
     fontSize: 18,
     marginBottom: 5,
     color: "#333",
+    fontFamily: fonts.body,
   },
   status: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+
     textAlign: "center",
     padding: 5,
     borderRadius: 5,
     marginTop: 10,
+    fontFamily: fonts.subtitle,
   },
   pending: {
     backgroundColor: colors.secondary,
@@ -120,6 +201,29 @@ const styles = StyleSheet.create({
   completed: {
     backgroundColor: colors.primary,
     color: "#fff",
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: colors.primary,
+    fontFamily: fonts.subtitle,
+  },
+  errorText: {
+    fontSize: 18,
+    color: colors.primary,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: colors.primary,
+    fontWeight: "bold",
   },
 });
 

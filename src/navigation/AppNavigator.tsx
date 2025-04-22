@@ -13,37 +13,88 @@ import SelfCareScreen from "../screens/SelfCareScreen";
 import SurveyScreen from "../components/SurveyScreen";
 import SurveySummary from "../components/SurveySummary";
 import LandingScreen from "../screens/LandingScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import VerifyCodeScreen from "../screens/VerifyCodeScreen";
+import ResetPasswordScreen from "../screens/ResetPasswordScreen";
+import Header from "../components/Header";
+
+
+type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
 export type RootStackParamList = {
+
   Login: undefined;
   Register: undefined;
   Home: undefined;
+  Header : { title: string; goTo?: keyof RootStackParamList };
   Informacion: undefined;
   TusCitas: undefined;
   TusProgramas: undefined;
   Resultados: undefined;
   Medicamentos: undefined;
-  Autocuidado: undefined;
+  ForgotPassword: undefined;
+  VerifyCode: { document: string, documentType: DocumentType };
+  ResetPassword: { document: string; documentType: DocumentType ; value: string };
+  Autocuidado: {
+    navigation: any;
+    route: any;
+  };
+  Landing: undefined;
   SurveySummary: {
     surveyId: string;
     responses: string[];
+    puntaje: number;
+    edad: number;
+    sexo: string;
+    indicadores: any;
+    imc: number;
+    survey: {
+      id: string;
+      nombre: string;
+      descripcion: string;
+      requiereEdad: boolean;
+      requiereSexo: boolean;
+      preguntas: {
+        omitida: boolean;
+        pregunta: string;
+        opciones: { texto: string; valor: number; sexo: string }[];
+        recomendaciones?: string;
+      }[];
+      recomendaciones?: {
+        min: number;
+        max: number;
+        texto: string;
+        sexo: string | null;
+      }[];
+    };
   };
   SurveyScreen: {
     surveyId: string;
-    preguntas: (
-      | string
-      | {
-          pregunta: string;
-          opciones: {
-            sexo: any; texto: string; valor: number 
-}[];
-        }
-    )[];
+    preguntas: {
+      omitida: boolean;
+      pregunta: string;
+      opciones: { texto: string; valor: number; sexo: string }[];
+      recomendaciones?: string;
+    }[];
     edad: number;
     sexo: string;
-    survey: { requiereEdad: boolean; requiereSexo: boolean };
+    survey: {
+      [x: string]: any;
+      id: string;
+      nombre: string;
+      descripcion: string;
+      preguntas: {
+        omitida: boolean;
+        pregunta: string;
+        opciones: { texto: string; valor: number; sexo: string }[];
+        recomendaciones?: string;
+      }[];
+      requiereEdad: boolean;
+      requiereSexo: boolean;
+      requiredIMC?: boolean;
+    };
+    indicadores: any;
   };
-  Landing: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -64,6 +115,9 @@ const AppNavigator = () => {
         <Stack.Screen name="Autocuidado" component={SelfCareScreen} />
         <Stack.Screen name="SurveyScreen" component={SurveyScreen} />
         <Stack.Screen name="SurveySummary" component={SurveySummary} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,12 +5,23 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  Platform,
+  Alert,
 } from "react-native";
 import colors from "../themes/colors";
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { fetchMedicaments } from "../services/medicamentService";
+import { fonts } from "../themes/fonts";
+import LoadingScreen from "../components/LoadingScreen";
+import { Asset } from "expo-asset";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import EmptyState from "../components/EmptyState";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
@@ -22,156 +33,192 @@ type Medicamento = {
   estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
-const MedicamentScreen: React.FC<Props> =({ navigation} ) => {
+const pdfAsset = require("../../assets/resultado.pdf");
+
+const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
-    
-    useEffect(() => {
-        const loadData = async () => {
-          const data = await fetchMedicaments();
-          setMedicamentos(data);
-        };
-        loadData();
-      }, []);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const tipo = await AsyncStorage.getItem("tipoDocumento");
+        const doc = await AsyncStorage.getItem("documento");
+        if (!tipo || !doc) throw new Error("Faltan datos del paciente");
+
+        const data = await fetchMedicaments(tipo, doc);
+        setMedicamentos(data);
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          "No se pudo cargar la información de los medicamentos"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const handleDownload = async () => {
+    try {
+      const asset = Asset.fromModule(pdfAsset);
+      await asset.downloadAsync();
+
+      const localUri = asset.localUri || asset.uri;
+      const fileName = "formula.pdf";
+      const destinationUri = FileSystem.documentDirectory + fileName;
+
+      await FileSystem.copyAsync({
+        from: localUri,
+        to: destinationUri,
+      });
+
+      await Sharing.shareAsync(destinationUri, {
+        mimeType: "application/pdf",
+        dialogTitle: "Ver fórmula médica",
+      });
+    } catch (error) {
+      console.error("Error al descargar PDF:", error);
+      Alert.alert("Error", "No se pudo descargar el archivo.");
+    }
+  };
+
+  if (loading) return <LoadingScreen />;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={colors.primary}
+        translucent={false}
+      />
+
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity onPress={() => navigation.replace("Home")}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
+        <Text style={styles.title}>Medicamentos</Text>
       </View>
-      <Text style={styles.title}>Gestión de Medicamentos</Text>
-      <FlatList
-        data={medicamentos}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.text}>
-              <FontAwesome5 name="pills" size={16} /> {item.nombre}
-            </Text>
-            <Text style={styles.text}>
-              <MaterialIcons name="event" size={16} /> {item.fechaOrden}
-            </Text>
-            <Text style={styles.text}>
-              <FontAwesome5 name="user-md" size={16} /> {item.medico}
-            </Text>
-            <Text
-              style={[
-                styles.status,
-                item.estado === "Pendiente"
-                  ? styles.pending
-                  : item.estado === "Reformulado"
-                  ? styles.reformulated
-                  : styles.downloaded,
-              ]}
-            >
-              {item.estado}
-            </Text>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.actionButton}>
-                <FontAwesome5
-                  name="file-download"
-                  size={16}
-                  color={colors.white}
-                />
-                <Text style={styles.buttonText}>Descargar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButton}>
-                <FontAwesome5 name="redo" size={16} color={colors.white} />
-                <Text style={styles.buttonText}>Renovar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButton}>
-                <FontAwesome5
-                  name="file-medical"
-                  size={16}
-                  color={colors.white}
-                />
-                <Text style={styles.buttonText}>Pedir</Text>
-              </TouchableOpacity>
+
+      <View style={styles.container}>
+        <FlatList
+          data={medicamentos}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: medicamentos.length === 0 ? "center" : "flex-start",
+            paddingBottom: 100,
+          }}
+          ListEmptyComponent={
+            <EmptyState message="Aún no tienes medicamentos registrados." />
+          }
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text style={styles.text}>
+                <Text style={styles.label}>Nombre: </Text> {item.nombre}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.label}>Fecha: </Text> {item.fechaOrden}
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.label}>Médico: </Text> {item.medico}
+              </Text>
+              <Text
+                style={[
+                  styles.status,
+                  item.estado === "Pendiente"
+                    ? styles.pending
+                    : item.estado === "Reformulado"
+                    ? styles.reformulated
+                    : styles.downloaded,
+                ]}
+              >
+                {item.estado}
+              </Text>
+              {(item.estado === "Pendiente" ||
+                item.estado === "Reformulado" ||
+                item.estado === "Descargado") && (
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={handleDownload}
+                >
+                  <Text style={styles.buttonText}>Descargar</Text>
+                </TouchableOpacity>
+              )}
             </View>
-          </View>
-        )}
-      />
-    </View>
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    padding: 20,
-    backgroundColor: colors.white,
+    backgroundColor: colors.primary,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
-    alignItems: "flex-start",
-    padding: 15,
-    marginTop: 30,
-    marginBottom: 40, 
-  },
-  
-  backButton: {
-    top: 30,
+    width: "100%",
+    height: 70,
     backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 50,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
-  },
-  imageSize: {
-    marginTop: 20,
-    width: 50,
-    height: 50,
+    paddingHorizontal: 16,
+    justifyContent: "flex-start",
+    gap: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    color: colors.primary,
+    fontFamily: fonts.title,
+    color: colors.white,
+  },
+  container: {
+    flex: 1,
+    padding: 30,
+    backgroundColor: colors.background,
   },
   card: {
-    backgroundColor: colors.background,
-    padding: 15,
+    backgroundColor: colors.white,
+    padding: 20,
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: colors.preto,
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 1,
   },
   text: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 5,
-    color: colors.preto,
+    color: "#333",
+    fontFamily: fonts.body,
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
+    color: colors.primary,
+    fontFamily: fonts.subtitle,
   },
   actionButton: {
+    marginTop: 10,
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primary,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    marginHorizontal: 5,
   },
   buttonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: "bold",
-    marginLeft: 5,
+    color: "white",
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
   },
   status: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontFamily: fonts.subtitle,
     textAlign: "center",
     padding: 5,
     borderRadius: 5,
@@ -182,7 +229,7 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   reformulated: {
-    backgroundColor: colors.secondary,
+    backgroundColor: "#ff9900",
     color: colors.white,
   },
   downloaded: {
@@ -190,4 +237,5 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
 });
+
 export default MedicamentScreen;

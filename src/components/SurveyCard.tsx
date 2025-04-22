@@ -1,81 +1,151 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Survey } from "../screens/SelfCareScreen";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Modal } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
+import { fonts } from "../themes/fonts";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import { ActivityIndicator } from "react-native-paper";
+
+dayjs.extend(duration);
 
 type Props = {
-  survey: Survey;
+  survey: {
+    nombre: string;
+    descripcion: string;
+    bloqueada?: boolean;
+  };
+  tiempoRestante?: {
+    porcentajeCompletado: number;
+    meses: number;
+    dias: number;
+    horas: number;
+    minutos?: number;
+    segundos: number;
+  };
+  cargando?: boolean;
   onPress: () => void;
 };
 
-const SurveyCard: React.FC<Props> = ({ survey, onPress }) => {
+const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, cargando, onPress }) => {
+  const [showModal, setShowModal] = useState(false);
+
+  const getTiempoDisponibleEn = () => {
+    if (!tiempoRestante) return "";
+
+    const partes = [];
+    if (tiempoRestante.meses > 0)
+      partes.push(
+        `${tiempoRestante.meses} mes${tiempoRestante.meses === 1 ? "" : "es"}`
+      );
+    if (tiempoRestante.dias > 0)
+      partes.push(
+        `${tiempoRestante.dias} día${tiempoRestante.dias === 1 ? "" : "s"}`
+      );
+    if (tiempoRestante.horas > 0)
+      partes.push(
+        `${tiempoRestante.horas} hora${tiempoRestante.horas === 1 ? "" : "s"}`
+      );
+    if (tiempoRestante.minutos && tiempoRestante.minutos > 0)
+      partes.push(`${tiempoRestante.minutos} min`);
+    if (tiempoRestante.segundos > 0) {
+      partes.push(
+        `${tiempoRestante.segundos} segundo${
+          tiempoRestante.segundos === 1 ? "" : "s"
+        }`
+      );
+    }
+
+    return partes.join(", ");
+  };
+
+  const handlePress = () => {
+    if (survey.bloqueada) {
+      setShowModal(true);
+    } else {
+      onPress();
+    }
+  };
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.text}>
-        <FontAwesome5 name="clipboard-list" size={16} /> {survey.nombre}
-      </Text>
-      <Text style={styles.description}>{survey.descripcion}</Text>
-      <TouchableOpacity style={styles.startButton} onPress={onPress}>
-        <Text style={styles.buttonText}>Iniciar</Text>
-      </TouchableOpacity>
-    </View>
+    <>
+      
+        <TouchableOpacity
+          onPress={handlePress}
+          style={[
+            styles.card,
+            survey.bloqueada && { backgroundColor: "#e0e0e0", opacity: 0.7 },
+          ]}
+          activeOpacity={survey.bloqueada ? 1 : 0.7}
+        >
+          {cargando ? (
+        <ActivityIndicator size="small" color={colors.primary} />
+      ) : (
+          <View style={{ flex: 1 }}>
+            <Text style={styles.label}>{survey.nombre}</Text>
+            <Text style={styles.description}>{survey.descripcion}</Text>
+            {/* {survey.bloqueada ? (
+            <Text style={styles.disabledText}>
+              Disponible en {getTiempoDisponibleEn()}
+            </Text>
+          ) : null} */}
+          </View>
+           )}
+          <MaterialIcons
+            name="arrow-forward"
+            size={24}
+            color={colors.primary}
+          />
+    
+        </TouchableOpacity>
+      
+
+      <Modal visible={showModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Encuesta bloqueada</Text>
+            <Text style={styles.modalText}>
+              Esta encuesta ya fue completada. Podrás volver a realizarla en{" "}
+              {getTiempoDisponibleEn()}.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setShowModal(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendido</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: colors.white,
-  },
-  header: {
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    padding: 15,
-    marginTop: 30,
-    marginBottom: 40,
-  },
-  backButton: {
-    top: 30,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
-  },
-  imageSize: {
-    marginTop: 20,
-    width: 50,
-    height: 50,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-    color: colors.primary,
-  },
   card: {
-    backgroundColor: colors.background,
-    padding: 15,
+    backgroundColor: colors.white,
+    padding: 20,
     borderRadius: 8,
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: colors.preto,
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 5,
+    elevation: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 120,
   },
   description: {
-    fontSize: 14,
-    color: colors.lightGray,
+    fontSize: 16,
+    color: "#555",
     marginBottom: 10,
+    fontFamily: fonts.body,
+  },
+  label: {
+    fontSize: 20,
+    marginBottom: 5,
+    color: colors.primary,
+    fontFamily: fonts.title,
   },
   startButton: {
     backgroundColor: colors.secondary,
@@ -89,109 +159,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  addButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 20,
-    alignSelf: "center",
+  disabledText: {
+    fontSize: 14,
+    color: colors.preto,
+    fontStyle: "italic",
   },
-  addButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  // 📌 Estilos del Modal (SurveyModal y SurveyForm)
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo semi-transparente
   },
   modalContent: {
-    width: "85%",
-    backgroundColor: colors.white,
-    padding: 20,
+    backgroundColor: "white",
+    padding: 25,
     borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    width: "85%",
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 15,
-    textAlign: "center",
+    marginBottom: 10,
     color: colors.primary,
   },
-  questionContainer: {
-    marginBottom: 10,
-  },
-  questionText: {
+  modalText: {
     fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
+    textAlign: "center",
+    marginBottom: 20,
+    color: colors.preto,
   },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: colors.lightGray,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  closeButton: {
+  modalButton: {
     backgroundColor: colors.secondary,
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  closeButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  // 📌 Botón para agregar preguntas dinámicamente
-  addQuestionButton: {
-    backgroundColor: colors.preto,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  addQuestionText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-
-  // 📌 Botón de Guardar/Editar Encuesta
-  submitButton: {
-    backgroundColor: colors.primary,
-    padding: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
   },
-  submitButtonText: {
+  modalButtonText: {
     color: colors.white,
-    fontSize: 16,
     fontWeight: "bold",
-  },
-  editButton: {
-    backgroundColor: colors.preto,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 10,
+    fontSize: 16,
   },
 });
 

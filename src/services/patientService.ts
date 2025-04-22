@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'http://10.0.2.2:3001/api/paciente'; // Ajusta si es IP o dominio en producción
+const API_URL = 'http://10.0.2.2:3001/api/paciente'; 
+const API_URL2 = 'http://10.0.2.2:5001/api/patient'; 
 
 export type PacienteBackend = {
-  tipo_documento: string;
+  tipo_documento: string | number;
   documento: string;
   primer_nombre: string;
   segundo_nombre?: string;
@@ -16,12 +17,31 @@ export type PacienteBackend = {
   correo: string;
   codigo_ips: number;
   eps: string;
+  tipo_documento_abreviado: string;
+};
+
+export type PacienteRegistro = {
+  _id: string;
+  documentType: string;
+  document: number;
+  password: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 
 export const getPatientByDocument = async (documento: string): Promise<PacienteBackend | null> => {
   try {
     const response = await axios.get<PacienteBackend>(`${API_URL}/${documento}`);
+    return response.data;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const checkPatient = async (document: number): Promise<PacienteRegistro | null> => {
+  try {
+    const response = await axios.get<PacienteRegistro>(`${API_URL2}/${document}`);
     return response.data;
   } catch (error) {
     return null;
