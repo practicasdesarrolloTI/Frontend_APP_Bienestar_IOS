@@ -17,13 +17,35 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { fetchMedicaments } from "../services/medicamentService";
 import { fonts } from "../themes/fonts";
 import LoadingScreen from "../components/LoadingScreen";
-import { Asset } from "expo-asset";
-import * as FileSystem from "expo-file-system";
-import * as Sharing from "expo-sharing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
+import {
+  agruparMedicamentosPorFecha,
+  generarPDFMedicamentos,
+} from "../services/pdfServices";
+import { getPatientByDocument } from "../services/patientService";
+import { calcularEdad } from "../utils/dateUtils";
+import Toast from "react-native-toast-message";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
+
+type Paciente = {
+  primer_nombre: string;
+  segundo_nombre?: string;
+  primer_apellido: string;
+  segundo_apellido?: string;
+  tipo_documento: string;
+  documento: string;
+  fecha_nacimiento: string;
+  codigo_ips: number;
+  sexo: string;
+  celular: number;
+  telefono: number;
+  correo: string;
+  eps: string;
+  iat: number;
+  tipo_documento_abreviado: string;
+};
 
 type Medicamento = {
   id: string;
@@ -37,50 +59,97 @@ const pdfAsset = require("../../assets/resultado.pdf");
 
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const tipo = await AsyncStorage.getItem("tipoDocumento");
-        const doc = await AsyncStorage.getItem("documento");
-        if (!tipo || !doc) throw new Error("Faltan datos del paciente");
+  const loadData = async () => {
+    try {
+      const tipo = await AsyncStorage.getItem("tipoDocumento");
+      const doc = await AsyncStorage.getItem("documento");
+      if (!tipo || !doc) throw new Error("Faltan datos del paciente");
 
-        const data = await fetchMedicaments(tipo, doc);
-        setMedicamentos(data);
-      } catch (error) {
-        Alert.alert(
-          "Error",
-          "No se pudo cargar la información de los medicamentos"
-        );
-      } finally {
-        setLoading(false);
+      const data = await fetchMedicaments(tipo, doc);
+      setMedicamentos(data);
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No se pudo cargar la información de los medicamentos.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadPatient = async () => {
+    try {
+      const storedDoc = await AsyncStorage.getItem("documento");
+      if (!storedDoc) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "No se encontró el documento del paciente.",
+        });
+        return;
       }
-    };
+
+      const data = await getPatientByDocument(storedDoc);
+      setPaciente(data as unknown as Paciente);
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No se pudo cargar la información del paciente.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPatient();
     loadData();
   }, []);
 
   const handleDownload = async () => {
     try {
-      const asset = Asset.fromModule(pdfAsset);
-      await asset.downloadAsync();
+      const tipo = await AsyncStorage.getItem("tipoDocumento");
+      const doc = await AsyncStorage.getItem("documento");
+      const edad = paciente?.fecha_nacimiento
+        ? calcularEdad(paciente.fecha_nacimiento)
+        : 0;
 
-      const localUri = asset.localUri || asset.uri;
-      const fileName = "formula.pdf";
-      const destinationUri = FileSystem.documentDirectory + fileName;
+      if (!tipo || !doc) throw new Error("Faltan datos del paciente");
 
-      await FileSystem.copyAsync({
-        from: localUri,
-        to: destinationUri,
+      const agrupados = agruparMedicamentosPorFecha(medicamentos);
+
+      const fechasOrden = Object.keys(agrupados);
+      if (fechasOrden.length === 0) return;
+      Toast.show({
+        type: "error",
+        text1: "Sin medicamentos recientes",
+        text2: "No hay medicamentos en los últimos 3 meses.",
       });
 
-      await Sharing.shareAsync(destinationUri, {
-        mimeType: "application/pdf",
-        dialogTitle: "Ver fórmula médica",
-      });
+      // Seleccionar la primera fecha (o podrías mostrar un Picker)
+      const fechaSeleccionada = fechasOrden[0];
+      await generarPDFMedicamentos(
+        {
+          nombre: paciente?.primer_nombre,
+          tipoDocumento: paciente?.tipo_documento_abreviado,
+          Documento: paciente?.documento,
+          edad: edad,
+        },
+        agrupados[fechaSeleccionada],
+        fechaSeleccionada
+      );
+      Alert.alert(
+        "Éxito",
+        "La orden fue generada y está lista para visualizar o compartir."
+      );
     } catch (error) {
-      console.error("Error al descargar PDF:", error);
-      Alert.alert("Error", "No se pudo descargar el archivo.");
+      console.error(error);
+      Alert.alert("Error", "No se pudo generar la orden.");
     }
   };
 
@@ -124,7 +193,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.text}>
                 <Text style={styles.label}>Médico: </Text> {item.medico}
               </Text>
-              <Text
+              {/* <Text
                 style={[
                   styles.status,
                   item.estado === "Pendiente"
@@ -135,7 +204,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                 ]}
               >
                 {item.estado}
-              </Text>
+              </Text> */}
               {(item.estado === "Pendiente" ||
                 item.estado === "Reformulado" ||
                 item.estado === "Descargado") && (

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { resetPassword } from "../services/authService";
 import colors from "../themes/colors";
@@ -20,7 +21,11 @@ import { checkPatient, getPatientByDocument } from "../services/patientService";
 import { registerUser } from "../services/authService";
 
 type RootStackParamList = {
-  ResetPassword: { document: string; documentType: DocumentType; value: string };
+  ResetPassword: {
+    document: string;
+    documentType: DocumentType;
+    value: string;
+  };
   Login: undefined;
 };
 
@@ -32,12 +37,30 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
   const { document, documentType, value } = route.params;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNewPassword = async () => {
     const patient = await getPatientByDocument(document);
     const patientExists = await checkPatient(Number(document));
 
     if (patientExists === null) {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2:
+            "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número.",
+        });
+        return;
+      } else if (password !== confirmPassword) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Las contraseñas no coinciden.",
+        });
+        return;
+      }
       if (documentType) {
         await registerUser(documentType, Number(document), password);
         Toast.show({
@@ -45,33 +68,31 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           text1: "Éxito",
           text2: "Usuario registrado correctamente.",
         });
-        navigation.replace("Login");}
-      } else {
-        if (!patient) {
-          return Alert.alert("Error", "El documento no existe.");
-        } else {
-          if (password !== confirmPassword) {
-            return Alert.alert("Error", "Las contraseñas no coinciden.");
-          }
-
-          try {
-            await resetPassword(Number(document), value, password);
-            Toast.show({
-              type: "success",
-              text1: "Éxito",
-              text2: "Tu contraseña ha sido restablecida.",
-            });
-            navigation.replace("Login");
-          } catch (error) {
-            Toast.show({
-              type: "error",
-              text1: value,
-              text2: "No se pudo cambiar la contraseña.",
-            });
-          }
-        }
+        navigation.replace("Login");
       }
-    
+    } else {
+      if (!patient) {
+        return Alert.alert("Error", "El documento no existe.");
+      }
+      try {
+        setIsLoading(true);
+        await resetPassword(Number(document), value, password);
+        Toast.show({
+          type: "success",
+          text1: "Éxito",
+          text2: "Tu contraseña ha sido restablecida.",
+        });
+        navigation.replace("Login");
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: value,
+          text2: "No se pudo cambiar la contraseña.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -102,8 +123,16 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           onChangeText={setConfirmPassword}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleNewPassword}>
-          <Text style={styles.buttonText}>Confirmar</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleNewPassword}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Confirmar</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

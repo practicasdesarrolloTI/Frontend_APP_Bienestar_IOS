@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -15,7 +16,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { checkPatient, getPatientByDocument } from "../services/patientService";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
-import DocumentPicker from "../components/DocumentPicker"; 
+import DocumentPicker from "../components/DocumentPicker";
 import Toast from "react-native-toast-message";
 import { sendRecoveryCode } from "../services/authService";
 import PasswordRecoveryModal from "../components/PasswordRecoveryModal";
@@ -29,7 +30,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [documentNumber, setDocumentNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [maskedEmail, setMaskedEmail] = useState("");
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
@@ -75,36 +76,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    // if (!documentType || !documentNumber || !password || !confirmPassword) {
-    //   Toast.show({
-    //     type: "error",
-    //     text1: "Error",
-    //     text2: "Todos los campos son obligatorios.",
-    //   });
-    //   return;
-    // }
-
-    // if (password !== confirmPassword) {
-    //   Toast.show({
-    //     type: "error",
-    //     text1: "Error",
-    //     text2: "Las contraseñas no coinciden.",
-    //   });
-    //   return;
-    // }
-    // const passwordRegex = /^[a-zA-Z0-9]{2,12}$/;
-    // if (!passwordRegex.test(password)) {
-    //   Toast.show({
-    //     type: "error",
-    //     text1: "Error",
-    //     text2:
-    //       "La contraseña debe ser alfanumérica y tener entre 4 y 12 caracteres.",
-    //   });
-    //   return;
-    // }
-    // setLoading(true);
-   ;
     try {
+      setIsLoading(true);
       const patientExits = await checkPatient(Number(documentNumber));
       if (patientExits) {
         Toast.show({
@@ -114,57 +87,31 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         });
         return;
       } else {
-      const correo = "christiandj456@outlook.com"; // este debería venir del paciente
-      setEmail(correo);
-      const result = await sendRecoveryCode(Number(docPaciente), correo);
-  
-      if (result.success) {
-        const [user, domain] = (correoPaciente || "").split("@");
-        const masked = `${user.substring(0, 4)}*****@${domain}`;
-        setMaskedEmail(masked);
-        setShowRecoveryModal(true);
-      } else {
-        if (result.retryAfterMinutes) {
-          Toast.show({
-            type: "error",
-            text1: "Límite alcanzado",
-            text2: `Intenta nuevamente en ${result.retryAfterMinutes} minuto(s)`,
-          });
+        const correo = "christiandj456@outlook.com"; // este debería venir del paciente
+        setEmail(correo);
+        const result = await sendRecoveryCode(Number(docPaciente), correo);
+
+        if (result.success) {
+          const [user, domain] = (correoPaciente || "").split("@");
+          const masked = `${user.substring(0, 4)}*****@${domain}`;
+          setMaskedEmail(masked);
+          setShowRecoveryModal(true);
         } else {
-          Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: result.message,
-          });
+          if (result.retryAfterMinutes) {
+            Toast.show({
+              type: "error",
+              text1: "Límite alcanzado",
+              text2: `Intenta nuevamente en ${result.retryAfterMinutes} minuto(s)`,
+            });
+          } else {
+            Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: result.message,
+            });
+          }
         }
-      }}
-      //
-      // if (!patient) {
-      //   Toast.show({
-      //     type: "error",
-      //     text1: "Error",
-      //     text2: "Este número de documento no está inscrito en la EPS.",
-      //   });
-      //   return;
-      // }
-
-      // if (patient.tipo_documento !== (documentType as string)) {
-      //   Toast.show({
-      //     type: "error",
-      //     text1: "¡Registro fallido!",
-      //     text2: "El tipo de documento no coincide.",
-      //   });
-      //   return;
-      // }
-
-      // await registerUser(documentType, Number(documentNumber), password);
-
-      // Toast.show({
-      //   type: "success",
-      //   text1: "¡Registro exitoso!",
-      //   text2: "Ahora puedes iniciar sesión.",
-      // });
-      // navigation.replace("Login");
+      }
     } catch (error) {
       Toast.show({
         type: "error",
@@ -172,17 +119,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         text2: "No se pudo enviar el código. Intenta nuevamente.",
       });
     }
+    finally {
+      setIsLoading(false);
+    }
   };
-  //   catch (error) {
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "¡Registro fallido!",
-  //       text2: "Error al registrar, intenta nuevamente.",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -213,48 +153,13 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setDocumentNumber}
         />
 
-        {/*  Contraseña */}
-        {/* <TextInput
-          style={styles.input}
-          placeholder="Nueva contraseña"
-          placeholderTextColor={colors.primary}
-          secureTextEntry
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            // const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,12}$/;
-            const regex = /^[a-zA-Z0-9]{2,12}$/; //debe contener al menos una letra y un número
-            setPasswordValid(regex.test(text));
-            setPasswordsMatch(text === confirmPassword);
-          }}
-        />
-        {!passwordValid && password.length > 0 && (
-        <Text style={{ color: 'red', marginBottom: 8 }}>
-          La contraseña debe tener entre 4 y 12 caracteres, incluir al menos una letra y un número, y no contener símbolos.
-        </Text>
-      )} */}
-
-        {/* Confirmar Contraseña */}
-
-        {/* <TextInput
-          style={styles.input}
-          placeholder="Confirmar contraseña"
-          placeholderTextColor={colors.primary}
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={(text) => {
-            setConfirmPassword(text);
-            setPasswordsMatch(password === text);
-          }}
-        />
-        {!passwordsMatch && confirmPassword.length > 0 && (
-        <Text style={{ color: 'red', marginBottom: 8 }}>
-          Las contraseñas no coinciden.
-        </Text>
-      )} */}
-
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
-          <Text style={styles.registerText}>Registrarse</Text>
+        {/*  Botón de Registro */}
+        <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={isLoading} >
+          {isLoading ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.loginText}>Iniciar sesión</Text>
+                    )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -266,7 +171,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onClose={() => {
             setShowRecoveryModal(false);
             if (documentType) {
-              navigation.navigate("VerifyCode", { document: documentNumber, documentType: documentType as DocumentType });
+              navigation.navigate("VerifyCode", {
+                document: documentNumber,
+                documentType: documentType as DocumentType,
+              });
             } else {
               Toast.show({
                 type: "error",

@@ -116,10 +116,10 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"} {"años"}
             </Text>
             <Text style={styles.label}>
-              <Text style={styles.bold}>Correo: </Text> {paciente?.correo}
+              <Text style={styles.bold}>Correo: </Text> {paciente?.correo || "No tiene correo registrado"} 
             </Text>
             <Text style={styles.label}>
-              <Text style={styles.bold}>Celular: </Text> {paciente?.celular}
+              <Text style={styles.bold}>Teléfono: </Text> {paciente?.celular || paciente?.telefono || "No tiene número teléfonico registrado"}
             </Text>
             <Text style={styles.label}>
               <Text style={styles.bold}>EPS:</Text> {paciente?.eps}

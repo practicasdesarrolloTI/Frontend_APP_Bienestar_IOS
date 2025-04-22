@@ -116,7 +116,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.label}>Fecha próxima cita:{" "}</Text>
                 {item.fecha_cita}
               </Text>
-              <Text
+              {/* <Text
                 style={[
                   styles.status,
                   item.estado === "Pendiente"
@@ -125,7 +125,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
                 ]}
               >
                 {item.estado}
-              </Text>
+              </Text> */}
             </View>
           )}
         />

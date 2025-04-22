@@ -69,7 +69,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     loadData();
   }, []);
 
-  const citasFiltradas = citas.filter((cita) => cita.estado === "Pendiente");
+  const citasFiltradas = citas.filter((cita) => cita.estado === "AUTORIZADO");
   const citasOrdenadas = citasFiltradas.sort((a, b) => {
     const fechaA = new Date(a.fecha);
     const fechaB = new Date(b.fecha);
@@ -95,6 +95,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.container}>
+
         {/* Lista de Citas */}
         {citasOrdenadas.length === 0 ? (
           <EmptyState message="No tienes citas agendadas por el momento." />
@@ -115,7 +116,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
                   <Text style={styles.label}>Especialidad: </Text>{" "}
                   {item.especialidad}
                 </Text>
-                <Text
+                {/* <Text
                   style={[
                     styles.status,
                     item.estado === "Pendiente"
@@ -124,7 +125,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
                   ]}
                 >
                   {item.estado}
-                </Text>
+                </Text> */}
               </View>
             )}
           />
