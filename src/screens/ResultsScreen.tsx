@@ -103,14 +103,14 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
             <View style={styles.card}>
               <Text style={styles.text}>
                 <Text style={styles.label}>Fecha: </Text>
-                {item.fechaRealizacion}
+                {item?.fechaRealizacion || "Fecha no disponible"}
               </Text>
               <Text style={styles.text}>
                 <Text style={styles.label}>Examen: </Text>
                 {item.examen}
               </Text>
               <Text style={styles.text}>
-                <Text style={styles.label}>Programa: </Text>
+                <Text style={styles.label}>Médico Remisor: </Text>
                 {item.programa}
               </Text>
             </View>

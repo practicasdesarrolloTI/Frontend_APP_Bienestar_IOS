@@ -16,7 +16,7 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
     if (Array.isArray(rawData)) {
       return rawData.map((item: any, index: number) => ({
         id: index.toString(),
-        fechaRealizacion: item.fecha_orden?.split(' ')[0] ?? '',
+        fechaRealizacion: item.fecha_orden?.split(" ")[0] || "",
         examen: item.Examen ?? '',
         programa: item.nom_medico_remisor ?? '',
         estado: 'Disponible',

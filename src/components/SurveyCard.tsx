@@ -84,11 +84,6 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, cargando, onPress
           <View style={{ flex: 1 }}>
             <Text style={styles.label}>{survey.nombre}</Text>
             <Text style={styles.description}>{survey.descripcion}</Text>
-            {/* {survey.bloqueada ? (
-            <Text style={styles.disabledText}>
-              Disponible en {getTiempoDisponibleEn()}
-            </Text>
-          ) : null} */}
           </View>
            )}
           <MaterialIcons
@@ -103,9 +98,9 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, cargando, onPress
       <Modal visible={showModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Encuesta bloqueada</Text>
+            <Text style={styles.modalTitle}>Encuesta completada</Text>
             <Text style={styles.modalText}>
-              Esta encuesta ya fue completada. Podrás volver a realizarla en{" "}
+              Podrás volver a realizarla en{" "}
               {getTiempoDisponibleEn()}.
             </Text>
             <TouchableOpacity

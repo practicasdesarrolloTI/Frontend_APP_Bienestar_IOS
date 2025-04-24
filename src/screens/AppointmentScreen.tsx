@@ -51,7 +51,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         const citasFormateadas = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
-          hora: item.fecha_cita?.split(" ")[1]?.slice(0, 5) || "",
+          // hora: item.fecha_cita?.split(" ")[1]?.slice(0, 5) || "",
           especialidad: item.Especialidad || "",
           programa: item.programa || "—",
           medico: item.nombre_medico || "",

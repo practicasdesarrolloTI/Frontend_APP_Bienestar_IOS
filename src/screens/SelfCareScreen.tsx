@@ -197,7 +197,7 @@ const SelfCareScreen: React.FC = () => {
 
       Toast.show({
         type: "error",
-        text1: "Encuesta bloqueada",
+        text1: "Encuesta realizada",
         text2: `Podrás volver a realizar esta encuesta en ${partes.join(
           " y "
         )}.`,

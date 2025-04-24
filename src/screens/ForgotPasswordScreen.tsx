@@ -40,7 +40,7 @@ const ForgotPasswordScreen = ({
   const handleSendCode = async () => {
     const paciente = await getPatientByDocument(document);
     const docPaciente = paciente?.documento || null;
-    const docType = paciente?.tipo_documento || null;
+    const docType = paciente?.tipo_documento_abreviado || null;
     const correoPaciente = paciente?.correo ;
 
     if (!documentType) {

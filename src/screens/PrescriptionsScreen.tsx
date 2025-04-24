@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  Alert,
 } from "react-native";
 import colors from "../themes/colors";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -75,6 +74,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         type: "error",
         text1: "Error",
         text2: "No se pudo cargar la información de los medicamentos.",
+        visibilityTime: 4000,
       });
     } finally {
       setLoading(false);
@@ -124,12 +124,12 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       const agrupados = agruparMedicamentosPorFecha(medicamentos);
 
       const fechasOrden = Object.keys(agrupados);
-      if (fechasOrden.length === 0) return;
-      Toast.show({
-        type: "error",
-        text1: "Sin medicamentos recientes",
-        text2: "No hay medicamentos en los últimos 3 meses.",
-      });
+      // if (fechasOrden.length === 0) return;
+      // Toast.show({
+      //   type: "error",
+      //   text1: "Sin medicamentos recientes",
+      //   text2: "No hay medicamentos en los últimos 3 meses.",
+      // });
 
       // Seleccionar la primera fecha (o podrías mostrar un Picker)
       const fechaSeleccionada = fechasOrden[0];
@@ -143,13 +143,20 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         agrupados[fechaSeleccionada],
         fechaSeleccionada
       );
-      Alert.alert(
-        "Éxito",
-        "La orden fue generada y está lista para visualizar o compartir."
-      );
+      Toast.show({
+        type: "success",
+        text1: "Éxito",
+        text2:
+          "La orden fue generada y está lista para visualizar o compartir.",
+        visibilityTime: 3000,
+      });
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "No se pudo generar la orden.");
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No se pudo generar la orden.",
+      });
     }
   };
 

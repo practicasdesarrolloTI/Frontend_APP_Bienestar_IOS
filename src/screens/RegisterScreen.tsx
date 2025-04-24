@@ -158,7 +158,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           {isLoading ? (
                       <ActivityIndicator color="#fff" />
                     ) : (
-                      <Text style={styles.loginText}>Iniciar sesión</Text>
+                      <Text style={styles.registerText}>Registrar</Text>
                     )}
         </TouchableOpacity>
 
