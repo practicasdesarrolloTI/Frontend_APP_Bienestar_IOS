@@ -48,6 +48,12 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         const data = await fetchAppointments(tipoDocumento, numeroDocumento);
 
         // Formateamos los datos según el tipo `Cita`
+        if (data.length === 0) {
+          Toast.show({
+            type: "info",
+            text1: "No tienes citas agendadas por el momento.",
+          });
+        }
         const citasFormateadas = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
@@ -60,7 +66,8 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
 
         setCitas(citasFormateadas);
       } catch (error) {
-       console.error("Error al cargar citas:", error);
+
+      
       } finally {
         setLoading(false);
       }

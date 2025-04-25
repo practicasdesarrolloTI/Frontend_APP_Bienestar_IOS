@@ -50,7 +50,7 @@ type Medicamento = {
   id: string;
   nombre: string;
   fechaOrden: string;
-  medico: string;
+  cantidad: number;
   estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
@@ -195,10 +195,10 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.label}>Nombre: </Text> {item.nombre}
               </Text>
               <Text style={styles.text}>
-                <Text style={styles.label}>Fecha: </Text> {item.fechaOrden}
+                <Text style={styles.label}>Cantidad: </Text> {item.cantidad}
               </Text>
               <Text style={styles.text}>
-                <Text style={styles.label}>Médico: </Text> {item.medico}
+                <Text style={styles.label}>Fecha de vigencia: </Text> {item.fechaOrden}
               </Text>
               {/* <Text
                 style={[
