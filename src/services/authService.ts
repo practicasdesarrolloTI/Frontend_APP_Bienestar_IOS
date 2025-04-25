@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 
-const API_URL = "http://10.20.15.236:5001/api/auth"; // Asegúrate de reemplazar con tu IP local si pruebas en un dispositivo real
+const API_URL = "http://10.0.2.2:5001/api/auth";
 
 export type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
@@ -42,14 +42,14 @@ export const registerUser = async (
 };
 
 // Iniciar sesión
-export const loginUser = async (document: number, password: string) => {
+export const loginUser = async (documentType: DocumentType, document: number, password: string) => {
   try {
-    console.log("Intentando iniciar sesión con:", { document, password });
+    console.log("Intentando iniciar sesión con:", { documentType, document, password });
 
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ document, password }),
+      body: JSON.stringify({ documentType, document, password }),
     });
 
     if (!response.ok) {

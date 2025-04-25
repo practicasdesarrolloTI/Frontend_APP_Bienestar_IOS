@@ -58,7 +58,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
-      const result = await loginUser(Number(document), password);
+      const result = await loginUser(documentType, Number(document), password);
       
       await AsyncStorage.setItem('documento', document);
       await AsyncStorage.setItem('tipoDocumento', String(documentType));
