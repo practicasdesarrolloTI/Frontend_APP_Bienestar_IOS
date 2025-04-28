@@ -1,4 +1,3 @@
-//Dejar solo las pendientes
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -9,7 +8,6 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  Alert,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -57,7 +55,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         const citasFormateadas = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
-          // hora: item.fecha_cita?.split(" ")[1]?.slice(0, 5) || "",
+          hora: item.hora_cita?.slice(0, 8) || "",
           especialidad: item.Especialidad || "",
           programa: item.programa || "—",
           medico: item.nombre_medico || "",
@@ -66,8 +64,6 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
 
         setCitas(citasFormateadas);
       } catch (error) {
-
-      
       } finally {
         setLoading(false);
       }
@@ -82,6 +78,19 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     const fechaB = new Date(b.fecha);
     return fechaA.getTime() - fechaB.getTime();
   });
+
+  const formatHora = (hora: string) => {
+    if (!hora) return "";
+    const [hours, minutes] = hora.split(":");
+    const date = new Date();
+    date.setHours(Number(hours));
+    date.setMinutes(Number(minutes));
+    return date.toLocaleTimeString("es-CO", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   if (loading) {
     return <LoadingScreen />;
@@ -102,7 +111,6 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.container}>
-
         {/* Lista de Citas */}
         {citasOrdenadas.length === 0 ? (
           <EmptyState message="No tienes citas agendadas por el momento." />
@@ -114,7 +122,8 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
               <View style={styles.card}>
                 <Text style={styles.text}>
                   <Text style={styles.label}>Fecha: </Text>
-                  {item.fecha} {item.hora}
+                  {item.fecha}
+                  {"  "} {formatHora(item.hora)}
                 </Text>
                 <Text style={styles.text}>
                   <Text style={styles.label}>Médico: </Text> {item.medico}
