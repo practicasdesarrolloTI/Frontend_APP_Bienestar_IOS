@@ -59,6 +59,15 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [loading, setLoading] = useState(true);
+  type Orden = {
+    no_autorizacion: string;
+    fecha_autorizacion: string;
+    medicamentos: Array<{
+      nombre_medicamento: string;
+      cant_presentacion: number;
+    }>;
+  };
+
   const [ordenes, setOrdenes] = useState<Orden[]>([]);
 
   const loadData = async () => {

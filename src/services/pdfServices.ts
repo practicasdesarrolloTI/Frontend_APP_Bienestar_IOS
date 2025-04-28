@@ -61,7 +61,7 @@ export const generarPDFMedicamentos = async (paciente: any, medicamentos: any[],
         <tbody>
           ${medicamentos.map((med) => `
             <tr>
-              <td>${med.codigo ?? "-"}</td>
+              <td>${med.id ?? "-"}</td>
               <td>${med.nombre}</td>
               <td>${med.presentacion ?? "-"}</td>
               <td>${med.cantidad ?? "-"}</td>
