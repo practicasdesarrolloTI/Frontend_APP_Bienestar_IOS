@@ -24,3 +24,54 @@ export const fetchMedicaments = async (tipoDocumento: string, numeroDocumento: s
     throw error;
   }
 };
+
+import axios from 'axios';
+
+const AUTH_URL = 'https://training.aacustomers.com/aa_panacap/pana/rest/auth_server.php';
+const MEDICAMENTOS_URL = 'https://training.aacustomers.com/aa_panacap/pana/rest/router.php/ordenes/consmed';
+
+// Credenciales proporcionadas
+const CLIENT_ID = 'rest901';
+const SECRET = 'rest901';
+const CUSTOM_ID = '901';
+
+// 1. Función para obtener el token
+interface AuthResponse {
+  token: string;
+}
+
+const getAuthToken = async (): Promise<string> => {
+  const res = await axios.post<AuthResponse>(
+    AUTH_URL,
+    {},
+    {
+      headers: {
+        'X-Client-Id': CLIENT_ID,
+        'X-Secret': SECRET,
+        'X-Custom-Id': CUSTOM_ID,
+      },
+    }
+  );
+  return res.data.token;
+};
+
+// 2. Función para consultar orden de medicamentos
+export const getOrdenMedicamentos = async (tipo_doc: string, identi_usr: string) => {
+  const token = await getAuthToken();
+
+  const res = await axios.post(
+    MEDICAMENTOS_URL,
+    {
+      tipo_doc,
+      identi_usr,
+    },
+    {
+      headers: {
+        'X-TOKEN': token,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  return res.data;
+};

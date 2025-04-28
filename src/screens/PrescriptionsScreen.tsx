@@ -13,7 +13,7 @@ import colors from "../themes/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { fetchMedicaments } from "../services/medicamentService";
+import { fetchMedicaments, getOrdenMedicamentos } from "../services/medicamentService";
 import { fonts } from "../themes/fonts";
 import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -54,12 +54,19 @@ type Medicamento = {
   estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
-const pdfAsset = require("../../assets/resultado.pdf");
+type Orden = {
+  id: string;
+  nombre: string;
+  fechaOrden: string;
+  cantidad: number;
+  estado: "Pendiente" | "Reformulado" | "Descargado";
+};
 
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [loading, setLoading] = useState(true);
+  const [ordenes, setOrdenes] = useState<Orden[]>([]);
 
   const loadData = async () => {
     try {
@@ -68,7 +75,36 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       if (!tipo || !doc) throw new Error("Faltan datos del paciente");
 
       const data = await fetchMedicaments(tipo, doc);
+
+      const tipoDoc = "CC";
+      const documento = "9010000322";
+
+      const dataAPI = (await getOrdenMedicamentos(tipoDoc, documento)) as Array<{
+        no_autorizacion: string;
+        fecha_autorizacion: string;
+        medicamentos: Array<{
+          nombre_medicamento: string;
+          cant_presentacion: number;
+        }>;
+      }>;
+      const medicamentosExternos = dataAPI.flatMap((orden: any) =>
+        orden.medicamentos.map((med: any, idx: number) => ({
+          id: `${orden.no_autorizacion}-${idx}`,
+          nombre: med.nombre_medicamento,
+          presentacion: med.presentacion,
+          dosificacion: med.dosificacion,
+          dias_tratamiento: med.dias_tratamiento,
+          cantidad: med.cant_presentacion,
+          via: med.via,
+          indicaciones: med.indicaciones,
+          fechaOrden: orden.fecha_autorizacion,
+          ordenCompleta: orden,
+        }))
+      );
+
+      
       setMedicamentos(data);
+      setOrdenes(medicamentosExternos);
     } catch (error) {
       Toast.show({
         type: "error",
@@ -121,7 +157,8 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
 
       if (!tipo || !doc) throw new Error("Faltan datos del paciente");
 
-      const agrupados = agruparMedicamentosPorFecha(medicamentos);
+      const agrupados = agruparMedicamentosPorFecha(ordenes);
+
 
       const fechasOrden = Object.keys(agrupados);
       // if (fechasOrden.length === 0) return;
@@ -215,13 +252,13 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               {(item.estado === "Pendiente" ||
                 item.estado === "Reformulado" ||
                 item.estado === "Descargado") && (
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={handleDownload}
-                >
-                  <Text style={styles.buttonText}>Descargar</Text>
-                </TouchableOpacity>
-              )}
+                  <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={handleDownload}
+                  >
+                    <Text style={styles.buttonText}>Descargar</Text>
+                  </TouchableOpacity>
+                )}
             </View>
           )}
         />
