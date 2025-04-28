@@ -54,13 +54,6 @@ type Medicamento = {
   estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
-type Orden = {
-  id: string;
-  nombre: string;
-  fechaOrden: string;
-  cantidad: number;
-  estado: "Pendiente" | "Reformulado" | "Descargado";
-};
 
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);

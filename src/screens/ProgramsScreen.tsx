@@ -1,4 +1,4 @@
-// Dejar pendientes 
+// Dejar pendientes
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -18,7 +18,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { fetchPrograms } from "../services/programService";
 import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusProgramas">;
 
@@ -26,6 +26,7 @@ type Programa = {
   id: string;
   fecha_cita: string;
   programa: string;
+  hora: string;
   medico: string;
   especialidad: string;
   estado: string;
@@ -38,25 +39,27 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   useEffect(() => {
     const loadPrograms = async () => {
       try {
-        const tipo = await AsyncStorage.getItem('tipoDocumento');
-        const doc = await AsyncStorage.getItem('documento');
-        if (!tipo || !doc) throw new Error('Datos incompletos');
+        const tipo = await AsyncStorage.getItem("tipoDocumento");
+        const doc = await AsyncStorage.getItem("documento");
+        if (!tipo || !doc) throw new Error("Datos incompletos");
 
         const data = await fetchPrograms(tipo, doc);
 
         const formateados = data.map((item: any, index: number) => ({
           id: index.toString(),
-          fecha_cita: item.fecha_cita?.split(' ')[0] ?? 'No tienes citas agendadas',
-          programa: item.Programa ?? '',
-          medico: item.nombre_medico ?? '',
-          especialidad: item.Especialidad ?? '',
-          estado: item.estado_cita ?? 'Pendiente',
+          fecha_cita:
+            item.fecha_cita?.split(" ")[0] ?? "No tienes citas agendadas",
+          hora: item.hora_cita?.slice(0, 8) ?? " ",
+          programa: item.Programa ?? "",
+          medico: item.nombre_medico ?? "",
+          especialidad: item.Especialidad ?? "",
+          estado: item.estado_cita ?? "Pendiente",
         }));
 
         setProgramas(formateados);
       } catch (err) {
         console.error(err);
-        Alert.alert('Error', 'No se pudieron cargar los programas');
+        Alert.alert("Error", "No se pudieron cargar los programas");
       } finally {
         setLoading(false);
       }
@@ -72,9 +75,19 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     const fechaA = new Date(a.fecha_cita);
     const fechaB = new Date(b.fecha_cita);
     return fechaA.getTime() - fechaB.getTime();
-  }
-  );
-
+  });
+  const formatHora = (hora: string) => {
+    if (!hora) return "";
+    const [hours, minutes] = hora.split(":");
+    const date = new Date();
+    date.setHours(Number(hours));
+    date.setMinutes(Number(minutes));
+    return date.toLocaleTimeString("es-CO", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
   if (loading) return <LoadingScreen />;
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -98,23 +111,23 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <View > 
-              {/* <Text style={styles.text}>
+              <View>
+                {/* <Text style={styles.text}>
                 <MaterialIcons name="calendar-today" size={16} /> Fecha de
                 inscripción: {item.fechaInscripcion}
               </Text> */}
               </View>
               <Text style={styles.text}>
-                <Text style={styles.label}>Programa:{" "}</Text>
+                <Text style={styles.label}>Programa: </Text>
                 {item.programa}
               </Text>
               <Text style={styles.text}>
-              <Text style={styles.label}>Médico:{" "}</Text>
+                <Text style={styles.label}>Médico: </Text>
                 {item.medico}
               </Text>
               <Text style={styles.text}>
-              <Text style={styles.label}>Fecha próxima cita:{" "}</Text>
-                {item.fecha_cita}
+                <Text style={styles.label}>Fecha próxima cita: </Text>
+                {item.fecha_cita} {formatHora(item.hora)}
               </Text>
               {/* <Text
                 style={[
@@ -209,9 +222,9 @@ const styles = StyleSheet.create({
     fontFamily: fonts.subtitle,
   },
   empty: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
 });
 
