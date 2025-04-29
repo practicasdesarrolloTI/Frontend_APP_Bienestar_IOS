@@ -13,7 +13,10 @@ import colors from "../themes/colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { fetchMedicaments, getOrdenMedicamentos } from "../services/medicamentService";
+import {
+  fetchMedicaments,
+  getOrdenMedicamentos,
+} from "../services/medicamentService";
 import { fonts } from "../themes/fonts";
 import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -54,7 +57,6 @@ type Medicamento = {
   estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
-
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
@@ -81,7 +83,10 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       const tipoDoc = "CC";
       const documento = "9010000322";
 
-      const dataAPI = (await getOrdenMedicamentos(tipoDoc, documento)) as Array<{
+      const dataAPI = (await getOrdenMedicamentos(
+        tipoDoc,
+        documento
+      )) as Array<{
         no_autorizacion: string;
         fecha_autorizacion: string;
         medicamentos: Array<{
@@ -101,10 +106,30 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
           indicaciones: med.indicaciones,
           fechaOrden: orden.fecha_autorizacion,
           ordenCompleta: orden,
+          // 🔥 CORREGIDO: tomamos estos datos de "orden"
+          codigo_contrato: orden.codigo_contrato,
+          nombre_contrato: orden.nombre_contrato,
+          no_orden: orden.no_autorizacion,
+          cod_usuario: orden.codigo_usuario,
+          plan: orden.plan,
+          tipo_afiliado: orden.tipo_afiliado,
+          cod_diagnostico: orden.codigo_diagnostico,
+          cod_medico_remite: orden.codigo_medico_remite,
+          nombre_medico_remite: orden.medico_remite,
+          doc_medico_remite: orden.cc_medico_remite,
+          nit_ips_remite: orden.nit_ips_remite,
+          cod_ips_remite: orden.codigo_ips_remite,
+          nom_ips_remite: orden.nombre_ips_remite,
+          fecha_autorizacion: orden.fecha_autorizacion,
+          fecha_vigencia: orden.fecha_vigencia,
+          fecha_vencimiento: orden.fecha_vencimiento,
+          nivel_usuario: orden.nivel_usuario,
+          valor_orden: orden.valor_orden,
+          exento: orden.exento,
+          cronico: orden.cronico,
         }))
       );
 
-      
       setMedicamentos(data);
       setOrdenes(medicamentosExternos);
     } catch (error) {
@@ -114,8 +139,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         text2: "No se pudo cargar la información de los medicamentos.",
         visibilityTime: 4000,
       });
-    } finally {
-      setLoading(false);
+      return;
     }
   };
 
@@ -139,14 +163,20 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         text1: "Error",
         text2: "No se pudo cargar la información del paciente.",
       });
-    } finally {
-      setLoading(false);
+      return;
     }
   };
 
   useEffect(() => {
-    loadPatient();
-    loadData();
+    const loadEverything = async () => {
+      try {
+        await Promise.all([loadPatient(), loadData()]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEverything();
   }, []);
 
   const handleDownload = async () => {
@@ -160,7 +190,6 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       if (!tipo || !doc) throw new Error("Faltan datos del paciente");
 
       const agrupados = agruparMedicamentosPorFecha(ordenes);
-
 
       const fechasOrden = Object.keys(agrupados);
       // if (fechasOrden.length === 0) return;
@@ -213,7 +242,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.replace("Home")}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.title}>Medicamentos</Text>
+        <Text style={styles.title}>Medicameeeentos</Text>
       </View>
 
       <View style={styles.container}>
@@ -237,7 +266,8 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.label}>Cantidad: </Text> {item.cantidad}
               </Text>
               <Text style={styles.text}>
-                <Text style={styles.label}>Fecha de vigencia: </Text> {item.fechaOrden}
+                <Text style={styles.label}>Fecha de vigencia: </Text>{" "}
+                {item.fechaOrden}
               </Text>
               {/* <Text
                 style={[
@@ -251,7 +281,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               >
                 {item.estado}
               </Text> */}
-              {(item.estado === "Pendiente" ||
+              {/* {(item.estado === "Pendiente" ||
                 item.estado === "Reformulado" ||
                 item.estado === "Descargado") && (
                   <TouchableOpacity
@@ -260,7 +290,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                   >
                     <Text style={styles.buttonText}>Descargar</Text>
                   </TouchableOpacity>
-                )}
+                )} */}
             </View>
           )}
         />
