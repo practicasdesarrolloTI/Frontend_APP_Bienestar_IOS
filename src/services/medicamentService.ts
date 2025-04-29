@@ -1,4 +1,5 @@
 const API_URL = 'http://10.0.2.2:8000/api';
+const API_PANA = 'http://10.0.2.2:3001/api';
 
 export const fetchMedicaments = async (tipoDocumento: string, numeroDocumento: string) => {
   try {
@@ -25,53 +26,17 @@ export const fetchMedicaments = async (tipoDocumento: string, numeroDocumento: s
   }
 };
 
-import axios from 'axios';
+export const fetchMedicamentsVigentes = async (tipoDocumento: string, numeroDocumento: string) => {
+  try {
+    const response = await fetch(`${API_PANA}/medicamentos-vigentes/${tipoDocumento}/${numeroDocumento}`);
 
-const AUTH_URL = 'https://training.aacustomers.com/aa_panacap/pana/rest/auth_server.php';
-const MEDICAMENTOS_URL = 'https://training.aacustomers.com/aa_panacap/pana/rest/router.php/ordenes/consmed';
+    if (!response.ok) throw new Error('Error al obtener medicamentos');
 
-// Credenciales proporcionadas
-const CLIENT_ID = 'rest901';
-const SECRET = 'rest901';
-const CUSTOM_ID = '901';
+    const data = await response.json();
 
-// 1. Función para obtener el token
-interface AuthResponse {
-  token: string;
-}
-
-const getAuthToken = async (): Promise<string> => {
-  const res = await axios.post<AuthResponse>(
-    AUTH_URL,
-    {},
-    {
-      headers: {
-        'X-Client-Id': CLIENT_ID,
-        'X-Secret': SECRET,
-        'X-Custom-Id': CUSTOM_ID,
-      },
-    }
-  );
-  return res.data.token;
-};
-
-// 2. Función para consultar orden de medicamentos
-export const getOrdenMedicamentos = async (tipo_doc: string, identi_usr: string) => {
-  const token = await getAuthToken();
-
-  const res = await axios.post(
-    MEDICAMENTOS_URL,
-    {
-      tipo_doc,
-      identi_usr,
-    },
-    {
-      headers: {
-        'X-TOKEN': token,
-        'Content-Type': 'application/json',
-      },
-    }
-  );
-
-  return res.data;
+    return data; // Es un array de órdenes, cada una con su lista de medicamentos
+  } catch (error) {
+    console.error('❌ Error en fetchMedicamentsVigentes:', error);
+    throw error;
+  }
 };
