@@ -101,8 +101,8 @@ const VerifyCodeScreen = ({
 
   const handleResendCode = async () => {
     try {
-      const email = "christiandj456@outlook.com";
-      await sendRecoveryCode(Number(document), email);
+
+      await sendRecoveryCode(Number(document), mail);
       setResendAttempts((prev) => prev + 1);
       setTimer(60);
       console.log("Resend code attempts:", resendAttempts, " of ", maxAttempts);

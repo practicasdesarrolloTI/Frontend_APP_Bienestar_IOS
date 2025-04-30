@@ -13,12 +13,14 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { getPatientByDocument } from "../services/patientService";
+import {
+  getPatientByDocument,
+  getPatientAPP,
+} from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
-import {calcularEdad} from "../utils/dateUtils";
-
+import { calcularEdad } from "../utils/dateUtils";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Informacion">;
 
@@ -38,8 +40,19 @@ type Paciente = {
   iat: number;
   tipo_documento_abreviado: string;
 };
+type PacienteRegistro = {
+  _id: string;
+  documentType: string;
+  document: number;
+  mail?: string;
+  password: string;
+  createdAt: string;
+  updatedAt: string;
+};
 const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
   const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [pacienteRegistro, setPacienteRegistro] =
+    useState<PacienteRegistro | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,9 +63,10 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           Alert.alert("Error", "No se encontró el documento del paciente.");
           return;
         }
-
+        const dataregistro = await getPatientAPP(Number(storedDoc));
         const data = await getPatientByDocument(storedDoc);
         setPaciente(data as unknown as Paciente);
+        setPacienteRegistro(dataregistro as unknown as PacienteRegistro);
       } catch (error) {
         Alert.alert("Error", "Error al obtener información del paciente.");
       } finally {
@@ -113,13 +127,18 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
             </Text>
             <Text style={styles.label}>
               <Text style={styles.bold}>Edad: </Text>{" "}
-              {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"} {"años"}
+              {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"}{" "}
+              {"años"}
             </Text>
             <Text style={styles.label}>
-              <Text style={styles.bold}>Correo: </Text> {paciente?.correo || "No tiene correo registrado"} 
+              <Text style={styles.bold}>Correo: </Text>{" "}
+              {pacienteRegistro?.mail || "No tiene correo registrado"}
             </Text>
             <Text style={styles.label}>
-              <Text style={styles.bold}>Teléfono: </Text> {paciente?.celular || paciente?.telefono || "No tiene número teléfonico registrado"}
+              <Text style={styles.bold}>Teléfono: </Text>{" "}
+              {paciente?.celular ||
+                paciente?.telefono ||
+                "No tiene número teléfonico registrado"}
             </Text>
             <Text style={styles.label}>
               <Text style={styles.bold}>EPS:</Text> {paciente?.eps}
@@ -163,7 +182,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: 22,
+    padding: 15,
   },
 
   profileIconContainer: {

@@ -116,6 +116,7 @@ export const sendRecoveryCode = async (
   retryAfterMinutes?: number;
 }> => {
   try {
+    console.log("Enviando código de recuperación a:", { document, email });
     const res = await axios.post<SendCodeResponse>(
       `${API_URL}/send-recovery-code`,
       {

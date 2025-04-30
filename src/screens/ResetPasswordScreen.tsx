@@ -123,12 +123,6 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           }}
         />
 
-        {!passwordValid && password.length > 0 && (
-          <Text style={{ color: 'red', marginBottom: 8 }}>
-            La contraseña debe tener entre 4 y 12 caracteres, incluir al menos una letra y un número, y no contener símbolos.
-          </Text>
-        )}
-
         <TextInput
           placeholder="Confirmar contraseña"
           placeholderTextColor={colors.primary}
@@ -140,12 +134,17 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
             setPasswordsMatch(password === text);
           }}
         />
-
-        {!passwordsMatch && confirmPassword.length > 0 && (
-          <Text style={{ color: 'red', marginBottom: 8 }}>
-            Las contraseñas no coinciden.
+        <View style={styles.warning}>
+          <Text
+            style={[
+              styles.warningText,
+              { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
+            ]}
+          >
+            La contraseña debe tener mínimo 8 caracteres, una mayúscula, una
+            minúscula y un número.
           </Text>
-        )}
+        </View>
 
         <TouchableOpacity
           style={styles.button}
@@ -196,10 +195,20 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     padding: 12,
-    marginBottom: 20,
+    marginBottom: 16,
     fontSize: 16,
     fontFamily: fonts.body,
   },
+  warning: {
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  warningText: {
+    color: colors.secondary,
+    fontSize: 14,
+    fontFamily: fonts.body,
+  },
+
   button: {
     backgroundColor: colors.primary,
     paddingVertical: 14,

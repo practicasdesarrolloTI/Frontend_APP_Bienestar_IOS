@@ -40,7 +40,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     const paciente = await getPatientByDocument(documentNumber);
     const docPaciente = paciente?.documento || null;
     const docType = paciente?.tipo_documento_abreviado || null;
-    const correoPaciente = paciente?.correo;
 
     if (!documentType) {
       Toast.show({
@@ -64,6 +63,22 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         type: "error",
         text1: "Error",
         text2: "El número de documento debe ser numérico.",
+      });
+      return;
+    }
+    if (!email) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ingrese un correo electrónico.",
+      });
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ingrese un correo electrónico válido.",
       });
       return;
     }
@@ -96,12 +111,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         });
         return;
       } else {
-        const correo = "christiandj456@outlook.com"; // este debería venir del paciente
-        setEmail(correo);
-        const result = await sendRecoveryCode(Number(docPaciente), correo);
+        // const correo = "christiandj456@outlook.com"; // este debería venir del paciente
+        // setEmail(correo);
+        const result = await sendRecoveryCode(Number(docPaciente), email);
 
         if (result.success) {
-          const [user, domain] = (correoPaciente || "").split("@");
+          const [user, domain] = (email || "").split("@");
           const masked = `${user.substring(0, 4)}*****@${domain}`;
           setMaskedEmail(masked);
           setShowRecoveryModal(true);
@@ -159,6 +174,16 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           keyboardType="numeric"
           value={documentNumber}
           onChangeText={setDocumentNumber}
+        />
+
+        {/*  Correo */}
+        <TextInput
+          style={styles.input}
+          placeholder="Correo electrónico"
+          placeholderTextColor={colors.primary}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={(text) => setEmail(text.toLowerCase())}
         />
 
         {/*  Términos y Condiciones */}

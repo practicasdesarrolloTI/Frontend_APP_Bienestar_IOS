@@ -24,6 +24,7 @@ export type PacienteRegistro = {
   _id: string;
   documentType: string;
   document: number;
+  email?: string;
   password: string;
   createdAt: string;
   updatedAt: string;
@@ -48,15 +49,14 @@ export const checkPatient = async (document: number): Promise<PacienteRegistro |
   }
 };
 
-// export const getPatientByDocument = async (document: string) => {
-//   try {
-//     const response = await axios.get(`${API_URL}/${document}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error al obtener información del paciente:", error);
-//     throw error;
-//   }
-// };
+export const getPatientAPP = async (document: number): Promise<PacienteRegistro | null> => {
+  try {
+    const response = await axios.get<PacienteRegistro>(`${API_URL2}/data/${document}`);
+    return response.data;
+  } catch (error) {
+    return null;
+  }
+}
 
 
 
