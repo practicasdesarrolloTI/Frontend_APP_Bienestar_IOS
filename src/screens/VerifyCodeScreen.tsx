@@ -26,8 +26,8 @@ import Toast from "react-native-toast-message";
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
 type RootStackParamList = {
-  VerifyCode: { document: string, documentType: DocumentType };
-  ResetPassword: { document: string; documentType: DocumentType; value: string };
+  VerifyCode: { document: string, documentType: DocumentType, mail: string };
+  ResetPassword: { document: string; documentType: DocumentType, mail: string; value: string };
 };
 
 type VerifyCodeScreenNavigationProp = StackNavigationProp<
@@ -44,7 +44,7 @@ const VerifyCodeScreen = ({
   route: VerifyCodeScreenRouteProp;
   navigation: VerifyCodeScreenNavigationProp;
 }) => {
-  const { document, documentType } = route.params;
+  const { document, documentType, mail } = route.params;
   
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -80,9 +80,10 @@ const VerifyCodeScreen = ({
 
   const handleVerify = async () => {
     console.log("tipo de documento", documentType);
+    console.log("correo", mail);
     try {
       await verifyRecoveryCode(Number(document), value);
-      navigation.navigate("ResetPassword", { document, documentType, value });
+      navigation.navigate("ResetPassword", { document, documentType, mail, value });
     } catch {
       Toast.show({
         type: "error",

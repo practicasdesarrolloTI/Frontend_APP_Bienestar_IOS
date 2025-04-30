@@ -24,6 +24,7 @@ type RootStackParamList = {
   ResetPassword: {
     document: string;
     documentType: DocumentType;
+    mail: string;
     value: string;
   };
   Login: undefined;
@@ -34,10 +35,12 @@ type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 type Props = StackScreenProps<RootStackParamList, "ResetPassword">;
 
 const ResetPasswordScreen = ({ route, navigation }: Props) => {
-  const { document, documentType, value } = route.params;
+  const { document, documentType, mail, value } = route.params;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(true);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   const handleNewPassword = async () => {
     const patient = await getPatientByDocument(document);
@@ -62,7 +65,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         return;
       }
       if (documentType) {
-        await registerUser(documentType, Number(document), password);
+        await registerUser(documentType, Number(document), mail, password);
         Toast.show({
           type: "success",
           text1: "Éxito",
@@ -112,16 +115,37 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           secureTextEntry
           style={styles.input}
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+            setPasswordValid(regex.test(text));
+            setPasswordsMatch(text === confirmPassword);
+          }}
         />
+
+        {!passwordValid && password.length > 0 && (
+          <Text style={{ color: 'red', marginBottom: 8 }}>
+            La contraseña debe tener entre 4 y 12 caracteres, incluir al menos una letra y un número, y no contener símbolos.
+          </Text>
+        )}
+
         <TextInput
           placeholder="Confirmar contraseña"
           placeholderTextColor={colors.primary}
           secureTextEntry
           style={styles.input}
           value={confirmPassword}
-          onChangeText={setConfirmPassword}
+          onChangeText={(text) => {
+            setConfirmPassword(text);
+            setPasswordsMatch(password === text);
+          }}
         />
+
+        {!passwordsMatch && confirmPassword.length > 0 && (
+          <Text style={{ color: 'red', marginBottom: 8 }}>
+            Las contraseñas no coinciden.
+          </Text>
+        )}
 
         <TouchableOpacity
           style={styles.button}

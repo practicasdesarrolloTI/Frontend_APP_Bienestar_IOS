@@ -144,7 +144,7 @@ const ForgotPasswordScreen = ({
         onClose={() => { 
           if (documentType) {
             setShowRecoveryModal(false); 
-            navigation.navigate("VerifyCode", { document, documentType: documentType as DocumentType }); 
+            navigation.navigate("VerifyCode", { document, documentType: documentType as DocumentType, mail: email }); 
           }
         }}
         

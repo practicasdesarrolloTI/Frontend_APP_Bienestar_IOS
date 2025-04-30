@@ -202,6 +202,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               navigation.navigate("VerifyCode", {
                 document: documentNumber,
                 documentType: documentType as DocumentType,
+                mail: email,
               });
             } else {
               Toast.show({

@@ -16,19 +16,21 @@ interface SendCodeResponse {
 export const registerUser = async (
   documentType: DocumentType,
   document: number,
+  mail: string,
   password: string
 ) => {
   try {
     console.log("Enviando solicitud de registro con:", {
       documentType,
       document,
+      mail,
       password,
     });
 
     const response = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ documentType, document, password }),
+      body: JSON.stringify({ documentType, document, mail, password }),
     });
     return {success: true, message: "Usuario registrado correctamente"};
   } catch (error: any) {
