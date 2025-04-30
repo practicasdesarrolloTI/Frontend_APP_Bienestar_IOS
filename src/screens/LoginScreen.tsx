@@ -33,6 +33,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [isBlocked, setIsBlocked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleLogin = async () => {
     if (!document || !password || !documentType) {
@@ -43,7 +44,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
-
+    if (!acceptedTerms) {
+      Toast.show({
+        type: "error",
+        text1: "Términos no aceptados",
+        text2: "Debes aceptar los términos y condiciones para continuar.",
+      });
+      return;
+    }
+    
     const passwordRegex = /^[a-zA-Z0-9]{2,12}$/;
     if (!passwordRegex.test(password)) {
       Toast.show({
@@ -59,9 +68,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     try {
       setIsLoading(true);
       const result = await loginUser(documentType, Number(document), password);
-      
-      await AsyncStorage.setItem('documento', document);
-      await AsyncStorage.setItem('tipoDocumento', String(documentType));
+
+      await AsyncStorage.setItem("documento", document);
+      await AsyncStorage.setItem("tipoDocumento", String(documentType));
 
       if (!result.success) {
         setFailedAttempts((prev) => {
@@ -83,7 +92,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           text1: "¡Inicio de Sesión Exitoso!",
           text2: "Bienvenido!",
           visibilityTime: 1300,
-                  });
+        });
         setTimeout(() => navigation.replace("Home"));
       }
     } catch (error) {
@@ -132,11 +141,27 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setPassword}
         />
 
+        {/*  Términos y Condiciones */}
+        <TouchableOpacity
+          style={styles.checkboxContainer}
+          onPress={() => setAcceptedTerms(!acceptedTerms)}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons
+            name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
+            size={26}
+            color={acceptedTerms ? colors.primary : colors.primary}
+          />
+          <Text style={styles.checkboxLabel}>
+            Acepto Términos y Condiciones
+          </Text>
+        </TouchableOpacity>
+
         {/*  Botón de Login */}
         <TouchableOpacity
           style={styles.loginButton}
           onPress={handleLogin}
-          disabled={isLoading} 
+          disabled={isLoading}
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" />
@@ -233,6 +258,17 @@ const styles = StyleSheet.create({
     fontFamily: fonts.subtitle,
     fontSize: 16,
     textDecorationLine: "underline",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  checkboxLabel: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
   },
 });
 

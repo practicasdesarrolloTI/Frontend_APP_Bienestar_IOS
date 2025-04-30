@@ -68,7 +68,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       const data = await fetchMedicaments(tipo, doc);
 
       const tipoDoc = "CC";
-      const documento = "9010000322";
+      const documento = "9010000560"; //9010000560  9010000322
 
       const dataPANA = await fetchMedicamentsVigentes(tipoDoc, documento);
 
@@ -163,19 +163,24 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text style={styles.text}>
-                <Text style={styles.label}>Nombre: </Text> {item.nombre}
+                <Text style={styles.label}>{item.nombre}</Text>
               </Text>
               <Text style={styles.text}>
                 <Text style={styles.label}>Cantidad: </Text> {item.cantidad}
               </Text>
               <Text style={styles.text}>
-                <Text style={styles.label}>Dosis: </Text> {item.dosificacion ?? 'No disponible'}
+                <Text style={styles.label}>Dosis: </Text>{" "}
+                {item.dosificacion ?? "No disponible"}
               </Text>
+              {item.indicaciones && item.indicaciones !== "NINGUNO" && (
+                <Text style={styles.text}>
+                  <Text style={styles.label}>Indicaciones: </Text>
+                  {item.indicaciones}
+                </Text>
+              )}
               <Text style={styles.text}>
-                <Text style={styles.label}>Indicaciones: </Text> {item.indicaciones || 'No disponible'}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Fecha de Vencimiento: </Text> {item.fechaVencimiento}
+                <Text style={styles.label}>F. de Vencimiento: </Text>{" "}
+                {item.fechaVencimiento}
               </Text>
             </View>
           )}

@@ -34,6 +34,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [maskedEmail, setMaskedEmail] = useState("");
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleRegister = async () => {
     const paciente = await getPatientByDocument(documentNumber);
@@ -58,11 +59,19 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
-    if (!/^\d+$/.test(docPaciente || "")) {
+    if (!/^\d+$/.test(documentNumber || "")) {
       Toast.show({
         type: "error",
         text1: "Error",
         text2: "El número de documento debe ser numérico.",
+      });
+      return;
+    }
+    if (!acceptedTerms) {
+      Toast.show({
+        type: "error",
+        text1: "Términos no aceptados",
+        text2: "Debes aceptar los términos y condiciones para continuar.",
       });
       return;
     }
@@ -118,8 +127,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         text1: "Error",
         text2: "No se pudo enviar el código. Intenta nuevamente.",
       });
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -153,13 +161,33 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={setDocumentNumber}
         />
 
+        {/*  Términos y Condiciones */}
+        <TouchableOpacity
+          style={styles.checkboxContainer}
+          onPress={() => setAcceptedTerms(!acceptedTerms)}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons
+            name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
+            size={26}
+            color={acceptedTerms ? colors.primary : colors.primary}
+          />
+          <Text style={styles.checkboxLabel}>
+            Acepto Términos y Condiciones
+          </Text>
+        </TouchableOpacity>
+
         {/*  Botón de Registro */}
-        <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={isLoading} >
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleRegister}
+          disabled={isLoading}
+        >
           {isLoading ? (
-                      <ActivityIndicator color="#fff" />
-                    ) : (
-                      <Text style={styles.registerText}>Registrar</Text>
-                    )}
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.registerText}>Registrar</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -250,6 +278,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: "underline",
     fontFamily: fonts.subtitle,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  checkboxLabel: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
   },
 });
 

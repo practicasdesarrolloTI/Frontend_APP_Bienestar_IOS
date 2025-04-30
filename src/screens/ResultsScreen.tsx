@@ -70,6 +70,10 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  const limpiarExamen = (texto: string): string => {
+    return texto.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
+  };
+
   if (loading) return <LoadingScreen />;
 
   return (
@@ -102,13 +106,13 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Text style={styles.text}>
+                <Text style={styles.label}>{limpiarExamen(item.examen)}</Text>
+              </Text>
+              <Text style={styles.text}>
                 <Text style={styles.label}>Fecha: </Text>
                 {item?.fechaRealizacion || "Fecha no disponible"}
               </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Examen: </Text>
-                {item.examen}
-              </Text>
+
               <Text style={styles.text}>
                 <Text style={styles.label}>Médico Remisor: </Text>
                 {item.programa}
@@ -182,22 +186,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: colors.primary,
     fontFamily: fonts.subtitle,
-  },
-  status: {
-    fontSize: 18,
-    textAlign: "center",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 10,
-    fontFamily: fonts.subtitle,
-  },
-  available: {
-    backgroundColor: "green",
-    color: colors.white,
-  },
-  pending: {
-    backgroundColor: colors.secondary,
-    color: colors.white,
   },
   footerButtonContainer: {
     position: "absolute",
