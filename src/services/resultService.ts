@@ -1,5 +1,24 @@
 const API_URL = 'http://10.0.2.2:8000/api';
 
+const convertirFechaADashFormat = (fecha: string) => {
+  if (!fecha) return "";
+
+  // Si ya está en formato YYYY-MM-DD, no la tocamos
+  if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+    return fecha;
+  }
+
+  // Si está en formato DD/MM/YYYY, la convertimos
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) {
+    const [dia, mes, anio] = fecha.split("/");
+    return `${anio}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+  }
+
+  // Si no coincide con ningún formato esperado
+  return "";
+};
+
+
 export const fetchResults = async (tipoDocumento: string, numeroDocumento: string) => {
   try {
     const url = `${API_URL}/examenes/${tipoDocumento}/${numeroDocumento}`;
@@ -16,7 +35,7 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
     if (Array.isArray(rawData)) {
       return rawData.map((item: any, index: number) => ({
         id: index.toString(),
-        fechaRealizacion: item.fecha_orden?.split(" ")[0] || "",
+        fechaRealizacion: convertirFechaADashFormat(item.fecha_orden)?.split(" ")[0] || "",
         examen: item.Examen ?? '',
         programa: item.nom_medico_remisor ?? '',
         estado: 'Disponible',
