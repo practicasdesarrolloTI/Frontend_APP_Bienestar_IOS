@@ -21,6 +21,7 @@ import { fonts } from "../themes/fonts";
 import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
+import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;
 
@@ -35,6 +36,8 @@ type Resultado = {
 const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   const [resultados, setResultados] = useState<Resultado[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
   const noHayResultados = resultados.length === 0;
 
   useEffect(() => {
@@ -58,6 +61,24 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     };
     loadData();
   }, []);
+
+  const resultadosOrdenadas = resultados.sort((a, b) => {
+    const fechaA = new Date(a.fechaRealizacion);
+    const fechaB = new Date(b.fechaRealizacion);
+    return fechaA.getTime() - fechaB.getTime();
+  });
+
+  const resultadosFiltrados = resultadosOrdenadas.filter((r) => {
+    if (!fechaInicio && !fechaFin) return true;
+    const fecha = new Date(r.fechaRealizacion);
+    const desde = fechaInicio ? new Date(fechaInicio) : null;
+    const hasta = fechaFin ? new Date(fechaFin) : null;
+
+    if (desde && fecha < desde) return false;
+    if (hasta && fecha > hasta) return false;
+    return true;
+  });
+
 
   const openLabResultsWeb = async () => {
     const url =
@@ -92,8 +113,15 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.contentContainer}>
+        <CustomDateRangeFilter
+          fechaInicio={fechaInicio}
+          fechaFin={fechaFin}
+          onChangeInicio={setFechaInicio}
+          onChangeFin={setFechaFin}
+        />
+
         <FlatList
-          data={resultados}
+          data={resultadosFiltrados}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
             flexGrow: 1,

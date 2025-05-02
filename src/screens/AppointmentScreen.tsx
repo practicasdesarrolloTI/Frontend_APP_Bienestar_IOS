@@ -19,6 +19,7 @@ import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import EmptyState from "../components/EmptyState";
+import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
 
@@ -35,6 +36,8 @@ type Cita = {
 const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   const [citas, setCitas] = useState<Cita[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
@@ -79,6 +82,17 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     return fechaA.getTime() - fechaB.getTime();
   });
 
+  const citasFiltradasPorFecha = citasOrdenadas.filter((c) => {
+    const fecha = new Date(c.fecha);
+    const desde = fechaInicio ? new Date(fechaInicio) : null;
+    const hasta = fechaFin ? new Date(fechaFin) : null;
+
+    if (desde && fecha < desde) return false;
+    if (hasta && fecha > hasta) return false;
+    return true;
+  });
+
+
   const formatHora = (hora: string) => {
     if (!hora) return "";
     const [hours, minutes] = hora.split(":");
@@ -111,12 +125,20 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.container}>
+
+        <CustomDateRangeFilter
+          fechaInicio={fechaInicio}
+          fechaFin={fechaFin}
+          onChangeInicio={setFechaInicio}
+          onChangeFin={setFechaFin}
+        />
         {/* Lista de Citas */}
-        {citasOrdenadas.length === 0 ? (
+        {citasFiltradasPorFecha.length === 0 ? (
           <EmptyState message="No tienes citas agendadas por el momento." />
         ) : (
+
           <FlatList
-            data={citasOrdenadas}
+            data={citasFiltradasPorFecha}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View style={styles.card}>

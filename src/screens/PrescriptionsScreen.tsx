@@ -23,6 +23,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
 import { getPatientByDocument } from "../services/patientService";
 import Toast from "react-native-toast-message";
+import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
@@ -58,6 +60,9 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+
 
   const loadData = async () => {
     try {
@@ -119,6 +124,19 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  const medicamentosFiltrados = medicamentos.filter((m) => {
+    if (!fechaInicio && !fechaFin) return true;
+
+    const fecha = new Date(m.fechaVencimiento);
+    const desde = fechaInicio ? new Date(fechaInicio) : null;
+    const hasta = fechaFin ? new Date(fechaFin) : null;
+
+    if (desde && fecha < desde) return false;
+    if (hasta && fecha > hasta) return false;
+    return true;
+  });
+
+
   useEffect(() => {
     const loadEverything = async () => {
       try {
@@ -149,8 +167,15 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.container}>
+        <CustomDateRangeFilter
+          fechaInicio={fechaInicio}
+          fechaFin={fechaFin}
+          onChangeInicio={setFechaInicio}
+          onChangeFin={setFechaFin}
+        />
+
         <FlatList
-          data={medicamentos}
+          data={medicamentosFiltrados}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
             flexGrow: 1,
