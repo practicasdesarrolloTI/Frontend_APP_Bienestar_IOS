@@ -8,6 +8,9 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ScrollView,
+  Keyboard,
+  Pressable,
 } from "react-native";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -110,82 +113,85 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
-
+  
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.replace("Landing")}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Inicio de sesión</Text>
       </View>
-
-      <View style={styles.container}>
-        <DocumentPicker selected={documentType} onSelect={setDocumentType} />
-
-        {/*  Número de Documento */}
-        <TextInput
-          style={styles.input}
-          placeholder="Número de documento"
-          placeholderTextColor={colors.primary}
-          value={document}
-          onChangeText={setDocument}
-          keyboardType="numeric"
-        />
-
-        {/*  Contraseña */}
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          placeholderTextColor={colors.primary}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        {/*  Términos y Condiciones */}
-        <TouchableOpacity
-          style={styles.checkboxContainer}
-          onPress={() => setAcceptedTerms(!acceptedTerms)}
-          activeOpacity={0.7}
+  
+      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
         >
-          <MaterialIcons
-            name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
-            size={26}
-            color={acceptedTerms ? colors.primary : colors.primary}
+          <DocumentPicker selected={documentType} onSelect={setDocumentType} />
+  
+          <TextInput
+            style={styles.input}
+            placeholder="Número de documento"
+            placeholderTextColor={colors.primary}
+            value={document}
+            onChangeText={setDocument}
+            keyboardType="numeric"
           />
-          <Text style={styles.checkboxLabel}>
-            Acepto Términos y Condiciones
-          </Text>
-        </TouchableOpacity>
-
-        {/*  Botón de Login */}
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleLogin}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.loginText}>Iniciar sesión</Text>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-          <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-          <Text style={styles.registerText}>¿No tienes cuenta? Regístrate</Text>
-        </TouchableOpacity>
-
-        <Snackbar
-          visible={visible}
-          onDismiss={() => setVisible(false)}
-          duration={2000}
-        >
-          {message}
-        </Snackbar>
-      </View>
+  
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor={colors.primary}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+  
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => setAcceptedTerms(!acceptedTerms)}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons
+              name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
+              size={26}
+              color={colors.primary}
+            />
+            <Text style={styles.checkboxLabel}>
+              Acepto Términos y Condiciones
+            </Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.loginText}>Iniciar sesión</Text>
+            )}
+          </TouchableOpacity>
+  
+          <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+            <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={styles.registerText}>
+              ¿No tienes cuenta? Regístrate
+            </Text>
+          </TouchableOpacity>
+  
+          <Snackbar
+            visible={visible}
+            onDismiss={() => setVisible(false)}
+            duration={2000}
+          >
+            {message}
+          </Snackbar>
+        </ScrollView>
+      </Pressable>
     </SafeAreaView>
   );
 };

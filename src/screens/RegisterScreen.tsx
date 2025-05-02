@@ -9,6 +9,9 @@ import {
   StatusBar,
   Platform,
   ActivityIndicator,
+  ScrollView,
+  Pressable,
+  Keyboard,
 } from "react-native";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -162,7 +165,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.title}>Registro</Text>
       </View>
 
-      <View style={styles.container}>
+<Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+  
+      <ScrollView 
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled">
+
         {/* Documento */}
         <DocumentPicker selected={documentType} onSelect={setDocumentType} />
 
@@ -238,7 +246,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
             }
           }}
         />
-      </View>
+      </ScrollView>
+      </Pressable>
     </SafeAreaView>
   );
 };
