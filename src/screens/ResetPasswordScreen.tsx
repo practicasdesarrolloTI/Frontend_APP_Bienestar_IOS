@@ -10,6 +10,9 @@ import {
   Platform,
   TouchableOpacity,
   ActivityIndicator,
+  Keyboard,
+  Pressable,
+  ScrollView,
 } from "react-native";
 import { resetPassword } from "../services/authService";
 import colors from "../themes/colors";
@@ -108,56 +111,61 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         <Text style={styles.title}>Nueva Contraseña</Text>
       </View>
 
-      <View style={styles.container}>
-        <TextInput
-          placeholder="Nueva contraseña"
-          placeholderTextColor={colors.primary}
-          secureTextEntry
-          style={styles.input}
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-            setPasswordValid(regex.test(text));
-            setPasswordsMatch(text === confirmPassword);
-          }}
-        />
-
-        <TextInput
-          placeholder="Confirmar contraseña"
-          placeholderTextColor={colors.primary}
-          secureTextEntry
-          style={styles.input}
-          value={confirmPassword}
-          onChangeText={(text) => {
-            setConfirmPassword(text);
-            setPasswordsMatch(password === text);
-          }}
-        />
-        <View style={styles.warning}>
-          <Text
-            style={[
-              styles.warningText,
-              { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
-            ]}
-          >
-            La contraseña debe tener mínimo 8 caracteres, una mayúscula, una
-            minúscula y un número.
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleNewPassword}
-          disabled={isLoading}
+      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
         >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Confirmar</Text>
-          )}
-        </TouchableOpacity>
-      </View>
+          <TextInput
+            placeholder="Nueva contraseña"
+            placeholderTextColor={colors.primary}
+            secureTextEntry
+            style={styles.input}
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+              setPasswordValid(regex.test(text));
+              setPasswordsMatch(text === confirmPassword);
+            }}
+          />
+
+          <TextInput
+            placeholder="Confirmar contraseña"
+            placeholderTextColor={colors.primary}
+            secureTextEntry
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={(text) => {
+              setConfirmPassword(text);
+              setPasswordsMatch(password === text);
+            }}
+          />
+          <View style={styles.warning}>
+            <Text
+              style={[
+                styles.warningText,
+                { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
+              ]}
+            >
+              La contraseña debe tener mínimo 8 caracteres, una mayúscula, una
+              minúscula y un número.
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleNewPassword}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Confirmar</Text>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </Pressable>
     </SafeAreaView>
   );
 };

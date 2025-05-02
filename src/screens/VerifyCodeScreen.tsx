@@ -7,6 +7,9 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Keyboard,
+  Pressable,
+  ScrollView,
 } from "react-native";
 import { verifyRecoveryCode } from "../services/authService";
 import colors from "../themes/colors";
@@ -26,8 +29,13 @@ import Toast from "react-native-toast-message";
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
 type RootStackParamList = {
-  VerifyCode: { document: string, documentType: DocumentType, mail: string };
-  ResetPassword: { document: string; documentType: DocumentType, mail: string; value: string };
+  VerifyCode: { document: string; documentType: DocumentType; mail: string };
+  ResetPassword: {
+    document: string;
+    documentType: DocumentType;
+    mail: string;
+    value: string;
+  };
 };
 
 type VerifyCodeScreenNavigationProp = StackNavigationProp<
@@ -45,7 +53,7 @@ const VerifyCodeScreen = ({
   navigation: VerifyCodeScreenNavigationProp;
 }) => {
   const { document, documentType, mail } = route.params;
-  
+
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -83,7 +91,12 @@ const VerifyCodeScreen = ({
     console.log("correo", mail);
     try {
       await verifyRecoveryCode(Number(document), value);
-      navigation.navigate("ResetPassword", { document, documentType, mail, value });
+      navigation.navigate("ResetPassword", {
+        document,
+        documentType,
+        mail,
+        value,
+      });
     } catch {
       Toast.show({
         type: "error",
@@ -101,7 +114,6 @@ const VerifyCodeScreen = ({
 
   const handleResendCode = async () => {
     try {
-
       await sendRecoveryCode(Number(document), mail);
       setResendAttempts((prev) => prev + 1);
       setTimer(60);
@@ -131,57 +143,61 @@ const VerifyCodeScreen = ({
         <Text style={styles.title}>Verificar Código</Text>
       </View>
 
-      <View style={styles.container}>
-        <Text style={styles.label}>Ingresa el código de recuperación:</Text>
-        <CodeField
-          ref={ref}
-          {...props}
-          value={value}
-          onChangeText={setValue}
-          cellCount={CELL_COUNT}
-          rootStyle={styles.codeFieldRoot}
-          keyboardType="number-pad"
-          textContentType="oneTimeCode"
-          renderCell={({ index, symbol, isFocused }) => (
-            <View
-              key={index}
-              style={[styles.cell, isFocused && styles.cellFocused]}
-              onLayout={getCellOnLayoutHandler(index)}
-            >
-              <Text style={styles.cellText}>
-                {symbol || (isFocused ? <Cursor /> : null)}
-              </Text>
-            </View>
-          )}
-        />
-        <Text style={styles.timerText}>
-          {timer > 0
-            ? `Código válido por ${formatTime(timer)}`
-            : "Código expirado"}
-        </Text>
-        <Text style={styles.instructions}>
-          Intento número {resendAttempts} de {maxAttempts}
-        </Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleVerify}
-          disabled={value.length !== 6}
-        
+      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.buttonText}>Verificar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            (timer > 0 || resendAttempts == maxAttempts) &&
-              styles.buttonDisabled,
-          ]}
-          onPress={handleResendCode}
-          disabled={timer > 0 || resendAttempts >= maxAttempts}
-        >
-          <Text style={styles.buttonText}>Reenviar código</Text>
-        </TouchableOpacity>
-      </View>
+          <Text style={styles.label}>Ingresa el código de recuperación:</Text>
+          <CodeField
+            ref={ref}
+            {...props}
+            value={value}
+            onChangeText={setValue}
+            cellCount={CELL_COUNT}
+            rootStyle={styles.codeFieldRoot}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            renderCell={({ index, symbol, isFocused }) => (
+              <View
+                key={index}
+                style={[styles.cell, isFocused && styles.cellFocused]}
+                onLayout={getCellOnLayoutHandler(index)}
+              >
+                <Text style={styles.cellText}>
+                  {symbol || (isFocused ? <Cursor /> : null)}
+                </Text>
+              </View>
+            )}
+          />
+          <Text style={styles.timerText}>
+            {timer > 0
+              ? `Código válido por ${formatTime(timer)}`
+              : "Código expirado"}
+          </Text>
+          <Text style={styles.instructions}>
+            Intento número {resendAttempts} de {maxAttempts}
+          </Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleVerify}
+            disabled={value.length !== 6}
+          >
+            <Text style={styles.buttonText}>Verificar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              (timer > 0 || resendAttempts == maxAttempts) &&
+                styles.buttonDisabled,
+            ]}
+            onPress={handleResendCode}
+            disabled={timer > 0 || resendAttempts >= maxAttempts}
+          >
+            <Text style={styles.buttonText}>Reenviar código</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </Pressable>
     </SafeAreaView>
   );
 };

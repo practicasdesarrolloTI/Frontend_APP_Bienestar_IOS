@@ -8,6 +8,9 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Keyboard,
+  Pressable,
+  ScrollView,
 } from "react-native";
 import { sendRecoveryCode } from "../services/authService";
 import { getPatientByDocument } from "../services/patientService"; // ya lo tienes
@@ -41,7 +44,7 @@ const ForgotPasswordScreen = ({
     const paciente = await getPatientByDocument(document);
     const docPaciente = paciente?.documento || null;
     const docType = paciente?.tipo_documento_abreviado || null;
-    const correoPaciente = paciente?.correo ;
+    const correoPaciente = paciente?.correo;
 
     if (!documentType) {
       Toast.show({
@@ -121,33 +124,45 @@ const ForgotPasswordScreen = ({
         <Text style={styles.title}>Recuperar Contraseña</Text>
       </View>
 
-      <View style={styles.container}>
-        <Text style={styles.label}>Ingresa tu número y tipo de documento:</Text>
-        <DocumentPicker selected={documentType} onSelect={setDocumentType} />
+      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text style={styles.label}>
+            Ingresa tu número y tipo de documento:
+          </Text>
+          <DocumentPicker selected={documentType} onSelect={setDocumentType} />
 
-        <TextInput
-          placeholder="Número de documento"
-          placeholderTextColor={colors.primary}
-          keyboardType="numeric"
-          style={styles.input}
-          value={document}
-          onChangeText={setDocument}
-        />
+          <TextInput
+            placeholder="Número de documento"
+            placeholderTextColor={colors.primary}
+            keyboardType="numeric"
+            style={styles.input}
+            value={document}
+            onChangeText={setDocument}
+          />
 
-        <TouchableOpacity style={styles.button} onPress={handleSendCode}>
-          <Text style={styles.buttonText}>Enviar código</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={styles.button} onPress={handleSendCode}>
+            <Text style={styles.buttonText}>Enviar código</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </Pressable>
+
+      {/* Modal de recuperación de contraseña */}
       <PasswordRecoveryModal
         visible={showRecoveryModal}
         maskedEmail={maskedEmail}
-        onClose={() => { 
+        onClose={() => {
           if (documentType) {
-            setShowRecoveryModal(false); 
-            navigation.navigate("VerifyCode", { document, documentType: documentType as DocumentType, mail: email }); 
+            setShowRecoveryModal(false);
+            navigation.navigate("VerifyCode", {
+              document,
+              documentType: documentType as DocumentType,
+              mail: email,
+            });
           }
         }}
-        
       />
     </SafeAreaView>
   );
