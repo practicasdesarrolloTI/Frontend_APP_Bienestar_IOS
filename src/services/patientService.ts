@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://10.0.2.2:3001/api/paciente'; 
-const API_URL2 = 'http://10.0.2.2:5001/api/patient'; 
+const API_URL = 'http://10.0.2.2:5001/api'; 
 
 export type PacienteBackend = {
   tipo_documento: string | number;
@@ -33,7 +32,7 @@ export type PacienteRegistro = {
 
 export const getPatientByDocument = async (documento: string): Promise<PacienteBackend | null> => {
   try {
-    const response = await axios.get<PacienteBackend>(`${API_URL}/${documento}`);
+    const response = await axios.get<PacienteBackend>(`${API_URL}/paciente/${documento}`);
     return response.data;
   } catch (error) {
     return null;
@@ -42,7 +41,7 @@ export const getPatientByDocument = async (documento: string): Promise<PacienteB
 
 export const checkPatient = async (document: number): Promise<PacienteRegistro | null> => {
   try {
-    const response = await axios.get<PacienteRegistro>(`${API_URL2}/${document}`);
+    const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/${document}`);
     return response.data;
   } catch (error) {
     return null;
@@ -51,7 +50,7 @@ export const checkPatient = async (document: number): Promise<PacienteRegistro |
 
 export const getPatientAPP = async (document: number): Promise<PacienteRegistro | null> => {
   try {
-    const response = await axios.get<PacienteRegistro>(`${API_URL2}/data/${document}`);
+    const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/data/${document}`);
     return response.data;
   } catch (error) {
     return null;
@@ -66,7 +65,7 @@ interface PatientResponse {
 
 export const checkPatientExists = async (documento: string): Promise<boolean> => {
   try {
-    const response = await axios.get<PatientResponse>(`${API_URL}/${documento}`);
+    const response = await axios.get<PatientResponse>(`${API_URL}/paciente/${documento}`);
     return !!response.data && response.data.documento === documento;
   } catch (error) {
     return false;
