@@ -79,7 +79,6 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     return true;
   });
 
-
   const openLabResultsWeb = async () => {
     const url =
       "https://resultadoslaboratorio.bienestarips.com:8443/resultados/#nbb";
@@ -91,10 +90,28 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  const limpiarExamen = (texto: string): string => {
-    return texto.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
+  /* Función para capitalizar el nombre */
+  const capitalizeName = (text: string): string => {
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
   };
 
+  /* Función para capitalizar la primera letra de cada oración */
+  const formatName = (text: string): string => {
+    const clear = text.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
+    return clear
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
+  };
   if (loading) return <LoadingScreen />;
 
   return (
@@ -104,7 +121,6 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor={colors.primary}
         translucent={false}
       />
-
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.replace("Home")}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
@@ -133,18 +149,50 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
           }
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text style={styles.text}>
-                <Text style={styles.label}>{limpiarExamen(item.examen)}</Text>
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Fecha: </Text>
-                {item?.fechaRealizacion || "Fecha no disponible"}
-              </Text>
-
-              <Text style={styles.text}>
-                <Text style={styles.label}>Médico Remisor: </Text>
-                {item.programa}
-              </Text>
+              <View style={styles.cardContent}>
+                {/* Columna izquierda: Fecha */}
+                <View style={styles.leftColumn}>
+                  {item.fechaRealizacion &&
+                  !isNaN(new Date(item.fechaRealizacion).getTime()) ? (
+                    <>
+                      <Text style={styles.dateDay}>
+                        {new Date(item.fechaRealizacion).getDate()}
+                      </Text>
+                      <Text style={styles.dateMonth}>
+                        {new Date(item.fechaRealizacion).toLocaleDateString(
+                          "es-CO",
+                          {
+                            month: "long",
+                          }
+                        )}
+                      </Text>
+                      <Text style={styles.dateYear}>
+                        {new Date(item.fechaRealizacion).getFullYear()}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text
+                      style={{
+                        color: "white",
+                        textAlign: "center",
+                        fontFamily: fonts.body,
+                      }}
+                    >
+                      No{"\n"}Disponible
+                    </Text>
+                  )}
+                </View>
+                {/* Columna derecha: Detalles */}
+                <View style={styles.rightColumn}>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>{formatName(item.examen)}</Text>
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>Médico Remisor: </Text>
+                    {capitalizeName(item.programa)}
+                  </Text>
+                </View>
+              </View>
             </View>
           )}
         />
@@ -195,23 +243,27 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    padding: 20,
     borderRadius: 8,
-    marginTop: 15,
+    marginBottom: 10,
     shadowColor: colors.preto,
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 1,
   },
+  cardContent: {
+    height: 140,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "stretch",
+  },
   text: {
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 17,
+    marginBottom: 2,
     color: "#333",
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 17,
     color: colors.primary,
     fontFamily: fonts.subtitle,
   },
@@ -235,6 +287,40 @@ const styles = StyleSheet.create({
   },
   footerButtonDisabled: {
     backgroundColor: "#ccc",
+  },
+  leftColumn: {
+    width: "20%",
+    height: "100%",
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+  },
+  dateDay: {
+    fontSize: 22,
+    color: "white",
+    fontFamily: fonts.title,
+  },
+  dateMonth: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: fonts.body,
+    textTransform: "capitalize",
+  },
+  dateYear: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: fonts.subtitle,
+    borderTopWidth: 1,
+    borderTopColor: "white",
+  },
+  rightColumn: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
 });
 

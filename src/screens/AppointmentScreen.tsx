@@ -92,7 +92,8 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     return true;
   });
 
-
+  
+  /* Función para formatear la hora */
   const formatHora = (hora: string) => {
     if (!hora) return "";
     const [hours, minutes] = hora.split(":");
@@ -104,6 +105,24 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       minute: "2-digit",
       hour12: true,
     });
+  };
+  
+  /* Función para capitalizar el nombre */
+  const capitalizeName = (text: string): string => {
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
+  };
+  
+  /* Función para capitalizar la primera letra de cada oración */
+  const capitalizeSentence = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/(^\w{1}|\.\s*\w{1})/g, (match) => match.toUpperCase());
   };
 
   if (loading) {
@@ -125,7 +144,6 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       <View style={styles.container}>
-
         <CustomDateRangeFilter
           fechaInicio={fechaInicio}
           fechaFin={fechaFin}
@@ -136,34 +154,42 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         {citasFiltradasPorFecha.length === 0 ? (
           <EmptyState message="No tienes citas agendadas por el momento." />
         ) : (
-
           <FlatList
             data={citasFiltradasPorFecha}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View style={styles.card}>
-                <Text style={styles.text}>
-                  <Text style={styles.label}>Fecha: </Text>
-                  {item.fecha}
-                  {"  "} {formatHora(item.hora)}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.label}>Médico: </Text> {item.medico}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.label}>Especialidad: </Text>{" "}
-                  {item.especialidad}
-                </Text>
-                {/* <Text
-                  style={[
-                    styles.status,
-                    item.estado === "Pendiente"
-                      ? styles.pending
-                      : styles.completed,
-                  ]}
-                >
-                  {item.estado}
-                </Text> */}
+                <View style={styles.cardContent}>
+                  {/* Columna izquierda: Fecha */}
+                  <View style={styles.leftColumn}>
+                    <Text style={styles.dateDay}>
+                      {new Date(item.fecha).getDate()}
+                    </Text>
+                    <Text style={styles.dateMonth}>
+                      {new Date(item.fecha).toLocaleDateString("es-CO", {
+                        month: "long",
+                      })}
+                    </Text>
+                    <Text style={styles.dateYear}>
+                      {new Date(item.fecha).getFullYear()}
+                    </Text>
+                  </View>
+                  {/* Columna derecha: Detalles */}
+                  <View style={styles.rightColumn}>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Hora: </Text>
+                      {formatHora(item.hora)}
+                    </Text>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Médico: </Text>{" "}
+                      {capitalizeName(item.medico)}
+                    </Text>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Especialidad: </Text>
+                      {capitalizeSentence(item.especialidad)}
+                    </Text>
+                  </View>
+                </View>
               </View>
             )}
           />
@@ -210,7 +236,6 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    padding: 20,
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: colors.preto,
@@ -218,32 +243,20 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
+  cardContent: {
+    height: 140,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "stretch",
+  },
   text: {
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 17,
+    marginBottom: 2,
     color: "#333",
     fontFamily: fonts.body,
   },
-  status: {
-    fontSize: 18,
-
-    textAlign: "center",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 10,
-    fontFamily: fonts.subtitle,
-  },
-  pending: {
-    backgroundColor: colors.secondary,
-    color: "#fff",
-  },
-  completed: {
-    backgroundColor: colors.primary,
-    color: "#fff",
-  },
   label: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 17,
     color: colors.primary,
     fontFamily: fonts.subtitle,
   },
@@ -263,6 +276,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.primary,
     fontWeight: "bold",
+  },
+  leftColumn: {
+    width: "20%",
+    height: "100%",
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+  },
+  dateDay: {
+    fontSize: 22,
+    color: "white",
+    fontFamily: fonts.title,
+  },
+  dateMonth: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: fonts.body,
+    textTransform: "capitalize",
+  },
+  dateYear: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: fonts.subtitle,
+    borderTopWidth: 1,
+    borderTopColor: "white",
+  },
+  rightColumn: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
 });
 

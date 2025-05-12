@@ -21,6 +21,7 @@ import Header from "../components/Header";
 
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
+
 export type RootStackParamList = {
 
   Login: undefined;

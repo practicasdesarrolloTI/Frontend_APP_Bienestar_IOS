@@ -25,7 +25,6 @@ import { getPatientByDocument } from "../services/patientService";
 import Toast from "react-native-toast-message";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 
-
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
 type Paciente = {
@@ -62,7 +61,6 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
-
 
   const loadData = async () => {
     try {
@@ -136,7 +134,6 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
     return true;
   });
 
-
   useEffect(() => {
     const loadEverything = async () => {
       try {
@@ -148,6 +145,24 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
 
     loadEverything();
   }, []);
+
+  const formatName = (text: string): string => {
+    const clear = text.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
+    return clear
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
+  };
+
+  /* Función para capitalizar la primera letra de cada oración */
+  const capitalizeSentence = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/(^\w{1}|\.\s*\w{1})/g, (match) => match.toUpperCase());
+  };
 
   if (loading) return <LoadingScreen />;
 
@@ -187,26 +202,46 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
           }
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text style={styles.text}>
-                <Text style={styles.label}>{item.nombre}</Text>
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Cantidad: </Text> {item.cantidad}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Dosis: </Text>{" "}
-                {item.dosificacion ?? "No disponible"}
-              </Text>
-              {item.indicaciones && item.indicaciones !== "NINGUNO" && (
-                <Text style={styles.text}>
-                  <Text style={styles.label}>Indicaciones: </Text>
-                  {item.indicaciones}
-                </Text>
-              )}
-              <Text style={styles.text}>
-                <Text style={styles.label}>F. de Vencimiento: </Text>{" "}
-                {item.fechaVencimiento}
-              </Text>
+              <View style={styles.cardContent}>
+                {/* Columna izquierda: Fecha */}
+                <View style={styles.leftColumn}>
+                  <Text style={styles.dateText}>Fecha de Vencimiento: </Text>
+                  <Text style={styles.dateDay}>
+                    {new Date(item.fechaVencimiento).getDate()}
+                  </Text>
+                  <Text style={styles.dateMonth}>
+                    {new Date(item.fechaVencimiento).toLocaleDateString(
+                      "es-CO",
+                      {
+                        month: "long",
+                      }
+                    )}
+                  </Text>
+                  <Text style={styles.dateYear}>
+                    {new Date(item.fechaVencimiento).getFullYear()}
+                  </Text>
+                </View>
+
+                {/* Columna derecha: Detalles */}
+                <View style={styles.rightColumn}>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>{formatName(item.nombre)}</Text>
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>Cantidad: </Text> {item.cantidad}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>Dosis: </Text>
+                    {item.dosificacion ?? "No disponible"}
+                  </Text>
+                  {item.indicaciones && item.indicaciones !== "NINGUNO" && (
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Indicaciones: </Text>
+                      {capitalizeSentence(item.indicaciones)}
+                    </Text>
+                  )}
+                </View>
+              </View>
             </View>
           )}
         />
@@ -243,7 +278,6 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    padding: 20,
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: colors.preto,
@@ -251,51 +285,63 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
+  cardContent: {
+    height: 150,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "stretch",
+  },
   text: {
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 17,
+    marginBottom: 2,
     color: "#333",
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 17,
     color: colors.primary,
     fontFamily: fonts.subtitle,
   },
-  actionButton: {
-    marginTop: 10,
-    backgroundColor: "green",
-    padding: 10,
+
+  leftColumn: {
+    width: "24%",
+    height: "100%",
+    backgroundColor: colors.primary,
     borderRadius: 8,
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 4,
   },
-  buttonText: {
+  dateText: {
+    fontSize: 10,
     color: "white",
+    fontFamily: fonts.body,
+    marginBottom: 2,
+  },
+  dateDay: {
+    fontSize: 22,
+    color: "white",
+    fontFamily: fonts.title,
+  },
+  dateMonth: {
     fontSize: 16,
-    fontFamily: fonts.subtitle,
+    color: "white",
+    fontFamily: fonts.body,
+    textTransform: "capitalize",
   },
-  status: {
+  dateYear: {
     fontSize: 18,
+    color: "white",
     fontFamily: fonts.subtitle,
-    textAlign: "center",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: "white",
   },
-  pending: {
-    backgroundColor: colors.secondary,
-    color: colors.white,
-  },
-  reformulated: {
-    backgroundColor: "#ff9900",
-    color: colors.white,
-  },
-  downloaded: {
-    backgroundColor: colors.green,
-    color: colors.white,
+  rightColumn: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
 });
 

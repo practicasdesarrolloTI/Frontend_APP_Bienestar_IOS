@@ -76,6 +76,10 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     const fechaB = new Date(b.fecha_cita);
     return fechaA.getTime() - fechaB.getTime();
   });
+
+  {
+    /* Función para formatear la hora */
+  }
   const formatHora = (hora: string) => {
     if (!hora) return "";
     const [hours, minutes] = hora.split(":");
@@ -88,6 +92,27 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
       hour12: true,
     });
   };
+  {
+    /* Función para capitalizar el nombre */
+  }
+  const capitalizeName = (text: string): string => {
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
+  };
+  {
+    /* Función para capitalizar la primera letra de cada oración */
+  }
+  const capitalizeSentence = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/(^\w{1}|\.\s*\w{1})/g, (match) => match.toUpperCase());
+  };
+
   if (loading) return <LoadingScreen />;
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -111,34 +136,44 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <View>
-                {/* <Text style={styles.text}>
+              <View style={styles.cardContent}>
+                <View>
+                  {/* <Text style={styles.text}>
                 <MaterialIcons name="calendar-today" size={16} /> Fecha de
                 inscripción: {item.fechaInscripcion}
               </Text> */}
+                </View>
+                {/* Columna izquierda: Fecha */}
+                <View style={styles.leftColumn}>
+                  <Text style={styles.dateDay}>
+                    {new Date(item.fecha_cita).getDate()}
+                  </Text>
+                  <Text style={styles.dateMonth}>
+                    {new Date(item.fecha_cita).toLocaleDateString("es-CO", {
+                      month: "long",
+                    })}
+                  </Text>
+                  <Text style={styles.dateYear}>
+                    {new Date(item.fecha_cita).getFullYear()}
+                  </Text>
+                </View>
+
+                {/* Columna derecha: Detalles */}
+                <View style={styles.rightColumn}>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>Hora: </Text>
+                    {formatHora(item.hora)}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>Programa: </Text>
+                    {item.programa}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={styles.label}>Médico: </Text>
+                    {capitalizeName(item.medico)}
+                  </Text>
+                </View>
               </View>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Programa: </Text>
-                {item.programa}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Médico: </Text>
-                {item.medico}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.label}>Fecha próxima cita: </Text>
-                {item.fecha_cita} {formatHora(item.hora)}
-              </Text>
-              {/* <Text
-                style={[
-                  styles.status,
-                  item.estado === "Pendiente"
-                    ? styles.pending
-                    : styles.completed,
-                ]}
-              >
-                {item.estado}
-              </Text> */}
             </View>
           )}
         />
@@ -150,7 +185,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 25,
+    padding: 30,
     backgroundColor: colors.background,
   },
   safeArea: {
@@ -182,9 +217,8 @@ const styles = StyleSheet.create({
     fontFamily: fonts.title,
     color: colors.white,
   },
-  card: {
+   card: {
     backgroundColor: colors.white,
-    padding: 20,
     borderRadius: 8,
     marginBottom: 10,
     shadowColor: colors.preto,
@@ -192,9 +226,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
+  cardContent: {
+    height: 150,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "stretch",
+  },
   text: {
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 17,
+    marginBottom: 2,
     color: "#333",
     fontFamily: fonts.body,
   },
@@ -215,16 +255,44 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   label: {
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: 17,
     color: colors.primary,
     fontWeight: "bold",
     fontFamily: fonts.subtitle,
   },
-  empty: {
-    textAlign: "center",
+  leftColumn: {
+    width: "20%",
+    height: "100%",
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+  },
+  dateDay: {
+    fontSize: 22,
+    color: "white",
+    fontFamily: fonts.title,
+  },
+  dateMonth: {
     fontSize: 16,
-    color: "#666",
+    color: "white",
+    fontFamily: fonts.body,
+    textTransform: "capitalize",
+  },
+  dateYear: {
+    fontSize: 18,
+    color: "white",
+    fontFamily: fonts.subtitle,
+    borderTopWidth: 1,
+    borderTopColor: "white",
+  },
+  rightColumn: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
 });
 
