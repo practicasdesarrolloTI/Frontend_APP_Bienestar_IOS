@@ -1,4 +1,4 @@
-const API_URL = 'http://10.0.2.2:8000/api';
+const API_URL = 'http://18.207.0.161:3001/api';
 
 const convertirFechaADashFormat = (fecha: string) => {
   if (!fecha) return "";

@@ -1,4 +1,4 @@
-const API_URL = "http://10.0.2.2:5001/api/surveys";
+const API_URL = "http://18.207.0.161:5001/api/surveys";
 
 export const submitSurvey = async (surveyId: string, responses: string[]) => {
   try {

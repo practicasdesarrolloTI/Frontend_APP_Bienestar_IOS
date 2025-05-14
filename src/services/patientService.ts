@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://10.0.2.2:5001/api'; 
+const API_URL = 'http://18.207.0.161:5001/api'; 
 
 export type PacienteBackend = {
   tipo_documento: string | number;
