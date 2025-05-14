@@ -1,5 +1,5 @@
 const API_URL = 'http://18.207.0.161:3001/api';
-const API_PANA = 'http://18.207.0.161:5001/api';
+const API_PANA = 'http://18.207.0.161:80/api';
 
 export const fetchMedicaments = async (tipoDocumento: string, numeroDocumento: string) => {
   try {

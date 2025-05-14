@@ -1,4 +1,4 @@
-const API_URL = "http://18.207.0.161:5001/api/surveys";
+const API_URL = "http://18.207.0.161:80/api/surveys";
 
 export const submitSurvey = async (surveyId: string, responses: string[]) => {
   try {
@@ -17,7 +17,7 @@ export const submitSurvey = async (surveyId: string, responses: string[]) => {
   }
 };
 
-const API_URL2 = 'http://10.0.2.2:8000/api';
+const API_URL2 = 'http://18.207.0.161:3001/api';
 
 export const getPatientIndicators = async (tipoDocumento: string, documento: string) => {
   try {

@@ -85,7 +85,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-          <StatusBar
+      <StatusBar
         barStyle="dark-content"
         translucent
         backgroundColor="transparent"
@@ -102,57 +102,70 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           transparent={true}
           rightComponent={""}
         />
-      <View style={styles.container}>
-        {/* Icono de perfil centrado */}
-        <View style={styles.profileIconContainer}>
-          <MaterialIcons
-            name="account-circle"
-            size={100}
-            color={colors.primary}
-          />
-        </View>
+        <View style={styles.container}>
+          {/* Icono de perfil centrado */}
+          <View style={styles.profileIconContainer}>
+            <MaterialIcons
+              name="account-circle"
+              size={100}
+              color={colors.primary}
+            />
+          </View>
 
-        {/* Información del Paciente */}
-        <View style={styles.infoContainer}>
-          <View>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Nombre: </Text>{" "}
-              {paciente?.primer_nombre} {paciente?.segundo_nombre}{" "}
-              {paciente?.primer_apellido} {paciente?.segundo_apellido}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Documento: </Text>{" "}
-              {paciente?.tipo_documento_abreviado} {paciente?.documento}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Sexo: </Text>{" "}
-              {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Fecha de Nacimiento: </Text>{" "}
-              {paciente?.fecha_nacimiento}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Edad: </Text>{" "}
-              {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"}{" "}
-              {"años"}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Correo: </Text>{" "}
-              {pacienteRegistro?.mail || "No tiene correo registrado"}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>Teléfono: </Text>{" "}
-              {paciente?.celular ||
-                paciente?.telefono ||
-                "No tiene número teléfonico registrado"}
-            </Text>
-            <Text style={styles.label}>
-              <Text style={styles.bold}>EPS:</Text> {paciente?.eps}
-            </Text>
+          {/* Información del Paciente */}
+          <View style={styles.infoContainer}>
+            <View>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Nombre: </Text>{" "}
+              </Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.primer_nombre} {paciente?.segundo_nombre}{" "}
+                {paciente?.primer_apellido} {paciente?.segundo_apellido}
+              </Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Documento: </Text>
+              </Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.tipo_documento_abreviado} {paciente?.documento}
+              </Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Sexo: </Text>
+              </Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
+              </Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Fecha de Nacimiento: </Text>
+              </Text>
+              <Text style={styles.labelinfo}>{paciente?.fecha_nacimiento}</Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Edad: </Text>
+              </Text>
+              <Text style={styles.labelinfo}>
+                {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"}{" "}
+                {"años"}
+              </Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Correo: </Text>
+              </Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.correo || "No tiene correo registrado"}
+              </Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>Teléfono: </Text>
+              </Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.celular ||
+                  paciente?.telefono ||
+                  "No tiene número teléfonico registrado"}
+              </Text>
+              <Text style={styles.label}>
+                <Text style={styles.bold}>EPS:</Text>
+              </Text>
+              <Text style={styles.labelinfo}>{paciente?.eps}</Text>
+            </View>
           </View>
         </View>
-      </View>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -174,7 +187,7 @@ const styles = StyleSheet.create({
 
   profileIconContainer: {
     alignItems: "center",
-    marginVertical: 50,
+    marginVertical: 20,
   },
   infoContainer: {
     alignSelf: "center",
@@ -190,7 +203,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    marginBottom: 10,
+    marginBottom: 1,
+
+    color: "#333",
+    fontFamily: fonts.subtitle,
+  },
+  labelinfo: {
+    fontSize: 18,
+    marginBottom: 25,
     color: "#333",
     fontFamily: fonts.subtitle,
   },

@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 
-const API_URL = "http://18.207.0.161:5001/api/Surveyresults";
+const API_URL = "http://18.207.0.161:80/api/Surveyresults";
 
 type SurveyResultResponse = {
   success?: boolean;

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 
-const API_URL = "http://18.207.0.161:5001/api/auth";
+const API_URL = "http://18.207.0.161:80/api/auth";
 
 export type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
