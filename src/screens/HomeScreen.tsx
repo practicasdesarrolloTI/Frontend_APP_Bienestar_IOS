@@ -12,6 +12,7 @@ import {
   Image,
   BackHandler,
   Modal,
+  ImageBackground,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -23,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
-import Header from "../components/Header";
+import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -48,8 +49,8 @@ const menuItems = [
 ];
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-
   const [nombrePaciente, setNombrePaciente] = useState<string | null>(null);
+  const [sexo, setSexo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -76,7 +77,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     >
       <MaterialIcons
         name={item.icon as keyof typeof MaterialIcons.glyphMap}
-        size={50}
+        size={40}
         color={colors.primary}
         style={styles.icon}
       />
@@ -92,8 +93,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         if (!documento) return;
         const paciente = await getPatientByDocument(documento);
         if (paciente) {
-          const nombreCompleto = `${paciente.primer_nombre}`;
+          const nombreCompleto = `${paciente.primer_nombre} ${paciente.primer_apellido}`;
+          const sexo = paciente.sexo;
           setNombrePaciente(nombreCompleto);
+          setSexo(sexo);
         }
       } catch (error) {
         console.error("Error al cargar paciente", error);
@@ -105,14 +108,27 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     loadPaciente();
 
     // Manejo del botón de "Atrás" en Android
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      setModalVisible(true);
-      return true; // Prevenir navegación automática
-    });
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        setModalVisible(true);
+        return true; // Prevenir navegación automática
+      }
+    );
 
     return () => backHandler.remove();
   }, []);
 
+  /* Función para capitalizar el nombre */
+  const capitalizeName = (text: string): string => {
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
+  };
   if (loading) {
     return <LoadingScreen />;
   }
@@ -120,68 +136,80 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
-      <Header
-        title=""
-        rightComponent={
-          <Image
-            source={require("../../assets/logomecuidosinletra.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        }
-      />
-  <View style={styles.container}>
-        {nombrePaciente && (
-          <View>
-            <Text style={styles.label}>Bienvenido, {nombrePaciente} </Text>
-          </View>
-        )}
-        <FlatList
-          data={menuItems}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          renderItem={renderItem}
-          contentContainerStyle={styles.grid}
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title=""
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
         />
+        <View style={styles.container}>
+          {nombrePaciente && (
+            <Text style={styles.label}>
+              {sexo === "F" ? "¡Bienvenida! " : "¡Bienvenido! "}
+              <Text>{capitalizeName(nombrePaciente)}</Text>
+            </Text>
+          )}
+          <FlatList
+            data={menuItems}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            renderItem={renderItem}
+            contentContainerStyle={styles.grid}
+          />
 
-        {/* Botón de Cerrar Sesión */}
-        <TouchableOpacity style={styles.logoutButton} onPress={() => setModalVisible(true)}>
-          <MaterialIcons name="logout" size={30} color={colors.primary} />
-        </TouchableOpacity>
-      </View>
+          {/* Botón de Cerrar Sesión */}
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <MaterialIcons name="logout" size={30} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
 
-      {/* Modal de Confirmación */}
-      <Modal transparent visible={modalVisible} animationType="fade">
-        <View style={styles.overlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>¿Deseas cerrar sesión?</Text>
+        {/* Modal de Confirmación */}
+        <Modal transparent visible={modalVisible} animationType="fade">
+          <View style={styles.overlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>¿Deseas cerrar sesión?</Text>
 
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.cancelText}>Cancelar</Text>
-              </TouchableOpacity>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.cancelText}>Cancelar</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity style={styles.confirmButton} onPress={handleLogout}>
-                <Text style={styles.confirmText}>Cerrar sesión</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.confirmButton}
+                  onPress={handleLogout}
+                >
+                  <Text style={styles.confirmText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
 
 const screenWidth = Dimensions.get("window").width;
-const itemSize = screenWidth / 2 - 50;
+const itemSize = screenWidth / 2 - 45;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     paddingHorizontal: 20,
     paddingTop: 50,
   },
@@ -189,18 +217,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logo: {
-    height: 35,
-    marginVertical: 15,
-    tintColor: colors.white,
   },
   grid: {
     alignItems: "center",
@@ -220,7 +236,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    margin: 7,
+    margin: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -232,7 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   menuText: {
-    fontSize: 19,
+    fontSize: 17,
     color: colors.primary,
     textAlign: "center",
     fontFamily: fonts.title,
@@ -247,6 +263,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
+    marginLeft: 15,
     fontSize: 22,
     marginBottom: 15,
     color: colors.primary,

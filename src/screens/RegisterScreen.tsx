@@ -12,6 +12,8 @@ import {
   ScrollView,
   Pressable,
   Keyboard,
+  ImageBackground,
+  Image,
 } from "react-native";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -23,6 +25,7 @@ import DocumentPicker from "../components/DocumentPicker";
 import Toast from "react-native-toast-message";
 import { sendRecoveryCode } from "../services/authService";
 import PasswordRecoveryModal from "../components/PasswordRecoveryModal";
+import CustomHeader from "../components/CustomHeader";
 
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
@@ -38,6 +41,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [maskedEmail, setMaskedEmail] = useState("");
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState("");
 
   const handleRegister = async () => {
     const paciente = await getPatientByDocument(documentNumber);
@@ -82,6 +86,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         type: "error",
         text1: "Error",
         text2: "Ingrese un correo electrónico válido.",
+      });
+      return;
+    }
+    if (email !== confirmEmail) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Los correos no coinciden.",
       });
       return;
     }
@@ -153,101 +165,131 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
-
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Landing")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Registro</Text>
-      </View>
-
-<Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-  
-      <ScrollView 
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled">
-
-        {/* Documento */}
-        <DocumentPicker selected={documentType} onSelect={setDocumentType} />
-
-        {/*  Número de Documento */}
-        <TextInput
-          style={styles.input}
-          placeholder="Número de documento"
-          placeholderTextColor={colors.primary}
-          keyboardType="numeric"
-          value={documentNumber}
-          onChangeText={setDocumentNumber}
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title=""
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
         />
-
-        {/*  Correo */}
-        <TextInput
-          style={styles.input}
-          placeholder="Correo electrónico"
-          placeholderTextColor={colors.primary}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={(text) => setEmail(text.toLowerCase())}
-        />
-
-        {/*  Términos y Condiciones */}
-        <TouchableOpacity
-          style={styles.checkboxContainer}
-          onPress={() => setAcceptedTerms(!acceptedTerms)}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons
-            name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
-            size={26}
-            color={acceptedTerms ? colors.primary : colors.primary}
+        <View style={styles.subheaderContainer}>
+          <Image
+            source={require("../../assets/logo_zentria_sinfondo.png")}
+            style={{ width: 80, height: 80 }}
           />
-          <Text style={styles.checkboxLabel}>
-            Acepto Términos y Condiciones
+          <Text style={styles.title}>Registro</Text>
+          <Text style={styles.subtitle}>
+            Ingrese sus datos para registrarse
           </Text>
-        </TouchableOpacity>
+        </View>
 
-        {/*  Botón de Registro */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleRegister}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.registerText}>Registrar</Text>
-          )}
-        </TouchableOpacity>
+        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Documento */}
+            <DocumentPicker
+              selected={documentType}
+              onSelect={setDocumentType}
+            />
 
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.loginText}>¿Ya tienes cuenta? Inicia sesión</Text>
-        </TouchableOpacity>
-        <PasswordRecoveryModal
-          visible={showRecoveryModal}
-          maskedEmail={maskedEmail}
-          onClose={() => {
-            setShowRecoveryModal(false);
-            if (documentType) {
-              navigation.navigate("VerifyCode", {
-                document: documentNumber,
-                documentType: documentType as DocumentType,
-                mail: email,
-              });
-            } else {
-              Toast.show({
-                type: "error",
-                text1: "Error",
-                text2: "Seleccione un tipo de documento válido.",
-              });
-            }
-          }}
-        />
-      </ScrollView>
-      </Pressable>
+            {/*  Número de Documento */}
+            <TextInput
+              style={styles.input}
+              placeholder="Número de documento"
+              placeholderTextColor={colors.preto}
+              keyboardType="numeric"
+              value={documentNumber}
+              onChangeText={setDocumentNumber}
+            />
+
+            {/*  Correo */}
+            <TextInput
+              style={styles.input}
+              placeholder="Correo electrónico"
+              placeholderTextColor={colors.preto}
+              keyboardType="email-address"
+              value={email}
+              onChangeText={(text) => setEmail(text.toLowerCase())}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Confirmar correo electrónico"
+              placeholderTextColor={colors.preto}
+              keyboardType="email-address"
+              value={confirmEmail}
+              onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
+            />
+
+            {/*  Términos y Condiciones */}
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setAcceptedTerms(!acceptedTerms)}
+              activeOpacity={0.7}
+            >
+              <MaterialIcons
+                name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
+                size={26}
+                color={acceptedTerms ? colors.preto : colors.preto}
+              />
+              <Text style={styles.checkboxLabel}>
+                Acepto Términos y Condiciones
+              </Text>
+            </TouchableOpacity>
+
+            {/*  Botón de Registro */}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleRegister}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.registerText}>Continuar</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={styles.loginText}>
+                ¿Ya tienes cuenta?
+                <Text style={styles.subtitle}> Inicia sesión</Text>
+              </Text>
+            </TouchableOpacity>
+            <PasswordRecoveryModal
+              visible={showRecoveryModal}
+              maskedEmail={maskedEmail}
+              onClose={() => {
+                setShowRecoveryModal(false);
+                if (documentType) {
+                  navigation.navigate("VerifyCode", {
+                    document: documentNumber,
+                    documentType: documentType as DocumentType,
+                    mail: email,
+                  });
+                } else {
+                  Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "Seleccione un tipo de documento válido.",
+                  });
+                }
+              }}
+            />
+          </ScrollView>
+        </Pressable>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -255,7 +297,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -268,33 +309,40 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     gap: 16,
   },
+  subtitle: {
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
+  },
+  subheaderContainer: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    color: colors.white,
+    color: colors.preto,
   },
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: colors.background,
     padding: 30,
+    marginTop: 60,
   },
   input: {
     width: "100%",
-    height: 50,
+    height: 55,
     backgroundColor: colors.white,
     borderRadius: 10,
     paddingLeft: 15,
-    marginBottom: 20,
+    marginBottom: 10,
     color: "#333",
-    borderWidth: 2,
-    borderColor: colors.primary,
     fontSize: 16,
     fontFamily: fonts.body,
   },
   button: {
-    marginTop: 50,
+    marginTop: 20,
     backgroundColor: colors.primary,
     width: "98%",
     paddingVertical: 14,
@@ -309,21 +357,20 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
   },
   loginText: {
-    color: colors.secondary,
+    color: colors.preto,
     fontSize: 16,
-    textDecorationLine: "underline",
     fontFamily: fonts.subtitle,
   },
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginTop: 10,
   },
   checkboxLabel: {
     marginLeft: 10,
     fontSize: 16,
     fontFamily: fonts.subtitle,
-    color: colors.primary,
+    color: colors.preto,
   },
 });
 

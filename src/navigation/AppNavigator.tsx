@@ -16,26 +16,34 @@ import LandingScreen from "../screens/LandingScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import VerifyCodeScreen from "../screens/VerifyCodeScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
-import Header from "../components/Header";
-
+import CustomHeader from "../components/CustomHeader";
 
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
-
 export type RootStackParamList = {
-
   Login: undefined;
   Register: undefined;
   Home: undefined;
-  Header : { title: string; goTo?: keyof RootStackParamList };
+  CustomHeader: {
+    title?: string;
+    rightComponent?: React.ReactNode;
+    backgroundColor?: string;
+    transparent?: boolean;
+    showBack?: boolean;
+  };
   Informacion: undefined;
   TusCitas: undefined;
   TusProgramas: undefined;
   Resultados: undefined;
   Medicamentos: undefined;
   ForgotPassword: undefined;
-  VerifyCode: { document: string, documentType: DocumentType, mail: string };
-  ResetPassword: { document: string; documentType: DocumentType, mail:string; value: string };
+  VerifyCode: { document: string; documentType: DocumentType; mail: string };
+  ResetPassword: {
+    document: string;
+    documentType: DocumentType;
+    mail: string;
+    value: string;
+  };
   Autocuidado: {
     navigation: any;
     route: any;

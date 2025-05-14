@@ -10,6 +10,8 @@ import {
   Keyboard,
   Pressable,
   ScrollView,
+  Image,
+  ImageBackground,
 } from "react-native";
 import { verifyRecoveryCode } from "../services/authService";
 import colors from "../themes/colors";
@@ -25,6 +27,7 @@ import {
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import Toast from "react-native-toast-message";
+import CustomHeader from "../components/CustomHeader";
 
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
@@ -118,12 +121,6 @@ const VerifyCodeScreen = ({
       setResendAttempts((prev) => prev + 1);
       setTimer(60);
       console.log("Resend code attempts:", resendAttempts, " of ", maxAttempts);
-      // Aquí puedes mostrar un mensaje de éxito al usuario
-      // Toast.show({
-      //   type: "success",
-      //   text1: "Código reenviado",
-      //   text2: "Se ha enviado un nuevo código al correo registrado.",
-      // });
     } catch (error) {
       Toast.show({
         type: "error",
@@ -135,69 +132,86 @@ const VerifyCodeScreen = ({
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Verificar Código</Text>
-      </View>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title=""
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
+        />
 
-      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Text style={styles.label}>Ingresa el código de recuperación:</Text>
-          <CodeField
-            ref={ref}
-            {...props}
-            value={value}
-            onChangeText={setValue}
-            cellCount={CELL_COUNT}
-            rootStyle={styles.codeFieldRoot}
-            keyboardType="number-pad"
-            textContentType="oneTimeCode"
-            renderCell={({ index, symbol, isFocused }) => (
-              <View
-                key={index}
-                style={[styles.cell, isFocused && styles.cellFocused]}
-                onLayout={getCellOnLayoutHandler(index)}
-              >
-                <Text style={styles.cellText}>
-                  {symbol || (isFocused ? <Cursor /> : null)}
-                </Text>
-              </View>
-            )}
-          />
-          <Text style={styles.timerText}>
-            {timer > 0
-              ? `Código válido por ${formatTime(timer)}`
-              : "Código expirado"}
-          </Text>
-          <Text style={styles.instructions}>
-            Intento número {resendAttempts} de {maxAttempts}
-          </Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleVerify}
-            disabled={value.length !== 6}
+        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
           >
-            <Text style={styles.buttonText}>Verificar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (timer > 0 || resendAttempts == maxAttempts) &&
-                styles.buttonDisabled,
-            ]}
-            onPress={handleResendCode}
-            disabled={timer > 0 || resendAttempts >= maxAttempts}
-          >
-            <Text style={styles.buttonText}>Reenviar código</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </Pressable>
+            <View style={styles.subheaderContainer}>
+              <Text style={styles.title}>Verificar código</Text>
+              <Text style={styles.subtitle}>
+                Ingrese el código de verificación que hemos enviado a tu correo
+                electrónico.
+              </Text>
+            </View>
+            <CodeField
+              ref={ref}
+              {...props}
+              value={value}
+              onChangeText={setValue}
+              cellCount={CELL_COUNT}
+              rootStyle={styles.codeFieldRoot}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              renderCell={({ index, symbol, isFocused }) => (
+                <View
+                  key={index}
+                  style={[styles.cell, isFocused && styles.cellFocused]}
+                  onLayout={getCellOnLayoutHandler(index)}
+                >
+                  <Text style={styles.cellText}>
+                    {symbol || (isFocused ? <Cursor /> : null)}
+                  </Text>
+                </View>
+              )}
+            />
+            <Text style={styles.timerText}>
+              {timer > 0
+                ? `Código válido por ${formatTime(timer)}`
+                : "Código expirado"}
+            </Text>
+            <Text style={styles.instructions}>
+              Intento número {resendAttempts} de {maxAttempts}
+            </Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleVerify}
+              disabled={value.length !== 6}
+            >
+              <Text style={styles.buttonText}>Verificar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.buttonReenviar,
+                (timer > 0 || resendAttempts == maxAttempts) &&
+                  styles.buttonDisabled,
+              ]}
+              onPress={handleResendCode}
+              disabled={timer > 0 || resendAttempts >= maxAttempts}
+            >
+              <Text style={styles.buttonReenviarText}>Reenviar código</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </Pressable>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -205,25 +219,28 @@ const VerifyCodeScreen = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  header: {
-    flexDirection: "row",
+  subtitle: {
+    marginTop: 10,
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
+    textAlign: "center",
+  },
+  subheaderContainer: {
+    marginBottom: 60,
     alignItems: "center",
-    gap: 16,
-    padding: 16,
-    backgroundColor: colors.primary,
+    justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: fonts.title,
-    color: colors.white,
+    color: colors.preto,
   },
   container: {
     flex: 1,
     padding: 30,
-    backgroundColor: colors.background,
     justifyContent: "center",
   },
   label: {
@@ -235,7 +252,8 @@ const styles = StyleSheet.create({
   instructions: {
     fontSize: 16,
     fontFamily: fonts.subtitle,
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop: 10,
     color: colors.primary,
     textAlign: "center",
   },
@@ -244,15 +262,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cell: {
-    width: 45,
+    width: 55,
     height: 55,
     lineHeight: 50,
     fontSize: 24,
-    borderWidth: 2,
-    borderColor: "#ccc",
+    borderWidth: 1,
+    borderColor: colors.primary,
     borderRadius: 8,
     textAlign: "center",
-    marginHorizontal: 5,
+    marginHorizontal: 3,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.white,
@@ -270,7 +288,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.subtitle,
     color: colors.secondary,
     textAlign: "center",
-    marginBottom: 15,
+    marginBottom: 5,
   },
   button: {
     backgroundColor: colors.primary,
@@ -286,6 +304,22 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: "#cccccc",
+    borderColor: "#cccccc",
+  },
+  buttonReenviar: {
+    backgroundColor: colors.background,
+    paddingVertical: 14,
+    borderRadius: 25,
+    alignItems: "center",
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  buttonReenviarText: {
+    color: colors.primary,
+    fontSize: 16,
+    fontFamily: fonts.title,
+    
   },
 });
 

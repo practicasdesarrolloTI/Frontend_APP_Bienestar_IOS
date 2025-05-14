@@ -10,6 +10,7 @@ import {
   StatusBar,
   Platform,
   Alert,
+  ImageBackground,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -19,6 +20,7 @@ import { fetchPrograms } from "../services/programService";
 import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusProgramas">;
 
@@ -117,67 +119,87 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Programas"
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
+        />
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Home")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Programas</Text>
-      </View>
-
-      <View style={styles.container}>
-        {/* Lista de Programas */}
-        <FlatList
-          data={programasOrdenados}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <View style={styles.cardContent}>
-                <View>
-                  {/* <Text style={styles.text}>
+        <View style={styles.container}>
+          {/* Lista de Programas */}
+          <FlatList
+            data={programasOrdenados}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View style={styles.cardContent}>
+                  <View>
+                    {/* <Text style={styles.text}>
                 <MaterialIcons name="calendar-today" size={16} /> Fecha de
                 inscripción: {item.fechaInscripcion}
               </Text> */}
-                </View>
-                {/* Columna izquierda: Fecha */}
-                <View style={styles.leftColumn}>
-                  <Text style={styles.dateDay}>
-                    {new Date(item.fecha_cita).getDate()}
-                  </Text>
-                  <Text style={styles.dateMonth}>
-                    {new Date(item.fecha_cita).toLocaleDateString("es-CO", {
-                      month: "long",
-                    })}
-                  </Text>
-                  <Text style={styles.dateYear}>
-                    {new Date(item.fecha_cita).getFullYear()}
-                  </Text>
-                </View>
+                  </View>
+                  {/* Columna izquierda: Fecha */}
+                  <View style={styles.leftColumn}>
+                    {item.fecha_cita &&
+                    !isNaN(new Date(item.fecha_cita).getTime()) ? (
+                      <>
+                        <Text style={styles.dateDay}>
+                          {new Date(item.fecha_cita).getDate()}
+                        </Text>
+                        <Text style={styles.dateMonth}>
+                          {new Date(item.fecha_cita).toLocaleDateString(
+                            "es-CO",
+                            {
+                              month: "long",
+                            }
+                          )}
+                        </Text>
+                        <Text style={styles.dateYear}>
+                          {new Date(item.fecha_cita).getFullYear()}
+                        </Text>
+                      </>
+                    ) : (
+                      <Text style={[styles.dateMonth, { textAlign: "center" }]}>
+                        Sin cita{"\n"}próxima
+                      </Text>
+                    )}
+                  </View>
 
-                {/* Columna derecha: Detalles */}
-                <View style={styles.rightColumn}>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>Hora: </Text>
-                    {formatHora(item.hora)}
-                  </Text>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>Programa: </Text>
-                    {item.programa}
-                  </Text>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>Médico: </Text>
-                    {capitalizeName(item.medico)}
-                  </Text>
+                  {/* Columna derecha: Detalles */}
+                  <View style={styles.rightColumn}>
+                    {item.hora && item.hora.trim() !== "" && (
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Hora: </Text>
+                        {formatHora(item.hora)}
+                      </Text>
+                    )}
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Programa: </Text>
+                      {item.programa}
+                    </Text>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Médico: </Text>
+                      {capitalizeName(item.medico)}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-        />
-      </View>
+            )}
+          />
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -186,11 +208,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30,
-    backgroundColor: colors.background,
   },
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -217,7 +237,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.title,
     color: colors.white,
   },
-   card: {
+  card: {
     backgroundColor: colors.white,
     borderRadius: 8,
     marginBottom: 10,

@@ -13,6 +13,8 @@ import {
   Keyboard,
   Pressable,
   ScrollView,
+  Image,
+  ImageBackground,
 } from "react-native";
 import { resetPassword } from "../services/authService";
 import colors from "../themes/colors";
@@ -22,6 +24,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import Toast from "react-native-toast-message";
 import { checkPatient, getPatientByDocument } from "../services/patientService";
 import { registerUser } from "../services/authService";
+import CustomHeader from "../components/CustomHeader";
 
 type RootStackParamList = {
   ResetPassword: {
@@ -44,6 +47,8 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordValid, setPasswordValid] = useState(true);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleNewPassword = async () => {
     const patient = await getPatientByDocument(document);
@@ -103,69 +108,108 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Nueva Contraseña</Text>
-      </View>
-
-      <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-        >
-          <TextInput
-            placeholder="Nueva contraseña"
-            placeholderTextColor={colors.primary}
-            secureTextEntry
-            style={styles.input}
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-              setPasswordValid(regex.test(text));
-              setPasswordsMatch(text === confirmPassword);
-            }}
-          />
-
-          <TextInput
-            placeholder="Confirmar contraseña"
-            placeholderTextColor={colors.primary}
-            secureTextEntry
-            style={styles.input}
-            value={confirmPassword}
-            onChangeText={(text) => {
-              setConfirmPassword(text);
-              setPasswordsMatch(password === text);
-            }}
-          />
-          <View style={styles.warning}>
-            <Text
-              style={[
-                styles.warningText,
-                { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
-              ]}
-            >
-              La contraseña debe tener mínimo 8 caracteres, una mayúscula, una
-              minúscula y un número.
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleNewPassword}
-            disabled={isLoading}
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title=""
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
+        />
+        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
           >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Confirmar</Text>
-            )}
-          </TouchableOpacity>
-        </ScrollView>
-      </Pressable>
+            <View style={styles.subheaderContainer}>
+              <Text style={styles.title}>Nueva Contraseña</Text>
+              <Text style={styles.subtitle}>
+                Ingresa tu nueva contraseña para continuar.
+              </Text>
+            </View>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[styles.inputPasword, { flex: 1 }]}
+                placeholder="Nueva contraseña"
+                placeholderTextColor={colors.preto}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  const regex =
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+                  setPasswordValid(regex.test(text));
+                  setPasswordsMatch(text === confirmPassword);
+                }}
+              />
+              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <MaterialIcons
+                  name={showPassword ? "visibility-off" : "visibility"}
+                  size={20}
+                  color={colors.preto}
+                  style={{ marginRight: 15 }}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={[styles.inputPasword, { flex: 1 }]}
+                placeholder="Confirmar contraseña"
+                placeholderTextColor={colors.preto}
+                secureTextEntry={!showConfirmPassword}
+                value={confirmPassword}
+                onChangeText={(text) => {
+                  setConfirmPassword(text);
+                  setPasswordsMatch(password === text);
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                <MaterialIcons
+                  name={showConfirmPassword ? "visibility-off" : "visibility"}
+                  size={20}
+                  color={colors.preto}
+                  style={{ marginRight: 15 }}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.warning}>
+              <Text
+                style={[
+                  styles.warningText,
+                  { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
+                ]}
+              >
+                La contraseña debe tener mínimo 8 caracteres, una mayúscula, una
+                minúscula y un número.
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleNewPassword}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Confirmar</Text>
+              )}
+            </TouchableOpacity>
+          </ScrollView>
+        </Pressable>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -173,37 +217,37 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
+  subtitle: {
+    marginTop: 10,
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
+    textAlign: "center",
+  },
+  subheaderContainer: {
+    marginBottom: 60,
     alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
+    justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontFamily: fonts.title,
-    color: colors.white,
+    color: colors.preto,
   },
   container: {
     flex: 1,
     padding: 30,
-    backgroundColor: colors.background,
     justifyContent: "center",
   },
-  input: {
+  inputPasword: {
+    width: "100%",
+    height: 55,
     backgroundColor: colors.white,
-    borderColor: colors.primary,
-    borderWidth: 2,
     borderRadius: 10,
-    padding: 12,
-    marginBottom: 16,
+    paddingLeft: 15,
+    color: "#333",
     fontSize: 16,
     fontFamily: fonts.body,
   },
@@ -222,11 +266,21 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 25,
     alignItems: "center",
+    marginTop: 5,
   },
   buttonText: {
     color: colors.white,
     fontSize: 16,
     fontFamily: fonts.title,
+  },
+  passwordContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderRadius: 10,
+    marginBottom: 5,
+    marginTop: 5,
   },
 });
 

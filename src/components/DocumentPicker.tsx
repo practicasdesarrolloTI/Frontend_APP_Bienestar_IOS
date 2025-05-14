@@ -45,7 +45,7 @@ const DocumentPicker: React.FC<Props> = ({ selected, onSelect }) => {
             ? documentOptions.find((opt) => opt.value === selected)?.label
             : "Seleccione tipo de documento"}
         </Text>
-        <MaterialIcons name="keyboard-arrow-down" size={24} color={colors.primary} />
+        <MaterialIcons name="keyboard-arrow-down" size={24} color={colors.preto} />
       </TouchableOpacity>
 
       <Modal
@@ -85,21 +85,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: colors.white,
-    borderWidth: 2,
-    borderColor: colors.primary,
     borderRadius: 10,
     paddingHorizontal: 15,
-    height: 50,
+    height: 55,
     width: "100%",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   selectedText: {
     fontSize: 16,
-    color: colors.primary,
+    color: colors.preto,
     fontFamily: fonts.body,
   },
   placeholder: {
-    color: "#999",
+    color: colors.preto,
   },
   overlay: {
     flex: 1,
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     fontFamily: fonts.body,
-    color: colors.primary,
+    color: colors.preto,
   },
 });
 

@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ImageBackground,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -21,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import { calcularEdad } from "../utils/dateUtils";
+import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Informacion">;
 
@@ -83,18 +85,23 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+          <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
-
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Home")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Información</Text>
-      </View>
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Información"
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
+        />
       <View style={styles.container}>
         {/* Icono de perfil centrado */}
         <View style={styles.profileIconContainer}>
@@ -146,33 +153,14 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
       </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
-  },
-  backButton: {
-    top: 30,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
   },
   title: {
     fontSize: 24,
@@ -181,7 +169,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: 15,
   },
 
