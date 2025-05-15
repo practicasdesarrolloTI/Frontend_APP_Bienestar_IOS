@@ -4,7 +4,7 @@ const Colors = {
     secondary: '#FF5F3F',
     selected: '#e02702',
     background: '#F5F5F5',
-    lightGray: '#ED7D7D7',
+    lightGray: '#bfbfbf',
     accent: '#505377',
     white: '#FFFFFF',
     softOrange: '#FFB5A6',

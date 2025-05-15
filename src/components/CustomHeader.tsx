@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,28 +6,38 @@ import {
   TouchableOpacity,
   Platform,
   ViewStyle,
+  Modal,
+  Pressable,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
 type HeaderProps = {
   title?: string;
   showBack?: boolean;
-  rightComponent?: React.ReactNode;
   backgroundColor?: string;
   transparent?: boolean;
+  showProfileIcon?: boolean;
+  onLogout: () => void;
+};
+
+type RootStackParamList = {
+  Informacion: undefined;
+  // add other routes here if needed
 };
 
 const CustomHeader: React.FC<HeaderProps> = ({
   title = "",
   showBack = true,
-  rightComponent,
   backgroundColor,
   transparent = false,
+  showProfileIcon = false,
+  onLogout,
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [menuVisible, setMenuVisible] = useState(false);
 
   return (
     <View
@@ -38,7 +48,6 @@ const CustomHeader: React.FC<HeaderProps> = ({
           : { backgroundColor: backgroundColor || colors.preto },
       ]}
     >
-      {/* Botón de regreso */}
       {showBack && (
         <TouchableOpacity
           style={styles.backButton}
@@ -52,13 +61,12 @@ const CustomHeader: React.FC<HeaderProps> = ({
         </TouchableOpacity>
       )}
 
-      {/* Título centrado */}
       <View style={styles.tittleStyles}>
         {!!title && (
           <Text
             style={[
               styles.title,
-              { color: transparent ? colors.preto : "white" },
+              { color: transparent ? colors.primary : "white" },
             ]}
           >
             {title}
@@ -66,8 +74,53 @@ const CustomHeader: React.FC<HeaderProps> = ({
         )}
       </View>
 
-      {/* Componente a la derecha */}
-      <View>{rightComponent}</View>
+      {/* Icono de persona con menú */}
+      {showProfileIcon && (
+        <View style={{ position: "relative" }}>
+          <TouchableOpacity
+            style={styles.profileIcon}
+            onPress={() => setMenuVisible(!menuVisible)}
+          >
+            <MaterialIcons
+              name="person"
+              size={24}
+              color={transparent ? colors.preto : "white"}
+            />
+          </TouchableOpacity>
+
+          <Modal
+            transparent
+            visible={menuVisible}
+            animationType="fade"
+            onRequestClose={() => setMenuVisible(false)}
+          >
+            <Pressable
+              style={styles.modalOverlay}
+              onPress={() => setMenuVisible(false)}
+            >
+              <Pressable style={styles.menu}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setMenuVisible(false);
+                    navigation.navigate("Informacion");
+                  }}
+                >
+                  <Text style={styles.menuItem}>Perfil</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setMenuVisible(false);
+                    onLogout();
+                  }}
+                >
+                  <Text style={styles.menuItem}>Cerrar sesión</Text>
+                </TouchableOpacity>
+              </Pressable>
+            </Pressable>
+          </Modal>
+        </View>
+      )}
     </View>
   );
 };
@@ -76,7 +129,7 @@ const styles = StyleSheet.create({
   header: {
     height: 120,
     paddingTop: Platform.OS === "android" ? 15 : 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -102,6 +155,38 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: colors.white,
     elevation: 5,
+  },
+  profileIcon: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    backgroundColor: colors.white,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
+    paddingTop: 70,
+    paddingRight: 20,
+  },
+  menu: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  menuItem: {
+    paddingVertical: 8,
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
 

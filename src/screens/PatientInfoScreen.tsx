@@ -56,6 +56,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
   const [pacienteRegistro, setPacienteRegistro] =
     useState<PacienteRegistro | null>(null);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const loadPatient = async () => {
@@ -97,10 +98,13 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
       >
         {/* Header transparente */}
         <CustomHeader
-          title="Información"
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
+          title="Mi Perfil"
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => {
+            () => setModalVisible(true);
+          }}
         />
         <View style={styles.container}>
           {/* Icono de perfil centrado */}

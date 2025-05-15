@@ -21,7 +21,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { fonts } from "../themes/fonts";
 import { getPatientByDocument } from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
 import HomeHeader from "../components/HomeHeader";
@@ -53,6 +53,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [sexo, setSexo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
+
+  const banners = [
+    require("../../assets/imagen_1_banner.png"),
+    require("../../assets/imagen_2_banner.png"),
+    require("../../assets/imagen_3_banner.png"),
+  ];
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -119,16 +127,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     return () => backHandler.remove();
   }, []);
 
-  /* Función para capitalizar el nombre */
-  const capitalizeName = (text: string): string => {
-    return text
-      .toLowerCase()
-      .split(" ")
-      .map((word) =>
-        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
-      )
-      .join(" ");
-  };
+  // Manejo del scroll automático del carrusel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (currentIndex + 1) % banners.length;
+      setCurrentIndex(nextIndex);
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+    }, 3000); // cada 3 segundos
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+
   if (loading) {
     return <LoadingScreen />;
   }
@@ -147,9 +156,49 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       >
         {/* Header transparente */}
         {nombrePaciente && sexo && (
-          <HomeHeader nombre={nombrePaciente} sexo={sexo} />
+          <HomeHeader
+            nombre={nombrePaciente}
+            sexo={sexo}
+            onLogout={() => setModalVisible(true)} // activa el modal de logout
+          />
         )}
-        
+        <View style={styles.carouselContainer}>
+          <FlatList
+            ref={flatListRef}
+            data={banners}
+            keyExtractor={(_, index) => index.toString()}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(e) => {
+              const newIndex = Math.round(
+                e.nativeEvent.contentOffset.x / Dimensions.get("window").width
+              );
+              setCurrentIndex(newIndex);
+            }}
+            renderItem={({ item }) => (
+              <Image
+                source={item}
+                style={styles.bannerImage}
+                resizeMode="cover"
+              />
+            )}
+          />
+          <View style={styles.pagination}>
+            {banners.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  currentIndex === index
+                    ? styles.activeDot
+                    : styles.inactiveDot,
+                ]}
+              />
+            ))}
+          </View>
+        </View>
+
         <View style={styles.container}>
           <FlatList
             data={menuItems}
@@ -158,14 +207,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             renderItem={renderItem}
             contentContainerStyle={styles.grid}
           />
-
-          {/* Botón de Cerrar Sesión */}
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={() => setModalVisible(true)}
-          >
-            <MaterialIcons name="logout" size={30} color={colors.primary} />
-          </TouchableOpacity>
         </View>
 
         {/* Modal de Confirmación */}
@@ -197,13 +238,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const screenWidth = Dimensions.get("window").width;
-const itemSize = screenWidth / 2 - 45;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingVertical: 20,
   },
   safeArea: {
     flex: 1,
@@ -220,8 +259,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-    width: itemSize,
-    height: itemSize,
+    width: 180,
+    height: 160,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.background,
@@ -315,6 +354,32 @@ const styles = StyleSheet.create({
   confirmText: {
     color: "white",
     fontFamily: fonts.title,
+  },
+  carouselContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  bannerImage: {
+    width: Dimensions.get("window").width,
+    height: 180,
+    borderRadius: 150,
+  },
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: colors.primary,
+  },
+  inactiveDot: {
+    backgroundColor: "#ccc",
   },
 });
 
