@@ -72,16 +72,6 @@ export const lawtonBrodySurvey = {
       ]
     }
   ],
-
-  calcularPuntaje: (respuestas: string[]) => {
-    let puntaje = 0;
-    respuestas.forEach((r) => {
-      const val = parseInt(r);
-      if (!isNaN(val)) puntaje += val;
-    });
-    return puntaje;
-  },
-
   recomendaciones: [
     {
       min: 0,

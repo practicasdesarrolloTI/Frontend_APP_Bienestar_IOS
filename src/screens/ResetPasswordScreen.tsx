@@ -155,7 +155,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
                 <MaterialIcons
                   name={showPassword ? "visibility-off" : "visibility"}
                   size={20}
-                  color={colors.preto}
+                  color={"#bfbfbf"}
                   style={{ marginRight: 15 }}
                 />
               </TouchableOpacity>
@@ -179,7 +179,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
                 <MaterialIcons
                   name={showConfirmPassword ? "visibility-off" : "visibility"}
                   size={20}
-                  color={colors.preto}
+                  color={"#bfbfbf"}
                   style={{ marginRight: 15 }}
                 />
               </TouchableOpacity>

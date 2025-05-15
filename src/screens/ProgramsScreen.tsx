@@ -207,31 +207,14 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
-  },
-  backButton: {
-    top: 30,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
-  },
+  
   title: {
     fontSize: 24,
     fontFamily: fonts.title,

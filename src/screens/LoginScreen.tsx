@@ -179,7 +179,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   name={showPassword ? "visibility-off" : "visibility"}
                   style={{ marginRight: 15 }}
                   size={20}
-                  color={colors.preto}
+                  color={"#bfbfbf"}
                 />
               </TouchableOpacity>
             </View>

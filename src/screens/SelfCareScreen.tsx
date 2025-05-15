@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ImageBackground,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -18,6 +19,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { findriscSurvey } from "../data/findriscSurvey";
 import { lawtonBrodySurvey } from "../data/lawtonBrodySurvey";
 import { framinghamSurvey } from "../data/fragmiganSurvey";
+import { moriskyGreenSurvey } from "../data/moriskyGreenSurvey";
 import { getPatientByDocument } from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calcularEdad } from "../utils/dateUtils";
@@ -33,6 +35,7 @@ import { getRemainingTime } from "../utils/getRemainingTimeUtils";
 import LoadingScreen from "../components/LoadingScreen";
 import SkeletonSurveyCard from "../components/SurveySkeleton";
 import { getPatientIndicators } from "../services/surveyService";
+import CustomHeader from "../components/CustomHeader";
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -108,7 +111,7 @@ const SelfCareScreen: React.FC = () => {
   const loadPatient = async () => {
     try {
       const storedDoc = await AsyncStorage.getItem("documento");
-      const storedTipo = await AsyncStorage.getItem('tipoDocumento');
+      const storedTipo = await AsyncStorage.getItem("tipoDocumento");
       if (!storedDoc || !storedTipo) {
         Alert.alert("Error", "No se encontró el documento del paciente.");
         return;
@@ -119,7 +122,6 @@ const SelfCareScreen: React.FC = () => {
 
       const indicadoresData = await getPatientIndicators(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
-      
     } catch (error) {
       Alert.alert("Error", "Error al obtener información del paciente.");
     }
@@ -148,10 +150,15 @@ const SelfCareScreen: React.FC = () => {
       requiereSexo: true,
       requiredIMC: false,
     },
+    {
+      ...moriskyGreenSurvey,
+      requiereEdad: false,
+      requiereSexo: false,
+      requiredIMC: false,
+    },
   ]);
 
   useEffect(() => {
-
     if (!encuestas.length) return;
 
     const intervalo = setInterval(() => {
@@ -209,6 +216,7 @@ const SelfCareScreen: React.FC = () => {
     const edad = calcularEdad(Paciente.fecha_nacimiento);
     const sexo = Paciente.sexo === "M" ? "Masculino" : "Femenino";
 
+    console.log("Pregunta antes de survey screen", survey.preguntas);
     navigation.navigate("SurveyScreen", {
       surveyId: survey.id,
       preguntas: survey.preguntas,
@@ -220,7 +228,10 @@ const SelfCareScreen: React.FC = () => {
   };
 
   const renderSurvey = (survey: Survey) => {
-    const estado = estadoEncuestas[survey.id] || { bloqueada: false, cargando: true };
+    const estado = estadoEncuestas[survey.id] || {
+      bloqueada: false,
+      cargando: true,
+    };
     if (estado.cargando) {
       return <SkeletonSurveyCard />;
     }
@@ -245,29 +256,35 @@ const SelfCareScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Autocuidado"
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
+        />
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Home")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Autocuidado</Text>
-      </View>
-
-      {loading ? (
-        <ActivityIndicator size="large" color={styles.title.color} />
-      ) : (
-        <View style={styles.container}>
-          <FlatList
-            data={encuestas}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => renderSurvey(item)}
-          />
-        </View>
-      )}
+        {loading ? (
+          <ActivityIndicator size="large" color={styles.title.color} />
+        ) : (
+          <View style={styles.container}>
+            <FlatList
+              data={encuestas}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => renderSurvey(item)}
+            />
+          </View>
+        )}
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -275,18 +292,7 @@ const SelfCareScreen: React.FC = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
   },
   title: {
     fontSize: 24,
@@ -295,8 +301,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 30,
-    backgroundColor: colors.background,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   card: {
     backgroundColor: colors.white,

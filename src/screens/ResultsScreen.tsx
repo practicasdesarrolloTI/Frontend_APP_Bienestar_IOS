@@ -11,6 +11,7 @@ import {
   Alert,
   Linking,
   Dimensions,
+  ImageBackground,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -22,6 +23,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
+import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;
 
@@ -117,102 +119,110 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Home")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Resultados</Text>
-      </View>
-
-      <View style={styles.contentContainer}>
-        <CustomDateRangeFilter
-          fechaInicio={fechaInicio}
-          fechaFin={fechaFin}
-          onChangeInicio={setFechaInicio}
-          onChangeFin={setFechaFin}
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Resultados"
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
         />
+        <View style={styles.contentContainer}>
+          <CustomDateRangeFilter
+            fechaInicio={fechaInicio}
+            fechaFin={fechaFin}
+            onChangeInicio={setFechaInicio}
+            onChangeFin={setFechaFin}
+          />
 
-        <FlatList
-          data={resultadosFiltrados}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: resultados.length === 0 ? "center" : "flex-start",
-            paddingBottom: 100,
-          }}
-          ListEmptyComponent={
-            <EmptyState message="Aún no se han registrado resultados de exámenes para ti." />
-          }
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <View style={styles.cardContent}>
-                {/* Columna izquierda: Fecha */}
-                <View style={styles.leftColumn}>
-                  {item.fechaRealizacion &&
-                  !isNaN(new Date(item.fechaRealizacion).getTime()) ? (
-                    <>
-                      <Text style={styles.dateDay}>
-                        {new Date(item.fechaRealizacion).getDate()}
+          <FlatList
+            data={resultadosFiltrados}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: resultados.length === 0 ? "center" : "flex-start",
+              paddingBottom: 100,
+            }}
+            ListEmptyComponent={
+              <EmptyState message="Aún no se han registrado resultados de exámenes para ti." />
+            }
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View style={styles.cardContent}>
+                  {/* Columna izquierda: Fecha */}
+                  <View style={styles.leftColumn}>
+                    {item.fechaRealizacion &&
+                    !isNaN(new Date(item.fechaRealizacion).getTime()) ? (
+                      <>
+                        <Text style={styles.dateDay}>
+                          {new Date(item.fechaRealizacion).getDate()}
+                        </Text>
+                        <Text style={styles.dateMonth}>
+                          {new Date(item.fechaRealizacion).toLocaleDateString(
+                            "es-CO",
+                            {
+                              month: "long",
+                            }
+                          )}
+                        </Text>
+                        <Text style={styles.dateYear}>
+                          {new Date(item.fechaRealizacion).getFullYear()}
+                        </Text>
+                      </>
+                    ) : (
+                      <Text
+                        style={{
+                          color: "white",
+                          textAlign: "center",
+                          fontFamily: fonts.body,
+                        }}
+                      >
+                        No{"\n"}Disponible
                       </Text>
-                      <Text style={styles.dateMonth}>
-                        {new Date(item.fechaRealizacion).toLocaleDateString(
-                          "es-CO",
-                          {
-                            month: "long",
-                          }
-                        )}
+                    )}
+                  </View>
+                  {/* Columna derecha: Detalles */}
+                  <View style={styles.rightColumn}>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>
+                        {formatName(item.examen)}
                       </Text>
-                      <Text style={styles.dateYear}>
-                        {new Date(item.fechaRealizacion).getFullYear()}
-                      </Text>
-                    </>
-                  ) : (
-                    <Text
-                      style={{
-                        color: "white",
-                        textAlign: "center",
-                        fontFamily: fonts.body,
-                      }}
-                    >
-                      No{"\n"}Disponible
                     </Text>
-                  )}
-                </View>
-                {/* Columna derecha: Detalles */}
-                <View style={styles.rightColumn}>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>{formatName(item.examen)}</Text>
-                  </Text>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>Médico Remisor: </Text>
-                    {capitalizeName(item.programa)}
-                  </Text>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Médico Remisor: </Text>
+                      {capitalizeName(item.programa)}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-        />
-      </View>
+            )}
+          />
+        </View>
 
-      {/* Botón fijo abajo */}
-      <View style={styles.footerButtonContainer}>
-        <TouchableOpacity
-          style={[
-            styles.footerButton,
-            noHayResultados && styles.footerButtonDisabled,
-          ]}
-          onPress={openLabResultsWeb}
-          disabled={noHayResultados}
-        >
-          <Text style={styles.footerButtonText}>
-            Consultar Resultados en la Web
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Botón fijo abajo */}
+        <View style={styles.footerButtonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.footerButton,
+              noHayResultados && styles.footerButtonDisabled,
+            ]}
+            onPress={openLabResultsWeb}
+            disabled={noHayResultados}
+          >
+            <Text style={styles.footerButtonText}>
+              Consultar Resultados en la Web
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -220,16 +230,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  header: {
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    gap: 16,
   },
   title: {
     fontSize: 24,
@@ -238,8 +239,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: colors.background,
     paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   card: {
     backgroundColor: colors.white,
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
     shadowColor: colors.preto,
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 1,
+    elevation: 2,
   },
   cardContent: {
     height: 140,

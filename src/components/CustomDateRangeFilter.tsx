@@ -50,15 +50,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   label: {
-    color: colors.primary,
+    color: colors.preto,
     fontFamily: fonts.subtitle,
     marginBottom: 5,
     fontSize: 14,
   },
   input: {
     backgroundColor: colors.white,
-    borderColor: colors.primary,
-    borderWidth: 1,
     borderRadius: 6,
     paddingHorizontal: 10,
     paddingVertical: 8,

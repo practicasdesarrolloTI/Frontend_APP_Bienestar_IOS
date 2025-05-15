@@ -1,4 +1,4 @@
-const API_URL = "http://18.207.0.161:80/api/surveys";
+const API_URL = "https://backend.bienestarips.com/api/surveys";
 
 export const submitSurvey = async (surveyId: string, responses: string[]) => {
   try {

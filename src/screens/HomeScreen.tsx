@@ -24,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
-import CustomHeader from "../components/CustomHeader";
+import HomeHeader from "../components/HomeHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -146,19 +146,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         resizeMode="cover"
       >
         {/* Header transparente */}
-        <CustomHeader
-          title=""
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
-        />
+        {nombrePaciente && sexo && (
+          <HomeHeader nombre={nombrePaciente} sexo={sexo} />
+        )}
+        
         <View style={styles.container}>
-          {nombrePaciente && (
-            <Text style={styles.label}>
-              {sexo === "F" ? "¡Bienvenida! " : "¡Bienvenido! "}
-              <Text>{capitalizeName(nombrePaciente)}</Text>
-            </Text>
-          )}
           <FlatList
             data={menuItems}
             keyExtractor={(item) => item.id}
@@ -211,7 +203,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 10,
   },
   safeArea: {
     flex: 1,
@@ -264,9 +256,16 @@ const styles = StyleSheet.create({
   },
   label: {
     marginLeft: 15,
-    fontSize: 22,
+    fontSize: 20,
+    // marginBottom: 2,
+    color: colors.preto,
+    fontFamily: fonts.body,
+  },
+  labelName: {
+    marginLeft: 15,
+    fontSize: 20,
     marginBottom: 15,
-    color: colors.primary,
+    color: colors.preto,
     fontFamily: fonts.title,
   },
   // Modal styles

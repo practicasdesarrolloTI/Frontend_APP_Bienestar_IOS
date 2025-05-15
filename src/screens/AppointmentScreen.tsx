@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ImageBackground,
+  Image,
 } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -20,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
+import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
 
@@ -92,7 +95,6 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     return true;
   });
 
-  
   /* Función para formatear la hora */
   const formatHora = (hora: string) => {
     if (!hora) return "";
@@ -106,7 +108,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       hour12: true,
     });
   };
-  
+
   /* Función para capitalizar el nombre */
   const capitalizeName = (text: string): string => {
     return text
@@ -117,7 +119,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       )
       .join(" ");
   };
-  
+
   /* Función para capitalizar la primera letra de cada oración */
   const capitalizeSentence = (text: string): string => {
     return text
@@ -131,70 +133,76 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
-
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Home")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Citas</Text>
-      </View>
-
-      <View style={styles.container}>
-        <CustomDateRangeFilter
-          fechaInicio={fechaInicio}
-          fechaFin={fechaFin}
-          onChangeInicio={setFechaInicio}
-          onChangeFin={setFechaFin}
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Citas"
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
         />
-        {/* Lista de Citas */}
-        {citasFiltradasPorFecha.length === 0 ? (
-          <EmptyState message="No tienes citas agendadas por el momento." />
-        ) : (
-          <FlatList
-            data={citasFiltradasPorFecha}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={styles.cardContent}>
-                  {/* Columna izquierda: Fecha */}
-                  <View style={styles.leftColumn}>
-                    <Text style={styles.dateDay}>
-                      {new Date(item.fecha).getDate()}
-                    </Text>
-                    <Text style={styles.dateMonth}>
-                      {new Date(item.fecha).toLocaleDateString("es-CO", {
-                        month: "long",
-                      })}
-                    </Text>
-                    <Text style={styles.dateYear}>
-                      {new Date(item.fecha).getFullYear()}
-                    </Text>
-                  </View>
-                  {/* Columna derecha: Detalles */}
-                  <View style={styles.rightColumn}>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Hora: </Text>
-                      {formatHora(item.hora)}
-                    </Text>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Médico: </Text>{" "}
-                      {capitalizeName(item.medico)}
-                    </Text>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Especialidad: </Text>
-                      {capitalizeSentence(item.especialidad)}
-                    </Text>
+
+        <View style={styles.container}>
+          <CustomDateRangeFilter
+            fechaInicio={fechaInicio}
+            fechaFin={fechaFin}
+            onChangeInicio={setFechaInicio}
+            onChangeFin={setFechaFin}
+          />
+          {/* Lista de Citas */}
+          {citasFiltradasPorFecha.length === 0 ? (
+            <EmptyState message="No tienes citas agendadas por el momento." />
+          ) : (
+            <FlatList
+              data={citasFiltradasPorFecha}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.card}>
+                  <View style={styles.cardContent}>
+                    {/* Columna izquierda: Fecha */}
+                    <View style={styles.leftColumn}>
+                      <Text style={styles.dateDay}>
+                        {new Date(item.fecha).getDate()}
+                      </Text>
+                      <Text style={styles.dateMonth}>
+                        {new Date(item.fecha).toLocaleDateString("es-CO", {
+                          month: "long",
+                        })}
+                      </Text>
+                      <Text style={styles.dateYear}>
+                        {new Date(item.fecha).getFullYear()}
+                      </Text>
+                    </View>
+                    {/* Columna derecha: Detalles */}
+                    <View style={styles.rightColumn}>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Hora: </Text>
+                        {formatHora(item.hora)}
+                      </Text>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Médico: </Text>{" "}
+                        {capitalizeName(item.medico)}
+                      </Text>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Especialidad: </Text>
+                        {capitalizeSentence(item.especialidad)}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            )}
-          />
-        )}
-      </View>
+              )}
+            />
+          )}
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -202,8 +210,8 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 30,
-    backgroundColor: colors.background,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   safeArea: {
     flex: 1,

@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ImageBackground,
 } from "react-native";
 import colors from "../themes/colors";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -24,6 +25,7 @@ import EmptyState from "../components/EmptyState";
 import { getPatientByDocument } from "../services/patientService";
 import Toast from "react-native-toast-message";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
+import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
@@ -169,83 +171,92 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
       />
-
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.replace("Home")}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Medicamentos</Text>
-      </View>
-
-      <View style={styles.container}>
-        <CustomDateRangeFilter
-          fechaInicio={fechaInicio}
-          fechaFin={fechaFin}
-          onChangeInicio={setFechaInicio}
-          onChangeFin={setFechaFin}
+      <ImageBackground
+        source={require("../../assets/fondo_preuba_app2.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Medicamentos"
+          showBack={true}
+          transparent={true}
+          rightComponent={""}
         />
+        <View style={styles.container}>
+          <CustomDateRangeFilter
+            fechaInicio={fechaInicio}
+            fechaFin={fechaFin}
+            onChangeInicio={setFechaInicio}
+            onChangeFin={setFechaFin}
+          />
 
-        <FlatList
-          data={medicamentosFiltrados}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: medicamentos.length === 0 ? "center" : "flex-start",
-            paddingBottom: 100,
-          }}
-          ListEmptyComponent={
-            <EmptyState message="Aún no tienes medicamentos registrados." />
-          }
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <View style={styles.cardContent}>
-                {/* Columna izquierda: Fecha */}
-                <View style={styles.leftColumn}>
-                  <Text style={styles.dateText}>Fecha de Vencimiento: </Text>
-                  <Text style={styles.dateDay}>
-                    {new Date(item.fechaVencimiento).getDate()}
-                  </Text>
-                  <Text style={styles.dateMonth}>
-                    {new Date(item.fechaVencimiento).toLocaleDateString(
-                      "es-CO",
-                      {
-                        month: "long",
-                      }
-                    )}
-                  </Text>
-                  <Text style={styles.dateYear}>
-                    {new Date(item.fechaVencimiento).getFullYear()}
-                  </Text>
-                </View>
-
-                {/* Columna derecha: Detalles */}
-                <View style={styles.rightColumn}>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>{formatName(item.nombre)}</Text>
-                  </Text>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>Cantidad: </Text> {item.cantidad}
-                  </Text>
-                  <Text style={styles.text}>
-                    <Text style={styles.label}>Dosis: </Text>
-                    {item.dosificacion ?? "No disponible"}
-                  </Text>
-                  {item.indicaciones && item.indicaciones !== "NINGUNO" && (
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Indicaciones: </Text>
-                      {capitalizeSentence(item.indicaciones)}
+          <FlatList
+            data={medicamentosFiltrados}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent:
+                medicamentos.length === 0 ? "center" : "flex-start",
+              paddingBottom: 100,
+            }}
+            ListEmptyComponent={
+              <EmptyState message="Aún no tienes medicamentos registrados." />
+            }
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View style={styles.cardContent}>
+                  {/* Columna izquierda: Fecha */}
+                  <View style={styles.leftColumn}>
+                    <Text style={styles.dateText}>Fecha de Vencimiento: </Text>
+                    <Text style={styles.dateDay}>
+                      {new Date(item.fechaVencimiento).getDate()}
                     </Text>
-                  )}
+                    <Text style={styles.dateMonth}>
+                      {new Date(item.fechaVencimiento).toLocaleDateString(
+                        "es-CO",
+                        {
+                          month: "long",
+                        }
+                      )}
+                    </Text>
+                    <Text style={styles.dateYear}>
+                      {new Date(item.fechaVencimiento).getFullYear()}
+                    </Text>
+                  </View>
+
+                  {/* Columna derecha: Detalles */}
+                  <View style={styles.rightColumn}>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>
+                        {formatName(item.nombre)}
+                      </Text>
+                    </Text>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Cantidad: </Text>{" "}
+                      {item.cantidad}
+                    </Text>
+                    <Text style={styles.text}>
+                      <Text style={styles.label}>Dosis: </Text>
+                      {item.dosificacion ?? "No disponible"}
+                    </Text>
+                    {item.indicaciones && item.indicaciones !== "NINGUNO" && (
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Indicaciones: </Text>
+                        {capitalizeSentence(item.indicaciones)}
+                      </Text>
+                    )}
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-        />
-      </View>
+            )}
+          />
+        </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
@@ -253,19 +264,9 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
-  },
+
   title: {
     fontSize: 24,
     fontFamily: fonts.title,
@@ -273,8 +274,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 30,
-    backgroundColor: colors.background,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
   card: {
     backgroundColor: colors.white,

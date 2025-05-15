@@ -23,7 +23,6 @@ type SurveyScreenProps = NativeStackScreenProps<
   "SurveyScreen"
 >;
 
-
 type Respuesta =
   | string
   | {
@@ -33,6 +32,8 @@ type Respuesta =
 
 const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const { preguntas, surveyId, edad, sexo, survey, indicadores } = route.params;
+
+  console.log("Preguntas", preguntas);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -45,24 +46,23 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
   const imc = peso && estatura ? peso / (estatura * estatura) : NaN;
 
-
-  console.log("Perimetro", indicadores?.Perimetro_Abdominal);
-
   // Filtrar preguntas omitidas
+
   let finalPreguntas = preguntas.filter((q) => {
-    if (typeof q === "string") return true;
-
-    const texto = q.pregunta.toLowerCase();
-
-    const esAltura = texto.includes("estatura") || texto.includes("altura");
-    const esIMC = texto.includes("imc");
-    const esEdad = texto.includes("edad");
-    const esPeso = texto.includes("peso");
-    const esSistolica = texto.includes("sistólica");
-    const esDiastolica = texto.includes("diastólica");
-    const esColesterol = texto.includes("colesterol");
-    const esHDL = texto.includes("hdl");
-    const esPerimetro = texto.includes("circunferencia") || texto.includes("perímetro abdominal");
+    if (typeof q === "string")
+      return false;
+    
+      
+  const texto = q.pregunta.toLowerCase();
+  const esAltura = /\b(estatura|altura)\b/.test(texto);
+  const esIMC = /\bimc\b/.test(texto);
+  const esEdad = /\bedad\b/.test(texto);
+  const esPeso = /\bpeso\b/.test(texto);
+  const esSistolica = /\bsistólica\b/.test(texto);
+  const esDiastolica = /\bdiastólica\b/.test(texto);
+  const esColesterol = /\bcolesterol\b/.test(texto);
+  const esHDL = /\bhdl\b/.test(texto);
+  const esPerimetro = /\b(circunferencia|perímetro abdominal)\b/.test(texto);
 
     if (esAltura && indicadores?.Altura) return false;
     if (esEdad && edad) return false;
@@ -78,9 +78,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   });
 
   if (survey.requiredIMC) {
-    finalPreguntas = [
-      ...finalPreguntas,
-    ];
+    finalPreguntas = [...finalPreguntas];
   }
 
   const handleNext = () => {
@@ -134,8 +132,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
       }
 
       if (edad && surveyId === "framingham") {
-
-        if (sexo === "Masculino"){
+        if (sexo === "Masculino") {
           if (edad >= 30 && edad <= 34) {
             respuestasExtra.push({ texto: "Entre 30-34 años", valor: -1 });
           } else if (edad >= 35 && edad <= 39) {
@@ -144,55 +141,60 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
             respuestasExtra.push({ texto: "Entre 40-44 años", valor: 1 });
           } else if (edad >= 45 && edad <= 49) {
             respuestasExtra.push({ texto: "Entre 45-49 años", valor: 2 });
-          } else if (edad >= 50 && edad <= 54){
-            respuestasExtra.push({ texto: "Entre 50-54 años", valor: 3});
-          } else if (edad >= 55 && edad <= 59){
-            respuestasExtra.push({ texto: "Entre 55-59 años", valor: 4});
-          } else if (edad >= 60 && edad <= 64){
-            respuestasExtra.push({ texto: "Entre 60-64 años", valor: 5});
-          } else if (edad >= 65 && edad <= 69){
-            respuestasExtra.push({ texto: "Entre 65-69 años", valor: 6});
-          } else if (edad >= 70 && edad <= 74){
-            respuestasExtra.push({ texto: "Entre 70-74 años", valor: 7});
+          } else if (edad >= 50 && edad <= 54) {
+            respuestasExtra.push({ texto: "Entre 50-54 años", valor: 3 });
+          } else if (edad >= 55 && edad <= 59) {
+            respuestasExtra.push({ texto: "Entre 55-59 años", valor: 4 });
+          } else if (edad >= 60 && edad <= 64) {
+            respuestasExtra.push({ texto: "Entre 60-64 años", valor: 5 });
+          } else if (edad >= 65 && edad <= 69) {
+            respuestasExtra.push({ texto: "Entre 65-69 años", valor: 6 });
+          } else if (edad >= 70 && edad <= 74) {
+            respuestasExtra.push({ texto: "Entre 70-74 años", valor: 7 });
           }
-        }else if (sexo === "Femenino"){
+        } else if (sexo === "Femenino") {
           if (edad >= 30 && edad <= 34) {
-            respuestasExtra.push({ texto: "Entre 30-34 años", valor: -9});
+            respuestasExtra.push({ texto: "Entre 30-34 años", valor: -9 });
           } else if (edad >= 35 && edad <= 39) {
-            respuestasExtra.push({ texto: "Entre 35-39 años", valor: -4});
+            respuestasExtra.push({ texto: "Entre 35-39 años", valor: -4 });
           } else if (edad >= 40 && edad <= 44) {
-            respuestasExtra.push({ texto: "Entre 40-44 años", valor: 0});
+            respuestasExtra.push({ texto: "Entre 40-44 años", valor: 0 });
           } else if (edad >= 45 && edad <= 49) {
-            respuestasExtra.push({ texto: "Entre 45-49 años", valor: 3});
-          } else if (edad >= 50 && edad <= 54){
-            respuestasExtra.push({ texto: "Entre 50-54 años", valor: 6});
-          } else if (edad >= 55 && edad <= 59){
-            respuestasExtra.push({ texto: "Entre 55-59 años", valor: 7});
-          } else if (edad >= 60 && edad <= 64){
-            respuestasExtra.push({ texto: "Entre 60-64 años", valor: 8});
-          } else if (edad >= 65 && edad <= 69){
-            respuestasExtra.push({ texto: "Entre 65-69 años", valor: 8});
-          } else if (edad >= 70 && edad <= 74){
-            respuestasExtra.push({ texto: "Entre 70-74 años", valor: 8});
+            respuestasExtra.push({ texto: "Entre 45-49 años", valor: 3 });
+          } else if (edad >= 50 && edad <= 54) {
+            respuestasExtra.push({ texto: "Entre 50-54 años", valor: 6 });
+          } else if (edad >= 55 && edad <= 59) {
+            respuestasExtra.push({ texto: "Entre 55-59 años", valor: 7 });
+          } else if (edad >= 60 && edad <= 64) {
+            respuestasExtra.push({ texto: "Entre 60-64 años", valor: 8 });
+          } else if (edad >= 65 && edad <= 69) {
+            respuestasExtra.push({ texto: "Entre 65-69 años", valor: 8 });
+          } else if (edad >= 70 && edad <= 74) {
+            respuestasExtra.push({ texto: "Entre 70-74 años", valor: 8 });
           }
         }
       }
 
-      if (imc && surveyId === "findrisc"){
-        if (imc < 25) respuestasExtra.push({texto: "Menos de 25 kg/m2", valor: 0});
-        if (imc >= 25 && imc <= 30) respuestasExtra.push({texto: "Entre 25-30 kg/m2", valor: 1});
-        if (imc > 30) respuestasExtra.push({texto: "Mas de 30 kg/m2", valor: 3});
+      if (imc && surveyId === "findrisc") {
+        if (imc < 25)
+          respuestasExtra.push({ texto: "Menos de 25 kg/m2", valor: 0 });
+        if (imc >= 25 && imc <= 30)
+          respuestasExtra.push({ texto: "Entre 25-30 kg/m2", valor: 1 });
+        if (imc > 30)
+          respuestasExtra.push({ texto: "Mas de 30 kg/m2", valor: 3 });
       }
 
       if (indicadores?.Perimetro_Abdominal && surveyId === "findrisc") {
         const p = indicadores.Perimetro_Abdominal;
         if (sexo === "Masculino") {
           if (p < 94) respuestasExtra.push({ texto: "< 94cm", valor: 0 });
-          else if (p <= 102) respuestasExtra.push({ texto: "94-102cm", valor: 3 });
+          else if (p <= 102)
+            respuestasExtra.push({ texto: "94-102cm", valor: 3 });
           else respuestasExtra.push({ texto: ">102cm", valor: 4 });
         } else {
           if (p < 80) respuestasExtra.push({ texto: "< 80cm", valor: 0 });
-          else if (p <= 88) respuestasExtra.push({ texto: "80-88cm", valor: 3 });
+          else if (p <= 88)
+            respuestasExtra.push({ texto: "80-88cm", valor: 3 });
           else respuestasExtra.push({ texto: ">88cm", valor: 4 });
         }
       }
@@ -201,64 +203,98 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         const hdl = indicadores.HDL;
         if (sexo === "Masculino") {
           if (hdl < 35) respuestasExtra.push({ texto: "Menor a 35", valor: 2 });
-          else if (hdl >= 35 && hdl <= 44) respuestasExtra.push({ texto: "Entre 35-44", valor: 1 });
-          else if (hdl >= 45 && hdl <= 49) respuestasExtra.push({ texto: "Entre 45-49", valor: 0 });
-          else if (hdl >= 50 && hdl <= 59) respuestasExtra.push({ texto: "Entre 50-59", valor: 0 });
-          else if (hdl > 60) respuestasExtra.push({ texto: "Mayor a 60", valor: -2 });
+          else if (hdl >= 35 && hdl <= 44)
+            respuestasExtra.push({ texto: "Entre 35-44", valor: 1 });
+          else if (hdl >= 45 && hdl <= 49)
+            respuestasExtra.push({ texto: "Entre 45-49", valor: 0 });
+          else if (hdl >= 50 && hdl <= 59)
+            respuestasExtra.push({ texto: "Entre 50-59", valor: 0 });
+          else if (hdl > 60)
+            respuestasExtra.push({ texto: "Mayor a 60", valor: -2 });
         }
 
-        if (sexo === "Femenino"){ 
+        if (sexo === "Femenino") {
           if (hdl < 35) respuestasExtra.push({ texto: "Menor a 35", valor: 5 });
-          else if (hdl >= 35 && hdl <= 44) respuestasExtra.push({ texto: "Entre 35-44", valor: 2 });
-          else if (hdl >= 45 && hdl <= 49) respuestasExtra.push({ texto: "Entre 45-49", valor: 1 });
-          else if (hdl >= 50 && hdl <= 59) respuestasExtra.push({ texto: "Entre 50-59", valor: 0 });
-          else if (hdl > 60) respuestasExtra.push({ texto: "Mayor a 60", valor: -3 });
+          else if (hdl >= 35 && hdl <= 44)
+            respuestasExtra.push({ texto: "Entre 35-44", valor: 2 });
+          else if (hdl >= 45 && hdl <= 49)
+            respuestasExtra.push({ texto: "Entre 45-49", valor: 1 });
+          else if (hdl >= 50 && hdl <= 59)
+            respuestasExtra.push({ texto: "Entre 50-59", valor: 0 });
+          else if (hdl > 60)
+            respuestasExtra.push({ texto: "Mayor a 60", valor: -3 });
         }
       }
 
       if (indicadores?.Colesterol_Total && surveyId === "framingham") {
         const colesterol = indicadores?.Colesterol_Total;
         if (sexo === "Masculino") {
-          if (colesterol < 160) respuestasExtra.push({ texto: "Menor a 160", valor: -3 });
-          else if (colesterol >= 160 && colesterol <= 199) respuestasExtra.push({ texto: "Entre 160-199", valor: 0 });
-          else if (colesterol >= 200 && colesterol <= 239) respuestasExtra.push({ texto: "Entre 200-239", valor: 1 });
-          else if (colesterol >= 240 && colesterol <= 279) respuestasExtra.push({ texto: "Entre 240-279", valor: 2 });
-          else if (colesterol > 280) respuestasExtra.push({ texto: "Mayor a 280", valor: 3 });
+          if (colesterol < 160)
+            respuestasExtra.push({ texto: "Menor a 160", valor: -3 });
+          else if (colesterol >= 160 && colesterol <= 199)
+            respuestasExtra.push({ texto: "Entre 160-199", valor: 0 });
+          else if (colesterol >= 200 && colesterol <= 239)
+            respuestasExtra.push({ texto: "Entre 200-239", valor: 1 });
+          else if (colesterol >= 240 && colesterol <= 279)
+            respuestasExtra.push({ texto: "Entre 240-279", valor: 2 });
+          else if (colesterol > 280)
+            respuestasExtra.push({ texto: "Mayor a 280", valor: 3 });
         }
 
-        if (sexo === "Femenino"){ 
-          if (colesterol < 160) respuestasExtra.push({ texto: "Menor a 160", valor: -2 });
-          else if (colesterol >= 160 && colesterol <= 199) respuestasExtra.push({ texto: "Entre 160-199", valor: 0 });
-          else if (colesterol >= 200 && colesterol <= 239) respuestasExtra.push({ texto: "Entre 200-239", valor: 1 });
-          else if (colesterol >= 240 && colesterol <= 279) respuestasExtra.push({ texto: "Entre 240-279", valor: 1 });
-          else if (colesterol > 280) respuestasExtra.push({ texto: "Mayor a 280", valor: 3 });
+        if (sexo === "Femenino") {
+          if (colesterol < 160)
+            respuestasExtra.push({ texto: "Menor a 160", valor: -2 });
+          else if (colesterol >= 160 && colesterol <= 199)
+            respuestasExtra.push({ texto: "Entre 160-199", valor: 0 });
+          else if (colesterol >= 200 && colesterol <= 239)
+            respuestasExtra.push({ texto: "Entre 200-239", valor: 1 });
+          else if (colesterol >= 240 && colesterol <= 279)
+            respuestasExtra.push({ texto: "Entre 240-279", valor: 1 });
+          else if (colesterol > 280)
+            respuestasExtra.push({ texto: "Mayor a 280", valor: 3 });
         }
       }
 
-      if (indicadores?.Tension_Arterial_Sistolica && surveyId === "framingham") {
+      if (
+        indicadores?.Tension_Arterial_Sistolica &&
+        surveyId === "framingham"
+      ) {
         const tension = indicadores?.Tension_Arterial_Sistolica;
-        if (sexo === "Masculino"){
-          if (tension < 120) respuestasExtra.push({ texto: "Menor a 120", valor: 0 });
-          else if (tension >= 120 && tension <= 129) respuestasExtra.push({ texto: "Entre 120-129", valor: 0 });
-          else if (tension >= 130 && tension <= 139) respuestasExtra.push({ texto: "Entre 130-139", valor: 1 });
-          else if (tension >= 140 && tension <= 159) respuestasExtra.push({ texto: "Entre 140-159", valor: 2 });
-          else if (tension > 160) respuestasExtra.push({ texto: "Mayor a 160", valor: 3 });
+        if (sexo === "Masculino") {
+          if (tension < 120)
+            respuestasExtra.push({ texto: "Menor a 120", valor: 0 });
+          else if (tension >= 120 && tension <= 129)
+            respuestasExtra.push({ texto: "Entre 120-129", valor: 0 });
+          else if (tension >= 130 && tension <= 139)
+            respuestasExtra.push({ texto: "Entre 130-139", valor: 1 });
+          else if (tension >= 140 && tension <= 159)
+            respuestasExtra.push({ texto: "Entre 140-159", valor: 2 });
+          else if (tension > 160)
+            respuestasExtra.push({ texto: "Mayor a 160", valor: 3 });
         }
-        if (sexo === "Femenino"){
-          if (tension < 120) respuestasExtra.push({ texto: "Menor a 120", valor: -3 });
-          else if (tension >= 120 && tension <= 129) respuestasExtra.push({ texto: "Entre 120-129", valor: 0 });
-          else if (tension >= 130 && tension <= 139) respuestasExtra.push({ texto: "Entre 130-139", valor: 0 });
-          else if (tension >= 140 && tension <= 159) respuestasExtra.push({ texto: "Entre 140-159", valor: 2 });
-          else if (tension > 160) respuestasExtra.push({ texto: "Mayor a 160", valor: 3 });
+        if (sexo === "Femenino") {
+          if (tension < 120)
+            respuestasExtra.push({ texto: "Menor a 120", valor: -3 });
+          else if (tension >= 120 && tension <= 129)
+            respuestasExtra.push({ texto: "Entre 120-129", valor: 0 });
+          else if (tension >= 130 && tension <= 139)
+            respuestasExtra.push({ texto: "Entre 130-139", valor: 0 });
+          else if (tension >= 140 && tension <= 159)
+            respuestasExtra.push({ texto: "Entre 140-159", valor: 2 });
+          else if (tension > 160)
+            respuestasExtra.push({ texto: "Mayor a 160", valor: 3 });
         }
       }
 
-      const puntajeTotal = [...responses, ...respuestasExtra].reduce((acc, r) => {
-        if (typeof r === 'object' && r.valor !== undefined) {
-          return acc + r.valor;
-        }
-        return acc;
-      }, 0);
+      const puntajeTotal = [...responses, ...respuestasExtra].reduce(
+        (acc, r) => {
+          if (typeof r === "object" && r.valor !== undefined) {
+            return acc + r.valor;
+          }
+          return acc;
+        },
+        0
+      );
 
       navigation.navigate("SurveySummary", {
         surveyId,
