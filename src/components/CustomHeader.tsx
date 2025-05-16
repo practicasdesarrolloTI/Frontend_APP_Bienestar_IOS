@@ -127,7 +127,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    height: 120,
+    height: 110,
     paddingTop: Platform.OS === "android" ? 15 : 10,
     paddingHorizontal: 20,
     flexDirection: "row",

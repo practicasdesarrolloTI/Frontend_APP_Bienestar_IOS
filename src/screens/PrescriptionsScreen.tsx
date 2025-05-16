@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   StatusBar,
@@ -26,7 +25,8 @@ import { getPatientByDocument } from "../services/patientService";
 import Toast from "react-native-toast-message";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
-
+import LogOutModal
+ from "../components/LogOutModal";
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
 type Paciente = {
@@ -62,6 +62,20 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
+  /** Función para cerrar sesión */
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text1: "Sesión cerrada",
+      text2: "Has cerrado sesión correctamente.",
+    });
+    navigation.navigate("Login");
+  };
+
 
   const loadData = async () => {
     try {
@@ -174,18 +188,22 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         translucent
         backgroundColor="transparent"
       />
+      
       <ImageBackground
         source={require("../../assets/fondo_preuba_app2.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
+
+       {/* Header transparente */}
         <CustomHeader
           title="Medicamentos"
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => setModalVisible(true)}
         />
+
         <View style={styles.container}>
           <CustomDateRangeFilter
             fechaInicio={fechaInicio}
@@ -253,6 +271,12 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
               </View>
             )}
+          />
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
           />
         </View>
       </ImageBackground>

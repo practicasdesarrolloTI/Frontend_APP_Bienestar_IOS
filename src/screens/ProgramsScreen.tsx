@@ -4,7 +4,6 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   StatusBar,
@@ -12,7 +11,6 @@ import {
   Alert,
   ImageBackground,
 } from "react-native";
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -21,6 +19,8 @@ import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../components/CustomHeader";
+import LogOutModal from "../components/LogOutModal";
+import Toast from "react-native-toast-message";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusProgramas">;
 
@@ -37,6 +37,19 @@ type Programa = {
 const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   const [programas, setProgramas] = useState<Programa[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  /** Función para cerrar sesión */
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text1: "Sesión cerrada",
+      text2: "Has cerrado sesión correctamente.",
+    });
+    navigation.navigate("Login");
+  };
 
   useEffect(() => {
     const loadPrograms = async () => {
@@ -109,11 +122,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   {
     /* Función para capitalizar la primera letra de cada oración */
   }
-  const capitalizeSentence = (text: string): string => {
-    return text
-      .toLowerCase()
-      .replace(/(^\w{1}|\.\s*\w{1})/g, (match) => match.toUpperCase());
-  };
 
   if (loading) return <LoadingScreen />;
   return (
@@ -128,12 +136,13 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
+  {/* Header transparente */}
         <CustomHeader
           title="Programas"
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => setModalVisible(true)}
         />
 
         <View style={styles.container}>
@@ -197,6 +206,12 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
               </View>
             )}
+          />
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
           />
         </View>
       </ImageBackground>

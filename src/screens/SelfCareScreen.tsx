@@ -11,7 +11,6 @@ import {
   Platform,
   ImageBackground,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -36,6 +35,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import SkeletonSurveyCard from "../components/SurveySkeleton";
 import { getPatientIndicators } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
+import LogOutModal from "../components/LogOutModal";  
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -87,6 +87,19 @@ const SelfCareScreen: React.FC = () => {
       { bloqueada?: boolean; disponibleEn?: any; cargando?: boolean }
     >
   >({});
+
+  const [modalVisible, setModalVisible] = useState(false);
+/** Función para cerrar sesión */
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text1: "Sesión cerrada",
+      text2: "Has cerrado sesión correctamente.",
+    });
+    navigation.navigate("Login");
+  };
 
   const loadResultados = async () => {
     const storedDoc = await AsyncStorage.getItem("documento");
@@ -265,12 +278,13 @@ const SelfCareScreen: React.FC = () => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
+         {/* Header transparente */}
         <CustomHeader
           title="Autocuidado"
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => setModalVisible(true)}
         />
 
         {loading ? (
@@ -284,6 +298,12 @@ const SelfCareScreen: React.FC = () => {
             />
           </View>
         )}
+        {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
       </ImageBackground>
     </SafeAreaView>
   );
