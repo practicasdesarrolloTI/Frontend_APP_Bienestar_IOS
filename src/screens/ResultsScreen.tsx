@@ -66,11 +66,6 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         setResultados(data);
         console.log("Resultados cargados:", data);
       } catch (error) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "No se pudieron cargar los resultados.",
-        });
         console.error("Error al cargar resultados:", error);
       } finally {
         setLoading(false);

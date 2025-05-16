@@ -33,6 +33,12 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
 
     const rawData = JSON.parse(text);
 
+    // Verficamos si la respuesta es null o undefined
+    if (!rawData || typeof rawData !== 'object') {
+      console.warn("⚠️ La respuesta del backend no es un objeto válido:", rawData);
+      return []; // ← no hay exámenes, devolvemos lista vacía
+    }
+
     if (Array.isArray(rawData)) {
       return rawData.map((item: any, index: number) => ({
         id: index.toString(),
