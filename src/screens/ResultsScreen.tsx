@@ -10,10 +10,8 @@ import {
   Platform,
   Alert,
   Linking,
-  Dimensions,
   ImageBackground,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -24,6 +22,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
+import Toast from "react-native-toast-message";
+import LogOutModal from "../components/LogOutModal";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;
 
@@ -40,7 +40,20 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const noHayResultados = resultados.length === 0;
+
+  /** Función para cerrar sesión */
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text1: "Sesión cerrada",
+      text2: "Has cerrado sesión correctamente.",
+    });
+    navigation.navigate("Login");
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -52,11 +65,12 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         const data = await fetchResults(tipo, doc);
         setResultados(data);
       } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "No se pudieron cargar los resultados.",
+        });
         console.error("Error al cargar resultados:", error);
-        Alert.alert(
-          "Error",
-          "No se pudo cargar la información de los resultados"
-        );
       } finally {
         setLoading(false);
       }
@@ -131,10 +145,12 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         {/* Header transparente */}
         <CustomHeader
           title="Resultados"
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => setModalVisible(true)}
         />
+
         <View style={styles.contentContainer}>
           <CustomDateRangeFilter
             fechaInicio={fechaInicio}
@@ -204,6 +220,12 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
               </View>
             )}
+          />
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
           />
         </View>
 

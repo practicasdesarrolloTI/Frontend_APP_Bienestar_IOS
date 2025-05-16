@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Alert,
   SafeAreaView,
   StatusBar,
@@ -23,6 +22,8 @@ import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import { calcularEdad } from "../utils/dateUtils";
 import CustomHeader from "../components/CustomHeader";
+import LogOutModal from "../components/LogOutModal";
+import Toast from "react-native-toast-message";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Informacion">;
 
@@ -57,6 +58,18 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
     useState<PacienteRegistro | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+
+  /** Función para cerrar sesión */
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text1: "Sesión cerrada",
+      text2: "Has cerrado sesión correctamente.",
+    });
+    navigation.navigate("Login");
+  };
 
   useEffect(() => {
     const loadPatient = async () => {
@@ -102,10 +115,9 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           showBack
           transparent
           showProfileIcon
-          onLogout={() => {
-            () => setModalVisible(true);
-          }}
+          onLogout={() => setModalVisible(true)}
         />
+
         <View style={styles.container}>
           {/* Icono de perfil centrado */}
           <View style={styles.profileIconContainer}>
@@ -169,6 +181,13 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.labelinfo}>{paciente?.eps}</Text>
             </View>
           </View>
+
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
         </View>
       </ImageBackground>
     </SafeAreaView>

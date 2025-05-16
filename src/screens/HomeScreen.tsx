@@ -5,11 +5,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Dimensions,
   SafeAreaView,
   StatusBar,
   Platform,
-  Image,
   BackHandler,
   Modal,
   ImageBackground,
@@ -25,6 +23,8 @@ import { useEffect, useState, useRef } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
 import HomeHeader from "../components/HomeHeader";
+import LogOutModal from "../components/LogOutModal";
+import Carousel from "../components/Carousel";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -53,14 +53,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [sexo, setSexo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef<FlatList>(null);
-
-  const banners = [
-    require("../../assets/imagen_1_banner.png"),
-    require("../../assets/imagen_2_banner.png"),
-    require("../../assets/imagen_3_banner.png"),
-  ];
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -116,27 +108,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     loadPaciente();
 
     // Manejo del botón de "Atrás" en Android
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        setModalVisible(true);
-        return true; // Prevenir navegación automática
-      }
-    );
+    // const backHandler = BackHandler.addEventListener(
+    //   "hardwareBackPress",
+    //   () => {
+    //     setModalVisible(true);
+    //     return true; // Prevenir navegación automática
+    //   }
+    // );
 
-    return () => backHandler.remove();
+    // return () => backHandler.remove();
   }, []);
-
-  // Manejo del scroll automático del carrusel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % banners.length;
-      setCurrentIndex(nextIndex);
-      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-    }, 3000); // cada 3 segundos
-
-    return () => clearInterval(interval);
-  }, [currentIndex]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -162,42 +143,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             onLogout={() => setModalVisible(true)} // activa el modal de logout
           />
         )}
-        <View style={styles.carouselContainer}>
-          <FlatList
-            ref={flatListRef}
-            data={banners}
-            keyExtractor={(_, index) => index.toString()}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={(e) => {
-              const newIndex = Math.round(
-                e.nativeEvent.contentOffset.x / Dimensions.get("window").width
-              );
-              setCurrentIndex(newIndex);
-            }}
-            renderItem={({ item }) => (
-              <Image
-                source={item}
-                style={styles.bannerImage}
-                resizeMode="cover"
-              />
-            )}
-          />
-          <View style={styles.pagination}>
-            {banners.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  currentIndex === index
-                    ? styles.activeDot
-                    : styles.inactiveDot,
-                ]}
-              />
-            ))}
-          </View>
-        </View>
+
+        <Carousel />
 
         <View style={styles.container}>
           <FlatList
@@ -207,32 +154,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             renderItem={renderItem}
             contentContainerStyle={styles.grid}
           />
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
         </View>
-
-        {/* Modal de Confirmación */}
-        <Modal transparent visible={modalVisible} animationType="fade">
-          <View style={styles.overlay}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>¿Deseas cerrar sesión?</Text>
-
-              <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text style={styles.cancelText}>Cancelar</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={handleLogout}
-                >
-                  <Text style={styles.confirmText}>Cerrar sesión</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -240,9 +168,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    padding: 30,
   },
   safeArea: {
     flex: 1,
@@ -259,8 +185,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-    width: 180,
-    height: 160,
+    width: 170,
+    height: 150,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.background,
@@ -269,11 +195,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 5,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 3,
-    padding: 5,
+    shadowRadius: 1,
+    elevation: 1,
   },
   icon: {
     marginBottom: 10,
@@ -296,7 +220,6 @@ const styles = StyleSheet.create({
   label: {
     marginLeft: 15,
     fontSize: 20,
-    // marginBottom: 2,
     color: colors.preto,
     fontFamily: fonts.body,
   },
@@ -306,80 +229,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: colors.preto,
     fontFamily: fonts.title,
-  },
-  // Modal styles
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    backgroundColor: colors.white,
-    padding: 25,
-    borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontFamily: fonts.title,
-    color: colors.primary,
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  cancelButton: {
-    padding: 10,
-    flex: 1,
-    alignItems: "center",
-    borderRadius: 5,
-    backgroundColor: colors.secondary,
-    marginRight: 10,
-  },
-  cancelText: {
-    color: "white",
-    fontFamily: fonts.title,
-  },
-  confirmButton: {
-    padding: 10,
-    flex: 1,
-    alignItems: "center",
-    borderRadius: 5,
-    backgroundColor: colors.primary,
-  },
-  confirmText: {
-    color: "white",
-    fontFamily: fonts.title,
-  },
-  carouselContainer: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
-  bannerImage: {
-    width: Dimensions.get("window").width,
-    height: 180,
-    borderRadius: 150,
-  },
-  pagination: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: colors.primary,
-  },
-  inactiveDot: {
-    backgroundColor: "#ccc",
   },
 });
 

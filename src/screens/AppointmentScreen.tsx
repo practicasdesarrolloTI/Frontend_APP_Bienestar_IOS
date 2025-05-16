@@ -23,6 +23,7 @@ import Toast from "react-native-toast-message";
 import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
+import LogOutModal from "../components/LogOutModal";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
 
@@ -41,6 +42,19 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
+  /** Función para cerrar sesión */
+ const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text1: "Sesión cerrada",
+      text2: "Has cerrado sesión correctamente.",
+    });
+    navigation.navigate("Login");
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -142,12 +156,13 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
+         {/* Header transparente */}
         <CustomHeader
           title="Citas"
-          showBack={true}
-          transparent={true}
-          rightComponent={""}
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => setModalVisible(true)}
         />
 
         <View style={styles.container}>
@@ -201,6 +216,12 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
               )}
             />
           )}
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
         </View>
       </ImageBackground>
     </SafeAreaView>
