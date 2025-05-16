@@ -15,7 +15,7 @@ import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { fetchAppointments } from "../services/appointmentService";
+import { fetchCitas } from "../services/appointmentService";
 import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -49,7 +49,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
           (await AsyncStorage.getItem("tipoDocumento")) ?? "";
         const numeroDocumento = (await AsyncStorage.getItem("documento")) ?? "";
 
-        const data = await fetchAppointments(tipoDocumento, numeroDocumento);
+        const data = await fetchCitas(tipoDocumento, numeroDocumento);
 
         // Formateamos los datos según el tipo `Cita`
         if (data.length === 0) {
@@ -62,7 +62,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
           hora: item.hora_cita?.slice(0, 8) || "",
-          especialidad: item.Especialidad || "",
+          especialidad: item.especialidad || "",
           programa: item.programa || "—",
           medico: item.nombre_medico || "",
           estado: item.estado || "",

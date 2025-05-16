@@ -16,7 +16,7 @@ import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { fetchPrograms } from "../services/programService";
+import { fetchProgramas } from "../services/programService";
 import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -45,15 +45,15 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         const doc = await AsyncStorage.getItem("documento");
         if (!tipo || !doc) throw new Error("Datos incompletos");
 
-        const data = await fetchPrograms(tipo, doc);
+        const data = await fetchProgramas(tipo, doc);
 
         const formateados = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha_cita:
             item.fecha_cita?.split(" ")[0] ?? "No tienes citas agendadas",
           hora: item.hora_cita?.slice(0, 8) ?? " ",
-          programa: item.Programa ?? "",
-          medico: item.nombre_medico ?? "",
+          programa: item.Programa ?? "Actualmente no estas en un programa",
+          medico: item.nombre_medico ?? "No Asignado",
           especialidad: item.Especialidad ?? "",
           estado: item.estado_cita ?? "Pendiente",
         }));

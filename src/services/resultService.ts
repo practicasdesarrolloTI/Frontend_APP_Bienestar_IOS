@@ -1,4 +1,6 @@
-const API_URL = 'http://18.207.0.161:3001/api';
+// const API_URL = 'http://18.207.0.161:3001/api';
+
+const API_URL = 'https://backend.bienestarips.com/api';
 
 const convertirFechaADashFormat = (fecha: string) => {
   if (!fecha) return "";
@@ -21,8 +23,7 @@ const convertirFechaADashFormat = (fecha: string) => {
 
 export const fetchResults = async (tipoDocumento: string, numeroDocumento: string) => {
   try {
-    const url = `${API_URL}/examenes/${tipoDocumento}/${numeroDocumento}`;
-    const response = await fetch(url);
+    const response = await fetch(`${API_URL}/examenes/externos/${tipoDocumento}/${numeroDocumento}`);
     const contentType = response.headers.get('content-type');
     const text = await response.text();
 
@@ -35,9 +36,9 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
     if (Array.isArray(rawData)) {
       return rawData.map((item: any, index: number) => ({
         id: index.toString(),
-        fechaRealizacion: convertirFechaADashFormat(item.fecha_orden)?.split(" ")[0] || "",
-        examen: item.Examen ?? '',
-        programa: item.nom_medico_remisor ?? '',
+        fechaRealizacion: item.fecha_orden || "",
+        examen: item.nombre_cups ?? '',
+        programa: item.nombre_medico_remisor ?? '',
         estado: 'Disponible',
       }));
     }
@@ -55,3 +56,14 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
     throw error;
   }
 };
+
+// const API_URL = 'https://backend.bienestarips.com/api';
+
+// export async function fetchExamenes(tipo: string, documento: string) {
+//   const res = await fetch(`${API_URL}/examenes/externos/${tipo}/${documento}`);
+//   if (!Array.isArray(res)) {
+//     return [];      
+//     }
+//   if (!res.ok) throw new Error("Error al obtener exámenes");
+//   return res.json();
+// }

@@ -15,7 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import {
-  fetchMedicaments,
+  fetchMedicamentos,
   fetchMedicamentsVigentes,
 } from "../services/medicamentService";
 import { fonts } from "../themes/fonts";
@@ -52,9 +52,8 @@ type Medicamento = {
   nombre: string;
   cantidad: number;
   dosificacion: number;
-  indicaciones: string;
+  presentacion: string;
   fechaVencimiento: string;
-  estado: "Pendiente" | "Reformulado" | "Descargado";
 };
 
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
@@ -70,25 +69,25 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       const doc = await AsyncStorage.getItem("documento");
       if (!tipo || !doc) throw new Error("Faltan datos del paciente");
 
-      const data = await fetchMedicaments(tipo, doc);
+      const data = await fetchMedicamentos(tipo, doc);
 
-      const tipoDoc = "CC";
-      const documento = "9010000560"; //9010000560  9010000322
+      // const tipoDoc = "CC";
+      // const documento = "9010000560"; //9010000560  9010000322
 
-      const dataPANA = await fetchMedicamentsVigentes(tipoDoc, documento);
+      // const dataPANA = await fetchMedicamentsVigentes(tipoDoc, documento);
 
-      const medicamentosData = dataPANA.flatMap((orden: any) =>
-        orden.medicamentos.map((med: any, idx: number) => ({
-          id: `${orden.no_autorizacion}-${idx}`,
-          nombre: med.nombre_medicamento,
-          cantidad: med.cant_presentacion,
-          dosificacion: med.dosificacion,
-          indicaciones: med.indicaciones,
-          fechaVencimiento: orden.fecha_vencimiento,
-        }))
-      );
+      // const medicamentosData = dataPANA.flatMap((orden: any) =>
+      //   orden.medicamentos.map((med: any, idx: number) => ({
+      //     id: `${orden.no_autorizacion}-${idx}`,
+      //     nombre: med.nombre_medicamento,
+      //     cantidad: med.cant_presentacion,
+      //     dosificacion: med.dosificacion,
+      //     presentacion: med.presentacion,
+      //     fechaVencimiento: orden.fecha_vencimiento,
+      //   }))
+      // );
 
-      setMedicamentos(medicamentosData);
+      setMedicamentos(data);
     } catch (error) {
       Toast.show({
         type: "error",
@@ -244,10 +243,10 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                       <Text style={styles.label}>Dosis: </Text>
                       {item.dosificacion ?? "No disponible"}
                     </Text>
-                    {item.indicaciones && item.indicaciones !== "NINGUNO" && (
+                    {item.presentacion && item.presentacion !== "NINGUNO" && (
                       <Text style={styles.text}>
-                        <Text style={styles.label}>Indicaciones: </Text>
-                        {capitalizeSentence(item.indicaciones)}
+                        <Text style={styles.label}>Presentación: </Text>
+                        {capitalizeSentence(item.presentacion)}
                       </Text>
                     )}
                   </View>

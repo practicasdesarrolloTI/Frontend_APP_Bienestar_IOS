@@ -46,7 +46,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const handleRegister = async () => {
     const paciente = await getPatientByDocument(documentNumber);
     const docPaciente = paciente?.documento || null;
-    const docType = paciente?.tipo_documento_abreviado || null;
+    const docType = paciente?.tipo_documento_abreviado || null ;
 
     if (!documentType) {
       Toast.show({
@@ -105,6 +105,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
+    
     if (documentType !== docType) {
       Toast.show({
         type: "error",

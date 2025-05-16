@@ -24,6 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
+import Toast from "react-native-toast-message";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;
 
@@ -51,6 +52,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
 
         const data = await fetchResults(tipo, doc);
         setResultados(data);
+        console.log("Resultados cargados:", data);
       } catch (error) {
         console.error("Error al cargar resultados:", error);
         Alert.alert(
