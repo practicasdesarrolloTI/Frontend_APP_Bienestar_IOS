@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     elevation: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    height: 120,
+    height: 150,
   },
   description: {
     fontSize: 16,

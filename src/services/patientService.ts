@@ -23,14 +23,14 @@ export type PacienteRegistro = {
   _id: string;
   documentType: string;
   document: number;
-  email?: string;
+  mail?: string;
   password: string;
   createdAt: string;
   updatedAt: string;
 };
 
 
-export const getPatientByDocument = async (documento: string): Promise<PacienteBackend | null> => {
+export const getPatientByDocument = async ( documento: string): Promise<PacienteBackend | null> => {
   try {
     const response = await axios.get<PacienteBackend>(`${API_URL}/paciente/${documento}`);
     return response.data;
@@ -39,9 +39,20 @@ export const getPatientByDocument = async (documento: string): Promise<PacienteB
   }
 };
 
-export const checkPatient = async (document: number): Promise<PacienteRegistro | null> => {
+export const checkPatient = async (documentType: string, document: number): Promise<PacienteRegistro | null> => {
   try {
-    const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/${document}`);
+    const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/${documentType}/${document}`);
+    return response.data;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const checkPatientByMail = async (mail: string): Promise<any> => {
+  try {
+    const response = await axios.post(`${API_URL}/patient/mail`, {
+      mail: mail,
+    });
     return response.data;
   } catch (error) {
     return null;

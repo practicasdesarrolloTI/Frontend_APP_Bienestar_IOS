@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 12,
     overflow: "hidden",
+    height: 150,
   },
   shimmerWrapper: {
     ...StyleSheet.absoluteFillObject,

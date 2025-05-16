@@ -71,12 +71,28 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
+  
+    const formatName = (text: string): string => {
+    const clear = text.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
+    return clear
+      .toLowerCase()
+      .split(" ")
+      .map((word) =>
+        word.length > 0 ? word.charAt(0).toUpperCase() + word.slice(1) : ""
+      )
+      .join(" ");
+  };
+
   useEffect(() => {
     const loadPatient = async () => {
       try {
         const storedDoc = await AsyncStorage.getItem("documento");
-        if (!storedDoc) {
-          Alert.alert("Error", "No se encontró el documento del paciente.");
+        const storedDocType = await AsyncStorage.getItem("tipoDocumento");
+        if (!storedDoc || !storedDocType) {
+          Alert.alert(
+            "Error",
+            "No se encontró el documento o el tipo de documento del paciente."
+          );
           return;
         }
         const dataregistro = await getPatientAPP(Number(storedDoc));
@@ -124,61 +140,45 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
             <MaterialIcons
               name="account-circle"
               size={100}
-              color={colors.primary}
+              color={colors.preto}
             />
           </View>
 
           {/* Información del Paciente */}
           <View style={styles.infoContainer}>
             <View>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Nombre: </Text>{" "}
-              </Text>
+              <Text style={styles.label}>Nombre:</Text>
               <Text style={styles.labelinfo}>
-                {paciente?.primer_nombre} {paciente?.segundo_nombre}{" "}
-                {paciente?.primer_apellido} {paciente?.segundo_apellido}
+                {formatName(paciente?.primer_nombre ?? "")} {formatName(paciente?.segundo_nombre ?? "")}
+                {formatName(paciente?.primer_apellido ?? "")} {formatName(paciente?.segundo_apellido ?? "")}
               </Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Documento: </Text>
-              </Text>
+              <Text style={styles.label}>Documento:</Text>
               <Text style={styles.labelinfo}>
                 {paciente?.tipo_documento_abreviado} {paciente?.documento}
               </Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Sexo: </Text>
-              </Text>
+              <Text style={styles.label}>Sexo:</Text>
               <Text style={styles.labelinfo}>
                 {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
               </Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Fecha de Nacimiento: </Text>
-              </Text>
+              <Text style={styles.label}>Fecha de Nacimiento:</Text>
               <Text style={styles.labelinfo}>{paciente?.fecha_nacimiento}</Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Edad: </Text>
-              </Text>
+              <Text style={styles.label}>Edad:</Text>
               <Text style={styles.labelinfo}>
                 {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"}{" "}
                 {"años"}
               </Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Correo: </Text>
-              </Text>
+              <Text style={styles.label}>Correo:</Text>
               <Text style={styles.labelinfo}>
                 {paciente?.correo || "No tiene correo registrado"}
               </Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>Teléfono: </Text>
-              </Text>
+              <Text style={styles.label}>Teléfono:</Text>
               <Text style={styles.labelinfo}>
                 {paciente?.celular ||
                   paciente?.telefono ||
                   "No tiene número teléfonico registrado"}
               </Text>
-              <Text style={styles.label}>
-                <Text style={styles.bold}>EPS:</Text>
-              </Text>
-              <Text style={styles.labelinfo}>{paciente?.eps}</Text>
+              <Text style={styles.label}>EPS:</Text>
+              <Text style={styles.labelinfo}>{formatName(paciente?.eps ?? "")}</Text>
             </View>
           </View>
 
@@ -227,19 +227,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     marginBottom: 1,
-
-    color: "#333",
-    fontFamily: fonts.subtitle,
+    color: colors.lightGray,
+    fontFamily: fonts.body,
   },
   labelinfo: {
     fontSize: 18,
     marginBottom: 25,
     color: "#333",
-    fontFamily: fonts.subtitle,
-  },
-  bold: {
-    fontWeight: "bold",
-    color: colors.primary,
+    fontFamily: fonts.title,
   },
 });
 

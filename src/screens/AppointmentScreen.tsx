@@ -172,6 +172,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
             onChangeInicio={setFechaInicio}
             onChangeFin={setFechaFin}
           />
+          
           {/* Lista de Citas */}
           {citasFiltradasPorFecha.length === 0 ? (
             <EmptyState message="No tienes citas agendadas por el momento." />

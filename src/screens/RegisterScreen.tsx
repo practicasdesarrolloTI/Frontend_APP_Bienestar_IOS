@@ -18,13 +18,12 @@ import {
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { checkPatient, getPatientByDocument } from "../services/patientService";
+import { checkPatient, checkPatientByMail, getPatientByDocument } from "../services/patientService";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
 import DocumentPicker from "../components/DocumentPicker";
 import Toast from "react-native-toast-message";
 import { sendRecoveryCode } from "../services/authService";
-import PasswordRecoveryModal from "../components/PasswordRecoveryModal";
 import CustomHeader from "../components/CustomHeader";
 
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
@@ -34,20 +33,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [documentType, setDocumentType] = useState<DocumentType | "">("");
   const [documentNumber, setDocumentNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [maskedEmail, setMaskedEmail] = useState("");
-  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState("");
 
   const handleRegister = async () => {
     const paciente = await getPatientByDocument(documentNumber);
     const docPaciente = paciente?.documento || null;
-    const docType = paciente?.tipo_documento_abreviado || null ;
-
+    const docType = paciente?.tipo_documento_abreviado || null;
     if (!documentType) {
       Toast.show({
         type: "error",
@@ -105,7 +99,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
-    
+
     if (documentType !== docType) {
       Toast.show({
         type: "error",
@@ -118,7 +112,18 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
-      const patientExits = await checkPatient(Number(documentNumber));
+      const patientExits = await checkPatient(documentType, Number(documentNumber));
+      const patientByMail = await checkPatientByMail(email);
+      console.log("patientExits", email);
+      console.log("patientByMail", patientByMail);
+      if (patientByMail) {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Correo ya registrado",
+        });
+        return;
+      }
       if (patientExits) {
         Toast.show({
           type: "error",
@@ -129,13 +134,15 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       } else {
         // const correo = "christiandj456@outlook.com"; // este debería venir del paciente
         // setEmail(correo);
+
         const result = await sendRecoveryCode(Number(docPaciente), email);
 
         if (result.success) {
-          const [user, domain] = (email || "").split("@");
-          const masked = `${user.substring(0, 4)}*****@${domain}`;
-          setMaskedEmail(masked);
-          setShowRecoveryModal(true);
+          navigation.navigate("VerifyCode", {
+            document: documentNumber,
+            documentType: documentType as DocumentType,
+            mail: email,
+          });
         } else {
           if (result.retryAfterMinutes) {
             Toast.show({
@@ -177,11 +184,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       >
         {/* Header transparente */}
         <CustomHeader
-          title=""
           showBack={true}
           transparent={true}
-          rightComponent={""}
+          showProfileIcon={false}
+          onLogout={() => {}}
         />
+
         <View style={styles.subheaderContainer}>
           <Image
             source={require("../../assets/logo_zentria_sinfondo.png")}
@@ -268,26 +276,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.subtitle}> Inicia sesión</Text>
               </Text>
             </TouchableOpacity>
-            <PasswordRecoveryModal
-              visible={showRecoveryModal}
-              maskedEmail={maskedEmail}
-              onClose={() => {
-                setShowRecoveryModal(false);
-                if (documentType) {
-                  navigation.navigate("VerifyCode", {
-                    document: documentNumber,
-                    documentType: documentType as DocumentType,
-                    mail: email,
-                  });
-                } else {
-                  Toast.show({
-                    type: "error",
-                    text1: "Error",
-                    text2: "Seleccione un tipo de documento válido.",
-                  });
-                }
-              }}
-            />
+            
           </ScrollView>
         </Pressable>
       </ImageBackground>
@@ -299,16 +288,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
   },
   subtitle: {
     fontSize: 16,

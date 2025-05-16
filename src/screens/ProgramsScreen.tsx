@@ -21,6 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/LogOutModal";
 import Toast from "react-native-toast-message";
+import EmptyState from "../components/EmptyState";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusProgramas">;
 
@@ -73,8 +74,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 
         setProgramas(formateados);
       } catch (err) {
-        console.error(err);
-        Alert.alert("Error", "No se pudieron cargar los programas");
       } finally {
         setLoading(false);
       }
@@ -136,7 +135,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-  {/* Header transparente */}
+        {/* Header transparente */}
         <CustomHeader
           title="Programas"
           showBack
@@ -147,66 +146,67 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 
         <View style={styles.container}>
           {/* Lista de Programas */}
-          <FlatList
-            data={programasOrdenados}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={styles.cardContent}>
-                  <View>
-                    {/* <Text style={styles.text}>
-                <MaterialIcons name="calendar-today" size={16} /> Fecha de
-                inscripción: {item.fechaInscripcion}
-              </Text> */}
-                  </View>
-                  {/* Columna izquierda: Fecha */}
-                  <View style={styles.leftColumn}>
-                    {item.fecha_cita &&
-                    !isNaN(new Date(item.fecha_cita).getTime()) ? (
-                      <>
-                        <Text style={styles.dateDay}>
-                          {new Date(item.fecha_cita).getDate()}
+          {programasOrdenados.length === 0 ? (
+            <EmptyState message="No estás inscrito en ningún programa en este momento." />
+          ) : (
+            <FlatList
+              data={programasOrdenados}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.card}>
+                  <View style={styles.cardContent}>
+                    {/* Columna izquierda: Fecha */}
+                    <View style={styles.leftColumn}>
+                      {item.fecha_cita &&
+                      !isNaN(new Date(item.fecha_cita).getTime()) ? (
+                        <>
+                          <Text style={styles.dateDay}>
+                            {new Date(item.fecha_cita).getDate()}
+                          </Text>
+                          <Text style={styles.dateMonth}>
+                            {new Date(item.fecha_cita).toLocaleDateString(
+                              "es-CO",
+                              {
+                                month: "long",
+                              }
+                            )}
+                          </Text>
+                          <Text style={styles.dateYear}>
+                            {new Date(item.fecha_cita).getFullYear()}
+                          </Text>
+                        </>
+                      ) : (
+                        <Text
+                          style={[styles.dateMonth, { textAlign: "center" }]}
+                        >
+                          Sin cita{"\n"}próxima
                         </Text>
-                        <Text style={styles.dateMonth}>
-                          {new Date(item.fecha_cita).toLocaleDateString(
-                            "es-CO",
-                            {
-                              month: "long",
-                            }
-                          )}
-                        </Text>
-                        <Text style={styles.dateYear}>
-                          {new Date(item.fecha_cita).getFullYear()}
-                        </Text>
-                      </>
-                    ) : (
-                      <Text style={[styles.dateMonth, { textAlign: "center" }]}>
-                        Sin cita{"\n"}próxima
-                      </Text>
-                    )}
-                  </View>
+                      )}
+                    </View>
 
-                  {/* Columna derecha: Detalles */}
-                  <View style={styles.rightColumn}>
-                    {item.hora && item.hora.trim() !== "" && (
+                    {/* Columna derecha: Detalles */}
+                    <View style={styles.rightColumn}>
+                      {item.hora && item.hora.trim() !== "" && (
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Hora: </Text>
+                          {formatHora(item.hora)}
+                        </Text>
+                      )}
                       <Text style={styles.text}>
-                        <Text style={styles.label}>Hora: </Text>
-                        {formatHora(item.hora)}
+                        <Text style={styles.label}>Programa: </Text>
+                        {item.programa}
                       </Text>
-                    )}
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Programa: </Text>
-                      {item.programa}
-                    </Text>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Médico: </Text>
-                      {capitalizeName(item.medico)}
-                    </Text>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Médico: </Text>
+                        {capitalizeName(item.medico)}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            )}
-          />
+              )}
+            />
+          )}
+
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
             visible={modalVisible}
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  
+
   title: {
     fontSize: 24,
     fontFamily: fonts.title,

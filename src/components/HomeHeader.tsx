@@ -26,6 +26,7 @@ type RootStackParamList = {
 const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
   const saludo = sexo === "F" ? "¡Bienvenida!" : "¡Bienvenido!";
   const [menuVisible, setMenuVisible] = useState(false);
+  
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const capitalize = (text: string) =>

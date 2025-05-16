@@ -63,7 +63,7 @@ const VerifyCodeScreen = ({
     value,
     setValue,
   });
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(120);
 
   useEffect(() => {
     if (timer === 0) return;
@@ -119,7 +119,7 @@ const VerifyCodeScreen = ({
     try {
       await sendRecoveryCode(Number(document), mail);
       setResendAttempts((prev) => prev + 1);
-      setTimer(60);
+      setTimer(120);
       console.log("Resend code attempts:", resendAttempts, " of ", maxAttempts);
     } catch (error) {
       Toast.show({
@@ -144,12 +144,12 @@ const VerifyCodeScreen = ({
       >
         {/* Header transparente */}
         <CustomHeader
-          title=""
           showBack={true}
           transparent={true}
-          rightComponent={""}
+          showProfileIcon={false}
+          onLogout={() => {}}
         />
-
+        
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
           <ScrollView
             contentContainerStyle={styles.container}
@@ -319,7 +319,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 16,
     fontFamily: fonts.title,
-    
   },
 });
 

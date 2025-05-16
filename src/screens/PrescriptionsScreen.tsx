@@ -25,8 +25,7 @@ import { getPatientByDocument } from "../services/patientService";
 import Toast from "react-native-toast-message";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
-import LogOutModal
- from "../components/LogOutModal";
+import LogOutModal from "../components/LogOutModal";
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
 
 type Paciente = {
@@ -76,7 +75,6 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
-
   const loadData = async () => {
     try {
       const tipo = await AsyncStorage.getItem("tipoDocumento");
@@ -103,12 +101,12 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
 
       setMedicamentos(data);
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "No se pudo cargar la información de los medicamentos.",
-        visibilityTime: 4000,
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: "Error",
+      //   text2: "No se pudo cargar la información de los medicamentos.",
+      //   visibilityTime: 4000,
+      // });
       return;
     }
   };
@@ -116,7 +114,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const loadPatient = async () => {
     try {
       const storedDoc = await AsyncStorage.getItem("documento");
-      if (!storedDoc) {
+      if (!storedDoc ) {
         Toast.show({
           type: "error",
           text1: "Error",
@@ -125,7 +123,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         return;
       }
 
-      const data = await getPatientByDocument(storedDoc);
+      const data = await getPatientByDocument( storedDoc);
       setPaciente(data as unknown as Paciente);
     } catch (error) {
       Toast.show({
@@ -161,6 +159,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
     loadEverything();
   }, []);
 
+  /* Función para formatear el nombre del medicamento */
   const formatName = (text: string): string => {
     const clear = text.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
     return clear
@@ -188,14 +187,13 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         translucent
         backgroundColor="transparent"
       />
-      
+
       <ImageBackground
         source={require("../../assets/fondo_preuba_app2.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-
-       {/* Header transparente */}
+        {/* Header transparente */}
         <CustomHeader
           title="Medicamentos"
           showBack

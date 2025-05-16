@@ -74,6 +74,7 @@ export const loginUser = async (documentType: DocumentType, document: number, pa
       type: "error",
       text1: "Error",
       text2: error.message,
+      position: "bottom",
     });
     return { success: false, message: error.message };
   }
@@ -87,6 +88,7 @@ export const logoutUser = async () => {
       type: "success",
       text1: "Sesión cerrada",
       text2: "Has cerrado sesión correctamente.",
+      position: "bottom",
     });
   } catch (error) {
     console.error("Error al eliminar el token:", error);

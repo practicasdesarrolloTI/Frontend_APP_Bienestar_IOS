@@ -120,11 +120,12 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
       >
         {/* Header transparente */}
         <CustomHeader
-          title=""
           showBack={true}
           transparent={true}
-          rightComponent={""}
+          showProfileIcon={false}
+          onLogout={() => {}}
         />
+
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
           <ScrollView
             contentContainerStyle={styles.container}

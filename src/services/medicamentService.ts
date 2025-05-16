@@ -76,7 +76,7 @@ export async function fetchMedicamentos(tipo: string, documento: string) {
     throw new Error('La respuesta no fue ni un arreglo ni un mensaje esperado');
 
   } catch (error) {
-    console.error("Error al obtener resultados:", error);
+    // console.error("Error al obtener resultados:", error);
     throw error;
   }
 }

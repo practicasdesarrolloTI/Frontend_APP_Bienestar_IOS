@@ -66,7 +66,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
           <Text
             style={[
               styles.title,
-              { color: transparent ? colors.primary : "white" },
+              { color: transparent ? colors.preto : "white" },
             ]}
           >
             {title}
@@ -82,8 +82,8 @@ const CustomHeader: React.FC<HeaderProps> = ({
             onPress={() => setMenuVisible(!menuVisible)}
           >
             <MaterialIcons
-              name="person"
-              size={24}
+              name="person-outline"
+              size={28}
               color={transparent ? colors.preto : "white"}
             />
           </TouchableOpacity>
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   profileIcon: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
     borderRadius: 25,
     backgroundColor: colors.white,
     justifyContent: "center",

@@ -6,22 +6,14 @@ import {
   Animated,
   TouchableOpacity,
 } from 'react-native';
-import { CheckCircle, AlertTriangle, Info } from "lucide-react-native";
-import Toast from 'react-native-toast-message';
 import Colors from '../themes/colors';
 
 interface ToastProps {
   type: 'success' | 'error' | 'info' | 'warning';
   text1: string;
   text2?: string;
-}
 
-const iconMap = {
-  success: <CheckCircle color="#00B094" size={28} />,
-  error: <AlertTriangle color="#FF5F3F" size={28} />,
-  info: <Info color="#80006A" size={28} />,
-  warning: <AlertTriangle color="#FFF280" size={28} />,
-};
+}
 
 const bgColorMap = {
   success: Colors.secondary,
@@ -39,7 +31,7 @@ const textColorMap = {
 
 const CustomToast = ({ type, text1, text2}: ToastProps) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(-30)).current;
+const slideAnim = useRef(new Animated.Value(40)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -68,7 +60,7 @@ const CustomToast = ({ type, text1, text2}: ToastProps) => {
 
       {/* <View style={styles.icon}>{iconMap[type]}</View> */}
       <View style={styles.textWrapper}>
-        <Text style={[styles.title, { color: textColorMap[type] }]}>{text1}</Text>
+        {/* <Text style={[styles.title, { color: textColorMap[type] }]}>{text1}</Text> */}
         {text2 && <Text style={[styles.message, { color: textColorMap[type] }]}>{text2}</Text>}
         <TouchableOpacity
           activeOpacity={0.7}
@@ -85,9 +77,9 @@ const styles = StyleSheet.create({
   toastContainer: {
     flexDirection: 'row',
     padding: 16,
-    marginHorizontal: 50,
+    marginHorizontal: 20,
     borderRadius: 20,
-    marginTop: 55,
+    // marginTop: 55,
     alignItems: 'center',
     overflow: 'hidden',
     elevation: 4,
@@ -109,6 +101,8 @@ const styles = StyleSheet.create({
     fontFamily: 'DM-Sans',
     fontSize: 16,
     marginTop: 4,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   button: {
     marginTop: 8,

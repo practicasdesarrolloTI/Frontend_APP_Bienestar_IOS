@@ -42,12 +42,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+
+  
   const handleLogin = async () => {
     if (!document || !password || !documentType) {
       Toast.show({
         type: "error",
         text1: "Error",
         text2: "Por favor completa todos los campos.",
+        position: "bottom",
       });
       return;
     }
@@ -56,6 +59,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         type: "error",
         text1: "Términos no aceptados",
         text2: "Debes aceptar los términos y condiciones para continuar.",
+        position: "bottom",
       });
       return;
     }
@@ -88,18 +92,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               type: "error",
               text1: "Acceso bloqueado",
               text2: "Has superado el límite de intentos.",
+              position: "bottom",
               visibilityTime: 3000,
             });
           }
           return newCount;
         });
       } else {
-        Toast.show({
-          type: "success",
-          text1: "¡Inicio de Sesión Exitoso!",
-          text2: "Bienvenido!",
-          visibilityTime: 1300,
-        });
         setTimeout(() => navigation.replace("Home"));
       }
     } catch (error) {
@@ -107,6 +106,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         type: "error",
         text1: "Error",
         text2: "Ocurrió un error al iniciar sesión.",
+        position: "bottom",
         visibilityTime: 3000,
       });
     } finally {
@@ -128,11 +128,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       >
         {/* Header transparente */}
         <CustomHeader
-          title=""
           showBack={true}
           transparent={true}
-          rightComponent={""}
+          showProfileIcon={false}
+          onLogout={() => {}}
         />
+
         <View style={styles.subheaderContainer}>
           <Image
             source={require("../../assets/logo_zentria_sinfondo.png")}
@@ -200,7 +201,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               <MaterialIcons
                 name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
                 size={26}
-                color={colors.primary}
+                color={colors.preto}
               />
               <Text style={styles.checkboxLabel}>
                 Acepto Términos y Condiciones
@@ -223,7 +224,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             <TouchableOpacity onPress={() => navigation.navigate("Register")}>
               <Text style={styles.registerText}>
                 ¿No tienes cuenta?{" "}
-                <Text style={styles.checkboxLabel}>Regístrate</Text>
+                <Text style={styles.subtitle}>Regístrate</Text>
               </Text>
             </TouchableOpacity>
 
@@ -322,7 +323,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     fontFamily: fonts.subtitle,
-    color: colors.primary,
+    color: colors.preto,
   },
   passwordContainer: {
     width: "100%",
