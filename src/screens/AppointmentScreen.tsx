@@ -45,13 +45,13 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   /** Función para cerrar sesión */
- const handleLogout = async () => {
+  const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("documento");
     Toast.show({
       type: "success",
-      text1: "Sesión cerrada",
       text2: "Has cerrado sesión correctamente.",
+      position: "bottom",
     });
     navigation.navigate("Login");
   };
@@ -70,18 +70,18 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
           Toast.show({
             type: "info",
             text1: "No tienes citas agendadas por el momento.",
+            position: "bottom",
           });
         }
         const citasFormateadas = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
-          hora: item.hora_cita?.slice(0, 8) || "",
+          hora: item.fecha_cita?.slice(11, 16) || "",
           especialidad: item.especialidad || "",
           programa: item.programa || "—",
           medico: item.nombre_medico || "",
           estado: item.estado || "",
         }));
-
         setCitas(citasFormateadas);
       } catch (error) {
       } finally {
@@ -156,7 +156,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-         {/* Header transparente */}
+        {/* Header transparente */}
         <CustomHeader
           title="Citas"
           showBack
@@ -172,7 +172,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
             onChangeInicio={setFechaInicio}
             onChangeFin={setFechaFin}
           />
-          
+
           {/* Lista de Citas */}
           {citasFiltradasPorFecha.length === 0 ? (
             <EmptyState message="No tienes citas agendadas por el momento." />
@@ -183,6 +183,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
               renderItem={({ item }) => (
                 <View style={styles.card}>
                   <View style={styles.cardContent}>
+
                     {/* Columna izquierda: Fecha */}
                     <View style={styles.leftColumn}>
                       <Text style={styles.dateDay}>
@@ -197,6 +198,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
                         {new Date(item.fecha).getFullYear()}
                       </Text>
                     </View>
+
                     {/* Columna derecha: Detalles */}
                     <View style={styles.rightColumn}>
                       <Text style={styles.text}>
@@ -217,6 +219,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
               )}
             />
           )}
+
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
             visible={modalVisible}

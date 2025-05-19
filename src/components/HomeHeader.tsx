@@ -26,7 +26,7 @@ type RootStackParamList = {
 const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
   const saludo = sexo === "F" ? "¡Bienvenida!" : "¡Bienvenido!";
   const [menuVisible, setMenuVisible] = useState(false);
-  
+
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const capitalize = (text: string) =>
@@ -50,7 +50,11 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
             onPress={() => setMenuVisible(!menuVisible)}
             activeOpacity={0.8}
           >
-            <MaterialIcons name="person" size={20} color={colors.preto} />
+            <MaterialIcons
+              name="person-outline"
+              size={26}
+              color={colors.preto}
+            />
           </TouchableOpacity>
 
           <Modal
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
   header: {
     height: 100,
     paddingTop: Platform.OS === "android" ? 15 : 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     justifyContent: "flex-end",
     backgroundColor: "transparent",
   },
@@ -107,21 +111,20 @@ const styles = StyleSheet.create({
   },
   left: {
     flex: 1,
-    paddingHorizontal: 10,
   },
   saludo: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: fonts.body,
     color: colors.preto,
   },
   nombre: {
-    fontSize: 22,
+    fontSize: 18,
     fontFamily: fonts.title,
     color: colors.preto,
   },
   profileIcon: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
     borderRadius: 25,
     backgroundColor: colors.white,
     justifyContent: "center",

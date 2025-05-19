@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
   Alert,
   SafeAreaView,
@@ -35,7 +33,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import SkeletonSurveyCard from "../components/SurveySkeleton";
 import { getPatientIndicators } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
-import LogOutModal from "../components/LogOutModal";  
+import LogOutModal from "../components/LogOutModal";
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -89,14 +87,14 @@ const SelfCareScreen: React.FC = () => {
   >({});
 
   const [modalVisible, setModalVisible] = useState(false);
-/** Función para cerrar sesión */
+  /** Función para cerrar sesión */
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("documento");
     Toast.show({
       type: "success",
-      text1: "Sesión cerrada",
       text2: "Has cerrado sesión correctamente.",
+      position: "bottom",
     });
     navigation.navigate("Login");
   };
@@ -114,7 +112,6 @@ const SelfCareScreen: React.FC = () => {
 
       setResultados(data as ResultadoEncuesta[]);
     } catch (error) {
-      console.log("Error al obtener resultados previos:", error);
     } finally {
       setLoading(false);
     }
@@ -126,7 +123,11 @@ const SelfCareScreen: React.FC = () => {
       const storedDoc = await AsyncStorage.getItem("documento");
       const storedTipo = await AsyncStorage.getItem("tipoDocumento");
       if (!storedDoc || !storedTipo) {
-        Alert.alert("Error", "No se encontró el documento del paciente.");
+        Toast.show({
+          type: "error",
+          text2: "No se encontró el documento del paciente.",
+          position: "bottom",
+        });
         return;
       }
 
@@ -136,7 +137,11 @@ const SelfCareScreen: React.FC = () => {
       const indicadoresData = await getPatientIndicators(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
     } catch (error) {
-      Alert.alert("Error", "Error al obtener información del paciente.");
+      Toast.show({
+        type: "error",
+        text2: "Error al obtener información del paciente.",
+        position: "bottom",
+      });
     }
   };
 
@@ -229,7 +234,6 @@ const SelfCareScreen: React.FC = () => {
     const edad = calcularEdad(Paciente.fecha_nacimiento);
     const sexo = Paciente.sexo === "M" ? "Masculino" : "Femenino";
 
-    console.log("Pregunta antes de survey screen", survey.preguntas);
     navigation.navigate("SurveyScreen", {
       surveyId: survey.id,
       preguntas: survey.preguntas,
@@ -278,7 +282,7 @@ const SelfCareScreen: React.FC = () => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-         {/* Header transparente */}
+        {/* Header transparente */}
         <CustomHeader
           title="Autocuidado"
           showBack
@@ -299,11 +303,11 @@ const SelfCareScreen: React.FC = () => {
           </View>
         )}
         {/* Modal de Cerrar Sesión */}
-          <LogOutModal
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
+        <LogOutModal
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={handleLogout}
+        />
       </ImageBackground>
     </SafeAreaView>
   );
@@ -323,30 +327,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 30,
     paddingVertical: 10,
-  },
-  card: {
-    backgroundColor: colors.white,
-    padding: 20,
-    borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: colors.preto,
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  description: {
-    fontSize: 16,
-    color: "#555",
-    marginBottom: 10,
-    fontFamily: fonts.body,
-  },
-  label: {
-    fontSize: 20,
-    marginBottom: 5,
-    color: colors.primary,
-    fontFamily: fonts.title,
   },
 });
 

@@ -47,22 +47,19 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const imc = peso && estatura ? peso / (estatura * estatura) : NaN;
 
   // Filtrar preguntas omitidas
-
   let finalPreguntas = preguntas.filter((q) => {
-    if (typeof q === "string")
-      return false;
-    
-      
-  const texto = q.pregunta.toLowerCase();
-  const esAltura = /\b(estatura|altura)\b/.test(texto);
-  const esIMC = /\bimc\b/.test(texto);
-  const esEdad = /\bedad\b/.test(texto);
-  const esPeso = /\bpeso\b/.test(texto);
-  const esSistolica = /\bsistólica\b/.test(texto);
-  const esDiastolica = /\bdiastólica\b/.test(texto);
-  const esColesterol = /\bcolesterol\b/.test(texto);
-  const esHDL = /\bhdl\b/.test(texto);
-  const esPerimetro = /\b(circunferencia|perímetro abdominal)\b/.test(texto);
+    if (typeof q === "string") return false;
+
+    const texto = q.pregunta.toLowerCase();
+    const esAltura = /\b(estatura|altura)\b/.test(texto);
+    const esIMC = /\bimc\b/.test(texto);
+    const esEdad = /\bedad\b/.test(texto);
+    const esPeso = /\bpeso\b/.test(texto);
+    const esSistolica = /\bsistólica\b/.test(texto);
+    const esDiastolica = /\bdiastólica\b/.test(texto);
+    const esColesterol = /\bcolesterol\b/.test(texto);
+    const esHDL = /\bhdl\b/.test(texto);
+    const esPerimetro = /\b(circunferencia|perímetro abdominal)\b/.test(texto);
 
     if (esAltura && indicadores?.Altura) return false;
     if (esEdad && edad) return false;

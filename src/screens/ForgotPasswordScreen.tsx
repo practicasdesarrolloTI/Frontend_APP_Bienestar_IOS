@@ -15,42 +15,55 @@ import {
   ImageBackground,
 } from "react-native";
 import { sendRecoveryCode } from "../services/authService";
-import { getPatientByDocument } from "../services/patientService"; // ya lo tienes
+import { checkPatient } from "../services/patientService"; // ya lo tienes
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
-import { MaterialIcons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import DocumentPicker from "../components/DocumentPicker";
-import PasswordRecoveryModal from "../components/PasswordRecoveryModal";
 import CustomHeader from "../components/CustomHeader";
 
 type ForgotPasswordScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "ForgotPassword"
 >;
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
+type DocumentType =
+  | "RC"
+  | "TI"
+  | "CC"
+  | "CE"
+  | "PAS"
+  | "NIT"
+  | "CD"
+  | "SC"
+  | "MSI"
+  | "ASI"
+  | "PEP"
+  | "PTP";
 
 const ForgotPasswordScreen = ({
   navigation,
 }: {
   navigation: ForgotPasswordScreenNavigationProp;
 }) => {
-  const [documentType, setDocumentType] = useState<DocumentType | "">("");
+  const [documentType, setDocumentType] = useState<DocumentType | null>(null);
   const [document, setDocument] = useState("");
   const [email, setEmail] = useState("");
-  const [maskedEmail, setMaskedEmail] = useState("");
-  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendCode = async () => {
-    const paciente = await getPatientByDocument(document);
-    const docPaciente = paciente?.documento || null;
-    const docType = paciente?.tipo_documento_abreviado || null;
-    const correoPaciente = paciente?.correo;
+    const paciente = await checkPatient(
+      documentType as DocumentType,
+      Number(document)
+    );
+    const docPaciente = paciente?.document || null;
+    const docType = paciente?.documentType || null;
+    const correoPaciente = paciente?.mail;
 
-    if (!documentType) {
+    console.log("paciente", paciente);
+
+    if (documentType === null) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -67,7 +80,7 @@ const ForgotPasswordScreen = ({
       });
       return;
     }
-    if (!/^\d+$/.test(docPaciente || "")) {
+    if (!/^\d+$/.test(String(docPaciente ?? ""))) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -87,14 +100,17 @@ const ForgotPasswordScreen = ({
 
     try {
       setIsLoading(true);
-      const correo = "christiandj456@outlook.com"; // este debería venir del paciente
-      setEmail(correo);
-      const result = await sendRecoveryCode(Number(document), correo);
+      setEmail(correoPaciente || "");
+      const result = await sendRecoveryCode(
+        Number(document),
+        correoPaciente || ""
+      );
       if (result.success) {
-        const [user, domain] = (correoPaciente || "").split("@");
-        const masked = `${user.substring(0, 4)}*****@${domain}`;
-        setMaskedEmail(masked);
-        setShowRecoveryModal(true);
+        navigation.navigate("VerifyCode", {
+          document: document,
+          documentType: documentType as DocumentType,
+          mail: email,
+        });
       } else {
         if (result.retryAfterMinutes) {
           Toast.show({
@@ -174,26 +190,11 @@ const ForgotPasswordScreen = ({
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>ENVIAR CÓDIGO</Text>
-              )}{" "}
+                <Text style={styles.buttonText}>Enviar Código</Text>
+              )}
             </TouchableOpacity>
           </ScrollView>
         </Pressable>
-        {/* Modal de recuperación de contraseña */}
-        <PasswordRecoveryModal
-          visible={showRecoveryModal}
-          maskedEmail={maskedEmail}
-          onClose={() => {
-            if (documentType) {
-              setShowRecoveryModal(false);
-              navigation.navigate("VerifyCode", {
-                document,
-                documentType: documentType as DocumentType,
-                mail: email,
-              });
-            }
-          }}
-        />
       </ImageBackground>
     </SafeAreaView>
   );

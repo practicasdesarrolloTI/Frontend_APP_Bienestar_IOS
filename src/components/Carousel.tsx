@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { View, Image, StyleSheet, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import colors from "../themes/colors";
 
 const { width } = Dimensions.get("window");
 
-  const images = [
-    require("../../assets/imagen_1_banner.png"),
-    require("../../assets/imagen_2_banner.png"),
-    require("../../assets/imagen_3_banner.png"),
-  ];
-
+const images = [
+  require("../../assets/imagen_1_banner.png"),
+  require("../../assets/imagen_2_banner.png"),
+  require("../../assets/imagen_3_banner.png"),
+];
 
 const DOT_SIZE = 8;
 
@@ -20,13 +20,13 @@ const ImageCarousel: React.FC = () => {
     <View style={styles.container}>
       <Carousel
         width={width * 0.85}
-        height={200}
+        height={180}
         data={images}
         autoPlay
         loop
-        scrollAnimationDuration={1000}
-        onSnapToItem={index => setActiveIndex(index)}
-        style={{ borderRadius: 16 }}
+        scrollAnimationDuration={4000}
+        onSnapToItem={(index) => setActiveIndex(index)}
+        style={{ borderRadius: 8 }}
         renderItem={({ item }) => (
           <View style={styles.imageWrapper}>
             <Image source={item} style={styles.image} resizeMode="cover" />
@@ -39,10 +39,7 @@ const ImageCarousel: React.FC = () => {
         {images.map((_, index) => (
           <View
             key={index}
-            style={[
-              styles.dot,
-              activeIndex === index && styles.activeDot,
-            ]}
+            style={[styles.dot, activeIndex === index && styles.activeDot]}
           />
         ))}
       </View>
@@ -56,9 +53,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   imageWrapper: {
-    borderRadius: 16,
+    borderRadius: 8,
     overflow: "hidden",
-    marginHorizontal: 2, // Espaciado entre imágenes
+    marginHorizontal: 1, // Espaciado entre imágenes
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: "100%",
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
   },
   activeDot: {
-    backgroundColor: "#8B008B", // color activo
+    backgroundColor: colors.lightGray, // color activo
   },
 });
 

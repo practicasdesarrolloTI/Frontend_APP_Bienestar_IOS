@@ -62,6 +62,7 @@ export const checkPatientByMail = async (mail: string): Promise<any> => {
 export const getPatientAPP = async (document: number): Promise<PacienteRegistro | null> => {
   try {
     const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/data/${document}`);
+    console.log("response", response);
     return response.data;
   } catch (error) {
     return null;

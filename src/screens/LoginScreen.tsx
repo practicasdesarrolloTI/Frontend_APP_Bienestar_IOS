@@ -27,11 +27,11 @@ import Toast from "react-native-toast-message";
 import { ActivityIndicator } from "react-native";
 import CustomHeader from "../components/CustomHeader";
 
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
+type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS" | "NIT" | "CD" | "SC" | "MSI" | "ASI" | "PEP" | "PTP";
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const [documentType, setDocumentType] = useState<DocumentType | "">("");
+  const [documentType, setDocumentType] = useState<DocumentType | null>(null);
   const [document, setDocument] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
@@ -45,7 +45,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   
   const handleLogin = async () => {
-    if (!document || !password || !documentType) {
+    if (!document || !password || documentType === null) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -71,6 +71,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         text1: "Error",
         text2:
           "La contraseña debe ser alfanumérica y tener entre 4 y 12 caracteres.",
+        position: "bottom",
       });
       setVisible(true);
       return;

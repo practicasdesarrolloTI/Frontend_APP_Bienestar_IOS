@@ -18,7 +18,11 @@ import {
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { checkPatient, checkPatientByMail, getPatientByDocument } from "../services/patientService";
+import {
+  checkPatient,
+  checkPatientByMail,
+  getPatientByDocument,
+} from "../services/patientService";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
 import DocumentPicker from "../components/DocumentPicker";
@@ -26,12 +30,24 @@ import Toast from "react-native-toast-message";
 import { sendRecoveryCode } from "../services/authService";
 import CustomHeader from "../components/CustomHeader";
 
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
+type DocumentType =
+  | "RC"
+  | "TI"
+  | "CC"
+  | "CE"
+  | "PAS"
+  | "NIT"
+  | "CD"
+  | "SC"
+  | "MSI"
+  | "ASI"
+  | "PEP"
+  | "PTP";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
-  const [documentType, setDocumentType] = useState<DocumentType | "">("");
+  const [documentType, setDocumentType] = useState<DocumentType | null>(null);
   const [documentNumber, setDocumentNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -112,10 +128,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
-      const patientExits = await checkPatient(documentType, Number(documentNumber));
+      const patientExits = await checkPatient(
+        documentType,
+        Number(documentNumber)
+      );
       const patientByMail = await checkPatientByMail(email);
-      console.log("patientExits", email);
-      console.log("patientByMail", patientByMail);
+
       if (patientByMail) {
         Toast.show({
           type: "error",
@@ -132,9 +150,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         });
         return;
       } else {
-        // const correo = "christiandj456@outlook.com"; // este debería venir del paciente
-        // setEmail(correo);
-
         const result = await sendRecoveryCode(Number(docPaciente), email);
 
         if (result.success) {
@@ -190,6 +205,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           onLogout={() => {}}
         />
 
+        {/* Subheader */}
         <View style={styles.subheaderContainer}>
           <Image
             source={require("../../assets/logo_zentria_sinfondo.png")}
@@ -276,7 +292,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.subtitle}> Inicia sesión</Text>
               </Text>
             </TouchableOpacity>
-            
           </ScrollView>
         </Pressable>
       </ImageBackground>

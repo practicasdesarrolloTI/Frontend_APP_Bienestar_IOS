@@ -25,7 +25,6 @@ type HeaderProps = {
 
 type RootStackParamList = {
   Informacion: undefined;
-  // add other routes here if needed
 };
 
 const CustomHeader: React.FC<HeaderProps> = ({
@@ -83,7 +82,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
           >
             <MaterialIcons
               name="person-outline"
-              size={28}
+              size={26}
               color={transparent ? colors.preto : "white"}
             />
           </TouchableOpacity>

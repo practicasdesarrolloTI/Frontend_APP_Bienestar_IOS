@@ -2,7 +2,6 @@ import React from "react";
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableOpacity,
   StatusBar,
@@ -33,10 +32,10 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
       >
         {/* Header transparente */}
         <CustomHeader
-          title=""
           showBack={false}
           transparent={true}
-          rightComponent={""}
+          showProfileIcon={false}
+          onLogout={() => {}}
         />
 
         {/* Contenido */}
@@ -48,6 +47,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
             </Text>
           </View>
 
+          {/* Botones de inicio de sesión */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.loginButton}
@@ -56,6 +56,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.loginText}>Iniciar sesión</Text>
             </TouchableOpacity>
 
+            {/* Botón de registro */}
             <TouchableOpacity
               style={styles.registerButton}
               onPress={() => navigation.navigate("Register")}
@@ -92,9 +93,6 @@ const styles = StyleSheet.create({
   body: {
     fontFamily: fonts.subtitle,
   },
-  italic: {
-    fontFamily: fonts.italic,
-  },
   buttonContainer: {
     flex: 1,
     justifyContent: "flex-end",
@@ -125,11 +123,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 20,
     fontFamily: fonts.title,
-  },
-  headerText: {
-    fontSize: 18,
-    color: colors.primary,
-    fontFamily: fonts.subtitle,
   },
 });
 

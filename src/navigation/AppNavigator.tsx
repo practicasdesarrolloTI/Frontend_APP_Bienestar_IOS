@@ -16,9 +16,20 @@ import LandingScreen from "../screens/LandingScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import VerifyCodeScreen from "../screens/VerifyCodeScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
-import CustomHeader from "../components/CustomHeader";
 
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
+type DocumentType =
+  | "RC"
+  | "TI"
+  | "CC"
+  | "CE"
+  | "PAS"
+  | "NIT"
+  | "CD"
+  | "SC"
+  | "MSI"
+  | "ASI"
+  | "PEP"
+  | "PTP";
 
 export type RootStackParamList = {
   Login: undefined;

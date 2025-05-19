@@ -10,15 +10,11 @@ import {
   Keyboard,
   Pressable,
   ScrollView,
-  Image,
   ImageBackground,
 } from "react-native";
 import { verifyRecoveryCode } from "../services/authService";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
-import { MaterialIcons } from "@expo/vector-icons";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
 import { sendRecoveryCode } from "../services/authService";
 import {
   CodeField,
@@ -28,35 +24,24 @@ import {
 } from "react-native-confirmation-code-field";
 import Toast from "react-native-toast-message";
 import CustomHeader from "../components/CustomHeader";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
+
+
+
 
 type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
 
-type RootStackParamList = {
-  VerifyCode: { document: string; documentType: DocumentType; mail: string };
-  ResetPassword: {
-    document: string;
-    documentType: DocumentType;
-    mail: string;
-    value: string;
-  };
-};
 
-type VerifyCodeScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "VerifyCode"
->;
-type VerifyCodeScreenRouteProp = RouteProp<RootStackParamList, "VerifyCode">;
+
+
+type Props = NativeStackScreenProps<RootStackParamList, "VerifyCode">;
 const CELL_COUNT = 6;
 
-const VerifyCodeScreen = ({
-  route,
-  navigation,
-}: {
-  route: VerifyCodeScreenRouteProp;
-  navigation: VerifyCodeScreenNavigationProp;
-}) => {
-  const { document, documentType, mail } = route.params;
 
+const VerifyCodeScreen = ({ route, navigation }: Props) => {
+  const { document, documentType, mail } = route.params;
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({

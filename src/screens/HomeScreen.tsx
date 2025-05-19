@@ -9,7 +9,6 @@ import {
   StatusBar,
   Platform,
   BackHandler,
-  Modal,
   ImageBackground,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,7 +18,8 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { fonts } from "../themes/fonts";
 import { getPatientByDocument } from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
 import HomeHeader from "../components/HomeHeader";
@@ -32,12 +32,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 const menuItems = [
   { id: "1", name: "Información", icon: "dashboard", screen: "Informacion" },
   { id: "2", name: "Citas", icon: "event", screen: "TusCitas" },
-  {
-    id: "3",
-    name: "Programas",
-    icon: "assignment",
-    screen: "TusProgramas",
-  },
+  { id: "3", name: "Programas", icon: "assignment", screen: "TusProgramas" },
   { id: "4", name: "Resultados", icon: "fact-check", screen: "Resultados" },
   { id: "5", name: "Medicamentos", icon: "medication", screen: "Medicamentos" },
   {
@@ -66,6 +61,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     navigation.replace("Login");
   };
 
+  /** Renderizar cada elemento del menú */
   const renderItem = ({ item }: any) => (
     <TouchableOpacity
       style={styles.menuItem}
@@ -85,6 +81,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  /** Manejar el evento de retroceso del hardware */
+  useFocusEffect(
+    React.useCallback(() => {
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        () => {
+          setModalVisible(true);
+          return true;
+        }
+      );
+
+      return () => backHandler.remove();
+    }, [])
+  );
+
   /** Cargar el nombre del paciente desde AsyncStorage */
   useEffect(() => {
     const loadPaciente = async () => {
@@ -93,7 +104,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         if (!documento) return;
         const paciente = await getPatientByDocument(documento);
         if (paciente) {
-          const nombreCompleto = `${paciente.primer_nombre} ${paciente.primer_apellido}`;
+          const nombreCompleto = `${paciente.primer_nombre} ${paciente.segundo_nombre} ${paciente.primer_apellido} `;
           const sexo = paciente.sexo;
           setNombrePaciente(nombreCompleto);
           setSexo(sexo);
@@ -106,17 +117,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     };
 
     loadPaciente();
-
-    // Manejo del botón de "Atrás" en Android
-    // const backHandler = BackHandler.addEventListener(
-    //   "hardwareBackPress",
-    //   () => {
-    //     setModalVisible(true);
-    //     return true; // Prevenir navegación automática
-    //   }
-    // );
-
-    // return () => backHandler.remove();
   }, []);
 
   if (loading) {
@@ -140,10 +140,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <HomeHeader
             nombre={nombrePaciente}
             sexo={sexo}
-            onLogout={() => setModalVisible(true)} // activa el modal de logout
+            onLogout={() => setModalVisible(true)} 
           />
         )}
-
         <Carousel />
 
         <View style={styles.container}>
@@ -168,11 +167,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   grid: {
@@ -200,13 +199,13 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   icon: {
-    marginBottom: 10,
+    marginBottom: 5,
   },
   menuText: {
     fontSize: 17,
-    color: colors.primary,
+    color: colors.preto,
     textAlign: "center",
-    fontFamily: fonts.title,
+    fontFamily: fonts.subtitle,
   },
   logoutButton: {
     position: "absolute",

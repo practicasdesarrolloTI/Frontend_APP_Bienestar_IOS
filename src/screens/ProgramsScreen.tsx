@@ -82,6 +82,10 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     loadPrograms();
   }, []);
 
+  const sinProgramas =
+    programas.length === 0 ||
+    programas.every((p) => p.programa.includes("no estas en un programa"));
+
   // const programasFiltrados = programas.filter(
   //   (programa) => programa.estado === "Pendiente"
   // );
@@ -91,9 +95,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     return fechaA.getTime() - fechaB.getTime();
   });
 
-  {
-    /* Función para formatear la hora */
-  }
+  /* Función para formatear la hora */
   const formatHora = (hora: string) => {
     if (!hora) return "";
     const [hours, minutes] = hora.split(":");
@@ -106,9 +108,8 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
       hour12: true,
     });
   };
-  {
-    /* Función para capitalizar el nombre */
-  }
+
+  /* Función para capitalizar el nombre */
   const capitalizeName = (text: string): string => {
     return text
       .toLowerCase()
@@ -118,9 +119,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
       )
       .join(" ");
   };
-  {
-    /* Función para capitalizar la primera letra de cada oración */
-  }
 
   if (loading) return <LoadingScreen />;
   return (
@@ -146,7 +144,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 
         <View style={styles.container}>
           {/* Lista de Programas */}
-          {programasOrdenados.length === 0 ? (
+          {sinProgramas ? (
             <EmptyState message="No estás inscrito en ningún programa en este momento." />
           ) : (
             <FlatList

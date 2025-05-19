@@ -20,7 +20,7 @@ import Toast from "react-native-toast-message";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { submitSurveyResult } from "../services/surveyResultService";
-import { useNavigation } from "@react-navigation/native";
+import CustomHeader from "../components/CustomHeader";
 import { getPatientByDocument } from "../services/patientService";
 
 type SurveySummaryProps = NativeStackScreenProps<
@@ -131,13 +131,11 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
       if (result.error) {
         Toast.show({
           type: "error",
-          text1: "Error",
           text2: result.error,
         });
       } else {
         Toast.show({
           type: "success",
-          text1: "Éxito",
           text2: "Resultado guardado correctamente",
           position: "bottom",
           visibilityTime: 5000,
@@ -145,24 +143,31 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         navigation.navigate("Home");
       }
     } catch (e) {
-      Alert.alert("Error", "Algo salió mal al guardar la encuesta.");
+      Toast.show({
+        type: "error",
+        text2: "Error al guardar el resultado de la encuesta.",
+        position: "bottom",
+      });
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
-      />
+     <StatusBar
+            barStyle="dark-content"
+            translucent
+            backgroundColor="transparent"
+          />
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Resumen de Respuestas</Text>
-      </View>
+       {/* Header transparente */}
+        <CustomHeader
+          title="Resumen de Encuesta"
+          showBack
+          transparent
+          showProfileIcon
+          onLogout={() => setModalVisible(true)}
+        />
+
       <View style={styles.container}>
         <View style={styles.summaryContainer}>
           <View style={styles.summaryInfo}>
@@ -221,21 +226,9 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
-  },
-
-  title: {
+   title: {
     fontSize: 24,
     fontFamily: fonts.title,
     color: colors.white,

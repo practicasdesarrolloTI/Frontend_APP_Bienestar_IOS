@@ -98,6 +98,10 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     if (supported) {
       await Linking.openURL(url);
     } else {
+      Toast.show({
+        type: "error",
+        text2: "No se pudo abrir el enlace.",
+      });
       Alert.alert("Error", "No se pudo abrir el enlace.");
     }
   };

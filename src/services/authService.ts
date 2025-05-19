@@ -4,7 +4,7 @@ import axios from "axios";
 
 const API_URL = "https://backend.bienestarips.com/api/auth";
 
-export type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
+type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS" | "NIT" | "CD" | "SC" | "MSI" | "ASI" | "PEP" | "PTP";
 
 interface SendCodeResponse {
   message: string;
@@ -36,8 +36,8 @@ export const registerUser = async (
   } catch (error: any) {
     Toast.show({
       type: "error",
-      text1: "Error",
       text2: error.message,
+      position: "bottom",
     });
     return { success: false, message: error.message };
   }

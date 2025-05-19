@@ -25,18 +25,7 @@ import Toast from "react-native-toast-message";
 import { checkPatient, getPatientByDocument } from "../services/patientService";
 import { registerUser } from "../services/authService";
 import CustomHeader from "../components/CustomHeader";
-
-type RootStackParamList = {
-  ResetPassword: {
-    document: string;
-    documentType: DocumentType;
-    mail: string;
-    value: string;
-  };
-  Login: undefined;
-};
-
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
+import { RootStackParamList } from "../navigation/AppNavigator";
 
 type Props = StackScreenProps<RootStackParamList, "ResetPassword">;
 
@@ -52,7 +41,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
 
   const handleNewPassword = async () => {
     const patient = await getPatientByDocument(document);
-    const patientExists = await checkPatient(Number(document));
+    const patientExists = await checkPatient(documentType, Number(document));
 
     if (patientExists === null) {
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -62,6 +51,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           text1: "Error",
           text2:
             "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número.",
+          position: "bottom",
         });
         return;
       } else if (password !== confirmPassword) {
@@ -69,6 +59,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           type: "error",
           text1: "Error",
           text2: "Las contraseñas no coinciden.",
+          position: "bottom",
         });
         return;
       }
@@ -78,6 +69,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           type: "success",
           text1: "Éxito",
           text2: "Usuario registrado correctamente.",
+          position: "bottom",
         });
         navigation.replace("Login");
       }
@@ -90,8 +82,8 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         await resetPassword(Number(document), value, password);
         Toast.show({
           type: "success",
-          text1: "Éxito",
           text2: "Tu contraseña ha sido restablecida.",
+          position: "bottom",
         });
         navigation.replace("Login");
       } catch (error) {
@@ -99,6 +91,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           type: "error",
           text1: value,
           text2: "No se pudo cambiar la contraseña.",
+          position: "bottom",
         });
       } finally {
         setIsLoading(false);

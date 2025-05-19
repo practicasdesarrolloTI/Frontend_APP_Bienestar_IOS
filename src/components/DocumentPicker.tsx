@@ -11,10 +11,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS" | "";
+type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS" | "NIT" | "CD" | "SC" | "MSI" | "ASI" | "PEP" | "PTP";
 
 type Props = {
-  selected: DocumentType;
+  selected: DocumentType | null;
   onSelect: (value: DocumentType) => void;
 };
 
@@ -24,6 +24,13 @@ const documentOptions = [
   { label: "Cédula de Ciudadanía", value: "CC" },
   { label: "Cédula de Extranjería", value: "CE" },
   { label: "Pasaporte", value: "PAS" },
+  { label: "NIT", value: "NIT" },
+  { label: "Cédula Diplomática", value: "CD" },
+  { label: "Salvoconducto", value: "SC" },
+  { label: "Menores Sin Identificación", value: "MSI" },
+  { label: "Adulto Sin Identificación", value: "ASI" },
+  { label: "Permiso Especial de Permanencia", value: "PEP" },
+  { label: "Permiso Temporal de Permanencia", value: "PTP" },
 ];
 
 const DocumentPicker: React.FC<Props> = ({ selected, onSelect }) => {

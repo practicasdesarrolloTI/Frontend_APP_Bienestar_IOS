@@ -71,8 +71,8 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
     navigation.navigate("Login");
   };
 
-  
-    const formatName = (text: string): string => {
+  /** Función para formatear el nombre */
+  const formatName = (text: string): string => {
     const clear = text.replace(/\s*[\(\[].*?[\)\]]\s*/g, " ").trim();
     return clear
       .toLowerCase()
@@ -83,16 +83,23 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
       .join(" ");
   };
 
+  /** Función para la fecha*/
+  const esFechaValida = (fecha: string) => {
+    const date = new Date(fecha);
+    return !isNaN(date.getTime());
+  };
+
   useEffect(() => {
     const loadPatient = async () => {
       try {
         const storedDoc = await AsyncStorage.getItem("documento");
         const storedDocType = await AsyncStorage.getItem("tipoDocumento");
         if (!storedDoc || !storedDocType) {
-          Alert.alert(
-            "Error",
-            "No se encontró el documento o el tipo de documento del paciente."
-          );
+          Toast.show({
+            type: "error",
+            text2: "No se encontró el documento del paciente.",
+            position: "bottom",
+          });
           return;
         }
         const dataregistro = await getPatientAPP(Number(storedDoc));
@@ -100,7 +107,11 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
         setPaciente(data as unknown as Paciente);
         setPacienteRegistro(dataregistro as unknown as PacienteRegistro);
       } catch (error) {
-        Alert.alert("Error", "Error al obtener información del paciente.");
+        Toast.show({
+          type: "error",
+          text2: "Error al obtener información del paciente.",
+          position: "bottom",
+        });
       } finally {
         setLoading(false);
       }
@@ -149,8 +160,10 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
             <View>
               <Text style={styles.label}>Nombre:</Text>
               <Text style={styles.labelinfo}>
-                {formatName(paciente?.primer_nombre ?? "")} {formatName(paciente?.segundo_nombre ?? "")}
-                {formatName(paciente?.primer_apellido ?? "")} {formatName(paciente?.segundo_apellido ?? "")}
+                {formatName(paciente?.primer_nombre ?? " ")}{" "}
+                {formatName(paciente?.segundo_nombre ?? " ")}{" "}
+                {formatName(paciente?.primer_apellido ?? " ")}{" "}
+                {formatName(paciente?.segundo_apellido ?? " ")}
               </Text>
               <Text style={styles.label}>Documento:</Text>
               <Text style={styles.labelinfo}>
@@ -161,11 +174,18 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
                 {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
               </Text>
               <Text style={styles.label}>Fecha de Nacimiento:</Text>
-              <Text style={styles.labelinfo}>{paciente?.fecha_nacimiento}</Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.fecha_nacimiento &&
+                esFechaValida(paciente.fecha_nacimiento)
+                  ? paciente.fecha_nacimiento
+                  : "Información no disponible"}
+              </Text>
               <Text style={styles.label}>Edad:</Text>
               <Text style={styles.labelinfo}>
-                {paciente ? calcularEdad(paciente.fecha_nacimiento) : "N/A"}{" "}
-                {"años"}
+                {paciente?.fecha_nacimiento &&
+                esFechaValida(paciente.fecha_nacimiento)
+                  ? `${calcularEdad(paciente.fecha_nacimiento)} años`
+                  : "Información no disponible"}
               </Text>
               <Text style={styles.label}>Correo:</Text>
               <Text style={styles.labelinfo}>
@@ -178,7 +198,9 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
                   "No tiene número teléfonico registrado"}
               </Text>
               <Text style={styles.label}>EPS:</Text>
-              <Text style={styles.labelinfo}>{formatName(paciente?.eps ?? "")}</Text>
+              <Text style={styles.labelinfo}>
+                {formatName(paciente?.eps ?? "")}
+              </Text>
             </View>
           </View>
 
@@ -205,9 +227,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 15,
+    paddingHorizontal: 15,
   },
-
   profileIconContainer: {
     alignItems: "center",
     marginVertical: 20,
