@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -20,9 +14,8 @@ type Props = {
 };
 
 const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  
+
   /** Función para cerrar sesión */
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
@@ -34,7 +27,7 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
     });
     navigation.navigate("Login");
   };
-   return (
+  return (
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
@@ -58,7 +51,7 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro semitransparente
     justifyContent: "center",
     alignItems: "center",
   },
@@ -68,6 +61,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
+    shadowColor: colors.preto,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.55,
+    shadowRadius: 4,
+    elevation: 5,
   },
   modalTitle: {
     fontSize: 20,

@@ -58,21 +58,8 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         const tipo = await AsyncStorage.getItem("tipoDocumento");
         const doc = await AsyncStorage.getItem("documento");
         if (!tipo || !doc) throw new Error("Datos incompletos");
-
         const data = await fetchProgramas(tipo, doc);
-
-        const formateados = data.map((item: any, index: number) => ({
-          id: index.toString(),
-          fecha_cita:
-            item.fecha_cita?.split(" ")[0] ?? "No tienes citas agendadas",
-          hora: item.hora_cita?.slice(0, 8) ?? " ",
-          programa: item.Programa ?? "Actualmente no estas en un programa",
-          medico: item.nombre_medico ?? "No Asignado",
-          especialidad: item.Especialidad ?? "",
-          estado: item.estado_cita ?? "Pendiente",
-        }));
-
-        setProgramas(formateados);
+        setProgramas(data);
       } catch (err) {
       } finally {
         setLoading(false);

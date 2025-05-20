@@ -10,6 +10,7 @@ import {
   Platform,
   BackHandler,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -25,6 +26,8 @@ import Toast from "react-native-toast-message";
 import HomeHeader from "../components/HomeHeader";
 import LogOutModal from "../components/LogOutModal";
 import Carousel from "../components/Carousel";
+import CustomHeader from "../components/CustomHeader";
+import { fetchProgramas } from "../services/programService";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -48,6 +51,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [sexo, setSexo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [tienePrograma, setTienePrograma] = useState<boolean>(true);
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -62,24 +67,38 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   /** Renderizar cada elemento del menú */
-  const renderItem = ({ item }: any) => (
-    <TouchableOpacity
-      style={styles.menuItem}
-      onPress={() =>
-        item.screen
-          ? navigation.navigate(item.screen as any)
-          : console.log(`Abrir ${item.name}`)
-      }
-    >
-      <MaterialIcons
-        name={item.icon as keyof typeof MaterialIcons.glyphMap}
-        size={40}
-        color={colors.primary}
-        style={styles.icon}
-      />
-      <Text style={styles.menuText}>{item.name}</Text>
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }: any) => {
+    const isAutocuidado = item.name === "Autocuidado";
+    const disabled = isAutocuidado && !tienePrograma;
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.menuItem,
+          disabled && styles.disabledItem,
+          disabled && { opacity: 0.6 },
+        ]}
+        disabled={disabled}
+        onPress={() =>
+          item.screen
+            ? navigation.navigate(item.screen as any)
+            : console.log(`Abrir ${item.name}`)
+        }
+      >
+        <MaterialIcons
+          name={item.icon as keyof typeof MaterialIcons.glyphMap}
+          size={40}
+          color={disabled ? colors.lightGray : colors.primary}
+          style={styles.icon}
+        />
+        <Text
+          style={[styles.menuText, disabled && { color: colors.lightGray }]}
+        >
+          {item.name}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   /** Manejar el evento de retroceso del hardware */
   useFocusEffect(
@@ -101,16 +120,32 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     const loadPaciente = async () => {
       try {
         const documento = await AsyncStorage.getItem("documento");
-        if (!documento) return;
+        if (!documento) throw new Error("No hay documento");
+        const tipoDocumento = await AsyncStorage.getItem("tipoDocumento");
+        if (tipoDocumento && documento) {
+          const programas = await fetchProgramas(tipoDocumento, documento);
+          if (
+            programas.length > 0 ||
+            programas.every((p: { programa: string | string[] }) =>
+              p.programa.includes("no estas en un programa")
+            )
+          ) {
+            setTienePrograma(false);
+          }
+        }
         const paciente = await getPatientByDocument(documento);
         if (paciente) {
-          const nombreCompleto = `${paciente.primer_nombre} ${paciente.segundo_nombre} ${paciente.primer_apellido} `;
-          const sexo = paciente.sexo;
+          const nombreCompleto = `${paciente.primer_nombre} ${
+            paciente.segundo_nombre ?? ""
+          } ${paciente.primer_apellido}`;
           setNombrePaciente(nombreCompleto);
-          setSexo(sexo);
+          setSexo(paciente.sexo);
+        } else {
+          setHasError(true);
         }
       } catch (error) {
         console.error("Error al cargar paciente", error);
+        setHasError(true); // activa la bandera de error
       } finally {
         setLoading(false);
       }
@@ -136,13 +171,26 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         resizeMode="cover"
       >
         {/* Header transparente */}
-        {nombrePaciente && sexo && (
-          <HomeHeader
-            nombre={nombrePaciente}
-            sexo={sexo}
-            onLogout={() => setModalVisible(true)} 
-          />
-        )}
+        {!loading &&
+          (hasError ? (
+            <CustomHeader
+              title="Inicio"
+              showBack={false}
+              transparent={true}
+              showProfileIcon={false}
+              onLogout={() => setModalVisible(true)}
+            />
+          ) : (
+            nombrePaciente &&
+            sexo && (
+              <HomeHeader
+                nombre={nombrePaciente}
+                sexo={sexo}
+                onLogout={() => setModalVisible(true)}
+              />
+            )
+          ))}
+
         <Carousel />
 
         <View style={styles.container}>
@@ -165,6 +213,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+const screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
@@ -174,8 +223,18 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 3,
+    paddingVertical: 5,
+  },
   grid: {
     alignItems: "center",
+  },
+  disabledItem: {
+    backgroundColor: "#f0f0f0", // un gris claro de fondo
+    borderColor: "#ccc",
   },
   title: {
     fontSize: 20,
@@ -184,8 +243,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-    width: 170,
-    height: 150,
+    width: 150,
+    height: 140,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.background,
@@ -202,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   menuText: {
-    fontSize: 17,
+    fontSize: 16,
     color: colors.preto,
     textAlign: "center",
     fontFamily: fonts.subtitle,

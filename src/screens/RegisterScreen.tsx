@@ -14,6 +14,7 @@ import {
   Keyboard,
   ImageBackground,
   Image,
+  Linking,
 } from "react-native";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -204,96 +205,115 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           showProfileIcon={false}
           onLogout={() => {}}
         />
-
-        {/* Subheader */}
-        <View style={styles.subheaderContainer}>
-          <Image
-            source={require("../../assets/logo_zentria_sinfondo.png")}
-            style={{ width: 80, height: 80 }}
-          />
-          <Text style={styles.title}>Registro</Text>
-          <Text style={styles.subtitle}>
-            Ingrese sus datos para registrarse
-          </Text>
-        </View>
-
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Documento */}
-            <DocumentPicker
-              selected={documentType}
-              onSelect={setDocumentType}
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Subheader */}
+          <View style={styles.subheaderContainer}>
+            <Image
+              source={require("../../assets/logo_zentria_sinfondo.png")}
+              style={{ width: 80, height: 80 }}
             />
+            <Text style={styles.title}>Registro</Text>
+            <Text style={styles.subtitle}>
+              Ingrese sus datos para registrarse
+            </Text>
+          </View>
 
-            {/*  Número de Documento */}
-            <TextInput
-              style={styles.input}
-              placeholder="Número de documento"
-              placeholderTextColor={colors.preto}
-              keyboardType="numeric"
-              value={documentNumber}
-              onChangeText={setDocumentNumber}
-            />
-
-            {/*  Correo */}
-            <TextInput
-              style={styles.input}
-              placeholder="Correo electrónico"
-              placeholderTextColor={colors.preto}
-              keyboardType="email-address"
-              value={email}
-              onChangeText={(text) => setEmail(text.toLowerCase())}
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Confirmar correo electrónico"
-              placeholderTextColor={colors.preto}
-              keyboardType="email-address"
-              value={confirmEmail}
-              onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
-            />
-
-            {/*  Términos y Condiciones */}
-            <TouchableOpacity
-              style={styles.checkboxContainer}
-              onPress={() => setAcceptedTerms(!acceptedTerms)}
-              activeOpacity={0.7}
+          <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+            <ScrollView
+              contentContainerStyle={styles.container}
+              keyboardShouldPersistTaps="handled"
             >
-              <MaterialIcons
-                name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
-                size={26}
-                color={acceptedTerms ? colors.preto : colors.preto}
+              {/* Documento */}
+              <DocumentPicker
+                selected={documentType}
+                onSelect={setDocumentType}
               />
-              <Text style={styles.checkboxLabel}>
-                Acepto Términos y Condiciones
-              </Text>
-            </TouchableOpacity>
 
-            {/*  Botón de Registro */}
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleRegister}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.registerText}>Continuar</Text>
-              )}
-            </TouchableOpacity>
+              {/*  Número de Documento */}
+              <TextInput
+                style={styles.input}
+                placeholder="Número de documento"
+                placeholderTextColor={colors.preto}
+                keyboardType="numeric"
+                value={documentNumber}
+                onChangeText={setDocumentNumber}
+              />
 
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.loginText}>
-                ¿Ya tienes cuenta?
-                <Text style={styles.subtitle}> Inicia sesión</Text>
-              </Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Pressable>
+              {/*  Correo */}
+              <TextInput
+                style={styles.input}
+                placeholder="Correo electrónico"
+                placeholderTextColor={colors.preto}
+                keyboardType="email-address"
+                value={email}
+                onChangeText={(text) => setEmail(text.toLowerCase())}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Confirmar correo electrónico"
+                placeholderTextColor={colors.preto}
+                keyboardType="email-address"
+                value={confirmEmail}
+                onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
+              />
+
+              {/* Terminos y condiciones */}
+              <View style={styles.termsContainer}>
+                <View style={styles.checkboxContainer}>
+                  <TouchableOpacity
+                    onPress={() => setAcceptedTerms(!acceptedTerms)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons
+                      name={
+                        acceptedTerms ? "check-box" : "check-box-outline-blank"
+                      }
+                      size={26}
+                      color={colors.preto}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={
+                      () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
+                    }
+                  >
+                    <Text style={styles.checkboxLabel}>
+                      Acepto los{" "}
+                      <Text style={styles.termsText}>
+                        Términos y Condiciones{" "}
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/*  Botón de Registro */}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleRegister}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.registerText}>Continuar</Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text style={styles.loginText}>
+                  ¿Ya tienes cuenta?
+                  <Text style={styles.subtitle}> Inicia sesión</Text>
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </Pressable>
+        </ScrollView>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -309,9 +329,25 @@ const styles = StyleSheet.create({
     fontFamily: fonts.subtitle,
     color: colors.primary,
   },
+  termsContainer: {
+    marginTop: 20,
+  },
   subheaderContainer: {
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 3,
+    paddingVertical: 5,
+  },
+  termsText: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary, // o "#007AFF" para estilo link
+    textDecorationLine: "underline",
   },
   title: {
     fontSize: 28,

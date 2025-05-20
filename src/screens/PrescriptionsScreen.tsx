@@ -252,6 +252,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               </View>
             )}
           />
+
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
             visible={modalVisible}
@@ -290,13 +291,13 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   cardContent: {
-    height: 150,
+    height: 190,
     width: "100%",
     flexDirection: "row",
     alignItems: "stretch",
   },
   text: {
-    fontSize: 17,
+    fontSize: 16,
     marginBottom: 2,
     color: "#333",
     fontFamily: fonts.body,
@@ -306,7 +307,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontFamily: fonts.subtitle,
   },
-
   leftColumn: {
     width: "24%",
     height: "100%",
@@ -345,8 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     justifyContent: "center",
-    alignItems: "flex-start",
-  },
+    alignItems: "flex-start"},
 });
 
 export default MedicamentScreen;

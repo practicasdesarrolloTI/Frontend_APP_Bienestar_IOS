@@ -13,6 +13,7 @@ import {
   Pressable,
   ImageBackground,
   Image,
+  Linking,
 } from "react-native";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -27,7 +28,19 @@ import Toast from "react-native-toast-message";
 import { ActivityIndicator } from "react-native";
 import CustomHeader from "../components/CustomHeader";
 
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS" | "NIT" | "CD" | "SC" | "MSI" | "ASI" | "PEP" | "PTP";
+type DocumentType =
+  | "RC"
+  | "TI"
+  | "CC"
+  | "CE"
+  | "PAS"
+  | "NIT"
+  | "CD"
+  | "SC"
+  | "MSI"
+  | "ASI"
+  | "PEP"
+  | "PTP";
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
@@ -42,8 +55,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-
-  
   const handleLogin = async () => {
     if (!document || !password || documentType === null) {
       Toast.show({
@@ -135,109 +146,131 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           onLogout={() => {}}
         />
 
-        <View style={styles.subheaderContainer}>
-          <Image
-            source={require("../../assets/logo_zentria_sinfondo.png")}
-            style={{ width: 80, height: 80 }}
-          />
-          <Text style={styles.title}>Inicio de sesión</Text>
-          <Text style={styles.subtitle}>
-            Ingrese sus datos para inicar sesión
-          </Text>
-        </View>
-
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
-          >
-            <DocumentPicker
-              selected={documentType}
-              onSelect={setDocumentType}
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.subheaderContainer}>
+            <Image
+              source={require("../../assets/logo_zentria_sinfondo.png")}
+              style={{ width: 80, height: 80 }}
             />
+            <Text style={styles.title}>Inicio de sesión</Text>
+            <Text style={styles.subtitle}>
+              Ingrese sus datos para inicar sesión
+            </Text>
+          </View>
 
-            {/* Documento */}
-            <TextInput
-              style={styles.input}
-              placeholder="Número de documento"
-              placeholderTextColor={colors.preto}
-              value={document}
-              onChangeText={setDocument}
-              keyboardType="numeric"
-            />
+          <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+            <ScrollView
+              contentContainerStyle={styles.container}
+              keyboardShouldPersistTaps="handled"
+            >
+              <DocumentPicker
+                selected={documentType}
+                onSelect={setDocumentType}
+              />
 
-            {/* Contraseña */}
-            <View style={styles.passwordContainer}>
+              {/* Documento */}
               <TextInput
-                style={[styles.inputPasword, { flex: 1 }]}
-                placeholder="Contraseña"
+                style={styles.input}
+                placeholder="Número de documento"
                 placeholderTextColor={colors.preto}
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
+                value={document}
+                onChangeText={setDocument}
+                keyboardType="numeric"
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <MaterialIcons
-                  name={showPassword ? "visibility-off" : "visibility"}
-                  style={{ marginRight: 15 }}
-                  size={20}
-                  color={"#bfbfbf"}
+
+              {/* Contraseña */}
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[styles.inputPasword, { flex: 1 }]}
+                  placeholder="Contraseña"
+                  placeholderTextColor={colors.preto}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
                 />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.forgotPasswordContainer}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <MaterialIcons
+                    name={showPassword ? "visibility-off" : "visibility"}
+                    style={{ marginRight: 15 }}
+                    size={20}
+                    color={"#bfbfbf"}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.forgotPasswordContainer}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("ForgotPassword")}
+                >
+                  <Text style={styles.forgotText}>
+                    ¿Olvidaste tu contraseña?
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Terminos y condiciones */}
+              <View style={styles.termsContainer}>
+                <View style={styles.checkboxContainer}>
+                  <TouchableOpacity
+                    onPress={() => setAcceptedTerms(!acceptedTerms)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons
+                      name={
+                        acceptedTerms ? "check-box" : "check-box-outline-blank"
+                      }
+                      size={26}
+                      color={colors.preto}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={
+                      () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
+                    }
+                  >
+                    <Text style={styles.checkboxLabel}>Acepto los {" "}
+                    <Text style={styles.termsText}>
+                      Términos y Condiciones{" "}
+                    </Text></Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Login Button */}
               <TouchableOpacity
-                onPress={() => navigation.navigate("ForgotPassword")}
+                style={styles.loginButton}
+                onPress={handleLogin}
+                disabled={isLoading}
               >
-                <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.loginText}>Iniciar sesión</Text>
+                )}
               </TouchableOpacity>
-            </View>
 
-            {/* Terminos y condiciones */}
-            <TouchableOpacity
-              style={styles.checkboxContainer}
-              onPress={() => setAcceptedTerms(!acceptedTerms)}
-              activeOpacity={0.7}
-            >
-              <MaterialIcons
-                name={acceptedTerms ? "check-box" : "check-box-outline-blank"}
-                size={26}
-                color={colors.preto}
-              />
-              <Text style={styles.checkboxLabel}>
-                Acepto Términos y Condiciones
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                <Text style={styles.registerText}>
+                  ¿No tienes cuenta?{" "}
+                  <Text style={styles.subtitle}>Regístrate</Text>
+                </Text>
+              </TouchableOpacity>
 
-            {/* Login Button */}
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.loginText}>Iniciar sesión</Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-              <Text style={styles.registerText}>
-                ¿No tienes cuenta?{" "}
-                <Text style={styles.subtitle}>Regístrate</Text>
-              </Text>
-            </TouchableOpacity>
-
-            <Snackbar
-              visible={visible}
-              onDismiss={() => setVisible(false)}
-              duration={2000}
-            >
-              {message}
-            </Snackbar>
-          </ScrollView>
-        </Pressable>
+              <Snackbar
+                visible={visible}
+                onDismiss={() => setVisible(false)}
+                duration={2000}
+              >
+                {message}
+              </Snackbar>
+            </ScrollView>
+          </Pressable>
+        </ScrollView>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -248,10 +281,23 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 3,
+    paddingVertical: 5,
+  },
   title: {
     fontSize: 28,
     fontFamily: fonts.title,
     color: colors.preto,
+  },
+  termsText: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontFamily: fonts.subtitle,
+    color: colors.primary, // o "#007AFF" para estilo link
+    textDecorationLine: "underline",
   },
   subtitle: {
     fontSize: 16,
@@ -289,6 +335,9 @@ const styles = StyleSheet.create({
     color: "#333",
     fontSize: 16,
     fontFamily: fonts.body,
+  },
+  termsContainer: {
+    marginTop: 20,
   },
   loginButton: {
     marginTop: 20,

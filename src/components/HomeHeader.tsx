@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "flex-end",
-    paddingTop: 80,
+    paddingTop: 55,
     paddingRight: 20,
   },
   menu: {

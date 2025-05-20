@@ -64,7 +64,6 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
 
         const data = await fetchResults(tipo, doc);
         setResultados(data);
-        console.log("Resultados cargados:", data);
       } catch (error) {
         console.error("Error al cargar resultados:", error);
       } finally {
@@ -163,9 +162,9 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
             data={resultadosFiltrados}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent: resultados.length === 0 ? "center" : "flex-start",
-              paddingBottom: 100,
+              // flexGrow: 1,
+              // justifyContent: resultados.length === 0 ? "center" : "flex-start",
+              paddingBottom: 120,
             }}
             ListEmptyComponent={
               <EmptyState message="Aún no se han registrado resultados de exámenes para ti." />
@@ -205,6 +204,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
                       </Text>
                     )}
                   </View>
+                  
                   {/* Columna derecha: Detalles */}
                   <View style={styles.rightColumn}>
                     <Text style={styles.text}>
@@ -271,31 +271,29 @@ const styles = StyleSheet.create({
     shadowColor: colors.preto,
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 1,
   },
   cardContent: {
-    height: 140,
+    height: 160,
     width: "100%",
     flexDirection: "row",
     alignItems: "stretch",
   },
   text: {
-    fontSize: 17,
+    fontSize: 16,
     marginBottom: 2,
-    color: "#333",
+    color: colors.preto,
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: 17,
+    fontSize: 16,
     color: colors.primary,
     fontFamily: fonts.subtitle,
   },
-  footerButtonContainer: {
-    position: "absolute",
-    bottom: 20,
-    left: 30,
-    right: 30,
-  },
+footerButtonContainer: {
+  marginTop: 10,
+  paddingHorizontal: 30,
+},
   footerButton: {
     backgroundColor: colors.secondary,
     paddingVertical: 14,
