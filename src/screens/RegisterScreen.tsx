@@ -277,17 +277,13 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                       color={colors.preto}
                     />
                   </TouchableOpacity>
+                  <Text style={styles.checkboxLabel}>Acepto los</Text>
                   <TouchableOpacity
                     onPress={
                       () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
                     }
                   >
-                    <Text style={styles.checkboxLabel}>
-                      Acepto los{" "}
-                      <Text style={styles.termsText}>
-                        Términos y Condiciones{" "}
-                      </Text>
-                    </Text>
+                    <Text style={styles.termsText}>Términos y Condiciones</Text>
                   </TouchableOpacity>
                 </View>
               </View>

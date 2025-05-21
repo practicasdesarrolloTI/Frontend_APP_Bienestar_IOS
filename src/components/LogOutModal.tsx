@@ -17,16 +17,7 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   /** Función para cerrar sesión */
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("documento");
-    Toast.show({
-      type: "success",
-      text1: "Sesión cerrada",
-      text2: "Has cerrado sesión correctamente.",
-    });
-    navigation.navigate("Login");
-  };
+  
   return (
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>

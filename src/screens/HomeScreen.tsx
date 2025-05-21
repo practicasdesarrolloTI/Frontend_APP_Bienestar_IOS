@@ -31,6 +31,16 @@ import { fetchProgramas } from "../services/programService";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
+type Programa = {
+  id: string;
+  fecha_cita: string;
+  programa: string;
+  hora: string;
+  medico: string;
+  especialidad: string;
+  estado: string;
+};
+
 /** Datos del menú con íconos de MaterialIcons y pantallas asociadas */
 const menuItems = [
   { id: "1", name: "Información", icon: "dashboard", screen: "Informacion" },
@@ -53,6 +63,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [tienePrograma, setTienePrograma] = useState<boolean>(true);
+  const [programas, setProgramas] = useState<Programa[]>([]);
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -69,7 +80,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   /** Renderizar cada elemento del menú */
   const renderItem = ({ item }: any) => {
     const isAutocuidado = item.name === "Autocuidado";
-    const disabled = isAutocuidado && !tienePrograma;
+    const disabled = isAutocuidado && sinProgramas;
 
     return (
       <TouchableOpacity
@@ -124,15 +135,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         const tipoDocumento = await AsyncStorage.getItem("tipoDocumento");
         if (tipoDocumento && documento) {
           const programas = await fetchProgramas(tipoDocumento, documento);
-          if (
-            programas.length > 0 ||
-            programas.every((p: { programa: string | string[] }) =>
-              p.programa.includes("no estas en un programa")
-            )
-          ) {
-            setTienePrograma(false);
-          }
+          setProgramas(programas);
         }
+
         const paciente = await getPatientByDocument(documento);
         if (paciente) {
           const nombreCompleto = `${paciente.primer_nombre} ${
@@ -153,6 +158,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     loadPaciente();
   }, []);
+
+const sinProgramas =
+  programas.length === 0 ||
+  programas.every(
+    (p) =>
+      !p.programa || p.programa.toLowerCase().includes("no tiene programa")
+  );
 
   if (loading) {
     return <LoadingScreen />;

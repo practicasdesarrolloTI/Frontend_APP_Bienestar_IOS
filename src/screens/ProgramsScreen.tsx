@@ -1,4 +1,3 @@
-// Dejar pendientes
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -8,7 +7,6 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  Alert,
   ImageBackground,
 } from "react-native";
 import colors from "../themes/colors";
@@ -65,13 +63,18 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         setLoading(false);
       }
     };
-
     loadPrograms();
   }, []);
 
-  const sinProgramas =
-    programas.length === 0 ||
-    programas.every((p) => p.programa.includes("no estas en un programa"));
+const sinProgramas =
+  programas.length === 0 ||
+  programas.every(
+    (p) =>
+      !p.programa || p.programa.toLowerCase().includes("no tiene programa")
+  );
+
+  console.log("SINPROGRAMA:", sinProgramas);
+  console.log("Programas:", programas);
 
   // const programasFiltrados = programas.filter(
   //   (programa) => programa.estado === "Pendiente"

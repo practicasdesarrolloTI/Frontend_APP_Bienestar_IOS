@@ -83,6 +83,12 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
       .join(" ");
   };
 
+  /** Función para validar fecha de nacimiento */
+  const esFechaValida = (fecha: string | undefined) => {
+    if (!fecha || fecha.includes("NaN")) return false;
+    return true;
+  };
+
   useEffect(() => {
     const loadPatient = async () => {
       try {
@@ -98,7 +104,6 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
         }
         const dataregistro = await getPatientAPP(Number(storedDoc));
         const data = await getPatientByDocument(storedDoc);
-
 
         setPaciente(data as unknown as Paciente);
         setPacienteRegistro(dataregistro as unknown as PacienteRegistro);
@@ -170,11 +175,18 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
                 {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
               </Text>
               <Text style={styles.label}>Fecha de Nacimiento:</Text>
-              <Text style={styles.labelinfo}>{paciente?.fecha_nacimiento}</Text>
+              <Text style={styles.labelinfo}>
+                {paciente?.fecha_nacimiento &&
+                esFechaValida(paciente.fecha_nacimiento)
+                  ? paciente.fecha_nacimiento
+                  : "Información no disponible"}
+              </Text>
               <Text style={styles.label}>Edad:</Text>
               <Text style={styles.labelinfo}>
                 {paciente?.fecha_nacimiento &&
-                  calcularEdad(paciente.fecha_nacimiento)}
+                esFechaValida(paciente.fecha_nacimiento)
+                  ? `${calcularEdad(paciente.fecha_nacimiento)} años`
+                  : "Información no disponible"}
               </Text>
               <Text style={styles.label}>Correo:</Text>
               <Text style={styles.labelinfo}>
