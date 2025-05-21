@@ -48,7 +48,6 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
           <TouchableOpacity
             style={styles.profileIcon}
             onPress={() => setMenuVisible(!menuVisible)}
-            activeOpacity={0.8}
           >
             <MaterialIcons
               name="person-outline"
@@ -57,39 +56,27 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
             />
           </TouchableOpacity>
 
-          <Modal
-            transparent
-            visible={menuVisible}
-            animationType="fade"
-            onRequestClose={() => setMenuVisible(false)}
-          >
-            {/* Cubre toda la pantalla */}
-            <Pressable
-              style={styles.modalOverlay}
-              onPress={() => setMenuVisible(false)}
-            >
-              {/* Evita que el touch dentro del menú también lo cierre */}
-              <Pressable style={styles.menu}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setMenuVisible(false);
-                    navigation.navigate("Informacion");
-                  }}
-                >
-                  <Text style={styles.menuItem}>Perfil</Text>
-                </TouchableOpacity>
+          {menuVisible && (
+            <View style={styles.inlineMenu}>
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  navigation.navigate("Informacion");
+                }}
+              >
+                <Text style={styles.menuItem}>Perfil</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => {
-                    setMenuVisible(false);
-                    onLogout();
-                  }}
-                >
-                  <Text style={styles.menuItem}>Cerrar sesión</Text>
-                </TouchableOpacity>
-              </Pressable>
-            </Pressable>
-          </Modal>
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  onLogout();
+                }}
+              >
+                <Text style={styles.menuItem}>Cerrar sesión</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -98,8 +85,8 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
 
 const styles = StyleSheet.create({
   header: {
-    height: 100,
-    paddingTop: Platform.OS === "android" ? 15 : 10,
+    height: 110,
+    paddingTop: Platform.OS === "android" ? 70 : 55,
     paddingHorizontal: 25,
     justifyContent: "flex-end",
     backgroundColor: "transparent",
@@ -130,15 +117,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
+  },  
+  menuItem: {
+    paddingVertical: 8,
+    fontSize: 16,
+    fontWeight: "500",
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "flex-end",
-    paddingTop: 55,
-    paddingRight: 20,
-  },
-  menu: {
+  inlineMenu: {
+    position: "absolute",
+    top: 55,
+    right: 0,
+    width: 140,
     backgroundColor: "#fff",
     borderRadius: 10,
     paddingVertical: 10,
@@ -148,11 +137,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
-  },
-  menuItem: {
-    paddingVertical: 8,
-    fontSize: 16,
-    fontWeight: "500",
+    zIndex: 999,
   },
 });
 

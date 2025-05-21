@@ -8,6 +8,7 @@ import {
   Platform,
   ImageBackground,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -24,6 +25,7 @@ import { calcularEdad } from "../utils/dateUtils";
 import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/LogOutModal";
 import Toast from "react-native-toast-message";
+import { Scroll } from "lucide-react-native";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Informacion">;
 
@@ -157,55 +159,56 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
             />
           </View>
 
-          {/* Información del Paciente */}
-          <View style={styles.infoContainer}>
-            <View>
-              <Text style={styles.label}>Nombre:</Text>
-              <Text style={styles.labelinfo}>
-                {formatName(paciente?.primer_nombre ?? " ")}{" "}
-                {formatName(paciente?.segundo_nombre ?? " ")}{" "}
-                {formatName(paciente?.primer_apellido ?? " ")}{" "}
-                {formatName(paciente?.segundo_apellido ?? " ")}
-              </Text>
-              <Text style={styles.label}>Documento:</Text>
-              <Text style={styles.labelinfo}>
-                {paciente?.tipo_documento_abreviado} {paciente?.documento}
-              </Text>
-              <Text style={styles.label}>Sexo:</Text>
-              <Text style={styles.labelinfo}>
-                {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
-              </Text>
-              <Text style={styles.label}>Fecha de Nacimiento:</Text>
-              <Text style={styles.labelinfo}>
-                {paciente?.fecha_nacimiento &&
-                esFechaValida(paciente.fecha_nacimiento)
-                  ? paciente.fecha_nacimiento
-                  : "Información no disponible"}
-              </Text>
-              <Text style={styles.label}>Edad:</Text>
-              <Text style={styles.labelinfo}>
-                {paciente?.fecha_nacimiento &&
-                esFechaValida(paciente.fecha_nacimiento)
-                  ? `${calcularEdad(paciente.fecha_nacimiento)} años`
-                  : "Información no disponible"}
-              </Text>
-              <Text style={styles.label}>Correo:</Text>
-              <Text style={styles.labelinfo}>
-                {paciente?.correo || "No tiene correo registrado"}
-              </Text>
-              <Text style={styles.label}>Teléfono:</Text>
-              <Text style={styles.labelinfo}>
-                {paciente?.celular ||
-                  paciente?.telefono ||
-                  "No tiene número teléfonico registrado"}
-              </Text>
-              <Text style={styles.label}>EPS:</Text>
-              <Text style={styles.labelinfo}>
-                {formatName(paciente?.eps ?? "")}
-              </Text>
+          <ScrollView>
+            {/* Información del Paciente */}
+            <View style={styles.infoContainer}>
+              <View>
+                <Text style={styles.label}>Nombre:</Text>
+                <Text style={styles.labelinfo}>
+                  {formatName(paciente?.primer_nombre ?? " ")}{" "}
+                  {formatName(paciente?.segundo_nombre ?? " ")}{" "}
+                  {formatName(paciente?.primer_apellido ?? " ")}{" "}
+                  {formatName(paciente?.segundo_apellido ?? " ")}
+                </Text>
+                <Text style={styles.label}>Documento:</Text>
+                <Text style={styles.labelinfo}>
+                  {paciente?.tipo_documento_abreviado} {paciente?.documento}
+                </Text>
+                <Text style={styles.label}>Sexo:</Text>
+                <Text style={styles.labelinfo}>
+                  {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
+                </Text>
+                <Text style={styles.label}>Fecha de Nacimiento:</Text>
+                <Text style={styles.labelinfo}>
+                  {paciente?.fecha_nacimiento &&
+                  esFechaValida(paciente.fecha_nacimiento)
+                    ? paciente.fecha_nacimiento
+                    : "Información no disponible"}
+                </Text>
+                <Text style={styles.label}>Edad:</Text>
+                <Text style={styles.labelinfo}>
+                  {paciente?.fecha_nacimiento &&
+                  esFechaValida(paciente.fecha_nacimiento)
+                    ? `${calcularEdad(paciente.fecha_nacimiento)} años`
+                    : "Información no disponible"}
+                </Text>
+                <Text style={styles.label}>Correo:</Text>
+                <Text style={styles.labelinfo}>
+                  {paciente?.correo || "No tiene correo registrado"}
+                </Text>
+                <Text style={styles.label}>Teléfono:</Text>
+                <Text style={styles.labelinfo}>
+                  {paciente?.celular ||
+                    paciente?.telefono ||
+                    "No tiene número teléfonico registrado"}
+                </Text>
+                <Text style={styles.label}>EPS:</Text>
+                <Text style={styles.labelinfo}>
+                  {formatName(paciente?.eps ?? "")}
+                </Text>
+              </View>
             </View>
-          </View>
-
+          </ScrollView>
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
             visible={modalVisible}
@@ -225,11 +228,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 15,
@@ -244,7 +242,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: screenWidth - 50,
-    height: screenHeight * 0.65,
     elevation: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -252,14 +249,14 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   label: {
-    fontSize: 17,
+    fontSize: 16,
     marginBottom: 1,
     color: colors.lightGray,
     fontFamily: fonts.body,
   },
   labelinfo: {
-    fontSize: 17,
-    marginBottom: 25,
+    fontSize: 16,
+    marginBottom: 15,
     color: "#333",
     fontFamily: fonts.title,
   },

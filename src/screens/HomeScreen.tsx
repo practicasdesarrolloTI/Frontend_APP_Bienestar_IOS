@@ -28,6 +28,8 @@ import LogOutModal from "../components/LogOutModal";
 import Carousel from "../components/Carousel";
 import CustomHeader from "../components/CustomHeader";
 import { fetchProgramas } from "../services/programService";
+import { Scroll } from "lucide-react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -90,17 +92,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           disabled && { opacity: 0.6 },
         ]}
         disabled={disabled}
-        onPress={() =>
-          item.screen
-            ? navigation.navigate(item.screen as any)
-            : console.log(`Abrir ${item.name}`)
-        }
+        onPress={() => item.screen && navigation.navigate(item.screen as any)}
       >
         <MaterialIcons
           name={item.icon as keyof typeof MaterialIcons.glyphMap}
-          size={40}
-          color={disabled ? colors.lightGray : colors.primary}
-          style={styles.icon}
+          size={35}
+          color={disabled ? colors.lightGray : colors.preto}
         />
         <Text
           style={[styles.menuText, disabled && { color: colors.lightGray }]}
@@ -159,12 +156,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     loadPaciente();
   }, []);
 
-const sinProgramas =
-  programas.length === 0 ||
-  programas.every(
-    (p) =>
-      !p.programa || p.programa.toLowerCase().includes("no tiene programa")
-  );
+  const sinProgramas =
+    programas.length === 0 ||
+    programas.every(
+      (p) =>
+        !p.programa || p.programa.toLowerCase().includes("no tiene programa")
+    );
 
   if (loading) {
     return <LoadingScreen />;
@@ -182,123 +179,77 @@ const sinProgramas =
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
         {!loading &&
           (hasError ? (
             <CustomHeader
               title="Inicio"
               showBack={false}
-              transparent={true}
+              transparent
               showProfileIcon={false}
               onLogout={() => setModalVisible(true)}
             />
           ) : (
-            nombrePaciente &&
-            sexo && (
-              <HomeHeader
-                nombre={nombrePaciente}
-                sexo={sexo}
-                onLogout={() => setModalVisible(true)}
-              />
-            )
+            <HomeHeader
+              nombre={nombrePaciente || ""}
+              sexo={sexo || ""}
+              onLogout={() => setModalVisible(true)}
+            />
           ))}
 
-        <Carousel />
+        <FlatList
+          data={menuItems}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          ListHeaderComponent={<Carousel />}
+          contentContainerStyle={styles.flatListContainer}
+        />
 
-        <View style={styles.container}>
-          <FlatList
-            data={menuItems}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            renderItem={renderItem}
-            contentContainerStyle={styles.grid}
-          />
-          {/* Modal de Cerrar Sesión */}
-          <LogOutModal
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
-        </View>
+        <LogOutModal
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={handleLogout}
+        />
       </ImageBackground>
     </SafeAreaView>
   );
 };
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 3,
-    paddingVertical: 5,
-  },
-  grid: {
+  flatListContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
     alignItems: "center",
   },
-  disabledItem: {
-    backgroundColor: "#f0f0f0", // un gris claro de fondo
-    borderColor: "#ccc",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.primary,
-    marginBottom: 20,
-  },
   menuItem: {
-    width: screenWidth / 2 - 45,
-    height: screenWidth / 2 - 55,
+    width: screenWidth / 2 - 40,
+    height: screenHeight / 4 - 30,
     backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.background,
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    margin: 5,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: colors.background,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 1,
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  icon: {
-    marginBottom: 5,
+  disabledItem: {
+    backgroundColor: "#f0f0f0",
   },
   menuText: {
     fontSize: 16,
-    color: colors.preto,
-    textAlign: "center",
     fontFamily: fonts.subtitle,
-  },
-  logoutButton: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  label: {
-    marginLeft: 15,
-    fontSize: 20,
-    color: colors.preto,
-    fontFamily: fonts.body,
-  },
-  labelName: {
-    marginLeft: 15,
-    fontSize: 20,
-    marginBottom: 15,
-    color: colors.preto,
-    fontFamily: fonts.title,
+    marginTop: 8,
   },
 });
 
