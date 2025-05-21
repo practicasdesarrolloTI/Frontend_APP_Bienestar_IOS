@@ -7,6 +7,7 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
@@ -216,6 +217,9 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -237,9 +241,10 @@ const styles = StyleSheet.create({
   infoContainer: {
     alignSelf: "center",
     backgroundColor: colors.white,
-    padding: 18,
+    padding: 20,
     borderRadius: 10,
-    width: "95%",
+    width: screenWidth - 50,
+    height: screenHeight * 0.65,
     elevation: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -247,13 +252,13 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   label: {
-    fontSize: 18,
+    fontSize: 17,
     marginBottom: 1,
     color: colors.lightGray,
     fontFamily: fonts.body,
   },
   labelinfo: {
-    fontSize: 18,
+    fontSize: 17,
     marginBottom: 25,
     color: "#333",
     fontFamily: fonts.title,

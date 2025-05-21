@@ -255,8 +255,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-    width: 150,
-    height: 140,
+    width: screenWidth / 2 - 45,
+    height: screenWidth / 2 - 55,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.background,

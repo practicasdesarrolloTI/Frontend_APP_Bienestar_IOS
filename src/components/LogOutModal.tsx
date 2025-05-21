@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Dimensions,
+} from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-toast-message";
 
 type Props = {
   visible: boolean;
@@ -17,7 +22,7 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   /** Función para cerrar sesión */
-  
+
   return (
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>

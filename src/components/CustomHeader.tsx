@@ -87,37 +87,27 @@ const CustomHeader: React.FC<HeaderProps> = ({
             />
           </TouchableOpacity>
 
-          <Modal
-            transparent
-            visible={menuVisible}
-            animationType="fade"
-            onRequestClose={() => setMenuVisible(false)}
-          >
-            <Pressable
-              style={styles.modalOverlay}
-              onPress={() => setMenuVisible(false)}
-            >
-              <Pressable style={styles.menu}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setMenuVisible(false);
-                    navigation.navigate("Informacion");
-                  }}
-                >
-                  <Text style={styles.menuItem}>Perfil</Text>
-                </TouchableOpacity>
+          {menuVisible && (
+            <View style={styles.inlineMenu}>
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  navigation.navigate("Informacion");
+                }}
+              >
+                <Text style={styles.menuItem}>Perfil</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => {
-                    setMenuVisible(false);
-                    onLogout();
-                  }}
-                >
-                  <Text style={styles.menuItem}>Cerrar sesión</Text>
-                </TouchableOpacity>
-              </Pressable>
-            </Pressable>
-          </Modal>
+              <TouchableOpacity
+                onPress={() => {
+                  setMenuVisible(false);
+                  onLogout();
+                }}
+              >
+                <Text style={styles.menuItem}>Cerrar sesión</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       )}
     </View>
@@ -164,14 +154,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 4,
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "flex-end",
-   paddingTop: 40,
-    paddingRight: 20,
+  menuItem: {
+    paddingVertical: 5,
+    fontSize: 16,
+    fontWeight: "500",
   },
-  menu: {
+  inlineMenu: {
+    position: "absolute",
+    top: 55,
+    right: 0,
+    width: 140,
     backgroundColor: "#fff",
     borderRadius: 10,
     paddingVertical: 10,
@@ -181,11 +173,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
-  },
-  menuItem: {
-    paddingVertical: 8,
-    fontSize: 16,
-    fontWeight: "500",
+    zIndex: 999,
   },
 });
 
