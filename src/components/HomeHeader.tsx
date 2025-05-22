@@ -117,7 +117,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
-  },  
+  },
+  
   menuItem: {
     paddingVertical: 8,
     fontSize: 16,

@@ -7,10 +7,9 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
-import { RootStackParamList } from "../navigation/AppNavigator";
+
 
 type Props = {
   visible: boolean;
@@ -19,11 +18,9 @@ type Props = {
 };
 
 const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   /** Función para cerrar sesión */
-
-  return (
+ return (
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>

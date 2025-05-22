@@ -179,62 +179,122 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
+        {/* Header transparente */}
         {!loading &&
           (hasError ? (
             <CustomHeader
               title="Inicio"
               showBack={false}
-              transparent
+              transparent={true}
               showProfileIcon={false}
               onLogout={() => setModalVisible(true)}
             />
           ) : (
-            <HomeHeader
-              nombre={nombrePaciente || ""}
-              sexo={sexo || ""}
-              onLogout={() => setModalVisible(true)}
-            />
+            nombrePaciente &&
+            sexo && (
+              <HomeHeader
+                nombre={nombrePaciente}
+                sexo={sexo}
+                onLogout={() => setModalVisible(true)}
+              />
+            )
           ))}
 
-        <FlatList
-          data={menuItems}
-          numColumns={2}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          ListHeaderComponent={<Carousel />}
-          contentContainerStyle={styles.flatListContainer}
-        />
+        <Carousel />
 
-        <LogOutModal
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          onConfirm={handleLogout}
-        />
+        <View style={styles.container}>
+          <ScrollView
+            contentContainerStyle={styles.grid}
+            showsVerticalScrollIndicator={false}
+          >
+            {menuItems.map((item) => {
+              const isAutocuidado = item.name === "Autocuidado";
+              const disabled = isAutocuidado && sinProgramas;
+
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.menuItem,
+                    disabled && styles.disabledItem,
+                    disabled && { opacity: 0.6 },
+                  ]}
+                  disabled={disabled}
+                  onPress={() =>
+                    item.screen && navigation.navigate(item.screen as any)
+                  }
+                >
+                  <MaterialIcons
+                    name={item.icon as keyof typeof MaterialIcons.glyphMap}
+                    size={35}
+                    color={disabled ? colors.lightGray : colors.preto}
+                  />
+                  <Text
+                    style={[
+                      styles.menuText,
+                      disabled && { color: colors.lightGray },
+                    ]}
+                  >
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          {/* Modal de Cerrar Sesión */}
+          <LogOutModal
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
+        </View>
       </ImageBackground>
     </SafeAreaView>
   );
 };
 
 const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
-
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+  },
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  flatListContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    alignItems: "center",
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingHorizontal: 3,
+    paddingVertical: 5,
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    paddingHorizontal: 5,
+    paddingBottom: 10,
+  },
+  disabledItem: {
+    backgroundColor: "#f0f0f0", // un gris claro de fondo
+    borderColor: "#ccc",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.primary,
+    marginBottom: 20,
   },
   menuItem: {
-    width: screenWidth / 2 - 40,
-    height: screenHeight / 4 - 30,
+    width: screenWidth / 2 - 60,
+    height: screenWidth / 2 - 55,
     backgroundColor: colors.white,
-    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 10,
     margin: 10,
     borderWidth: 1,
     borderColor: colors.background,
@@ -243,13 +303,36 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
-  disabledItem: {
-    backgroundColor: "#f0f0f0",
+  icon: {
+    marginBottom: 5,
   },
   menuText: {
     fontSize: 16,
+    color: colors.preto,
+    textAlign: "center",
     fontFamily: fonts.subtitle,
-    marginTop: 8,
+  },
+  logoutButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 20,
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  label: {
+    marginLeft: 15,
+    fontSize: 20,
+    color: colors.preto,
+    fontFamily: fonts.body,
+  },
+  labelName: {
+    marginLeft: 15,
+    fontSize: 20,
+    marginBottom: 15,
+    color: colors.preto,
+    fontFamily: fonts.title,
   },
 });
 
