@@ -53,31 +53,31 @@ const menuItems = [
   {
     id: "2",
     name: "Citas",
-    image: require("../../assets/icons/citas.png"),
+    image: require("../../assets/icons/citas_b.png"),
     screen: "TusCitas",
   },
   {
     id: "3",
     name: "Programas",
-    image: require("../../assets/icons/programas.png"),
+    image: require("../../assets/icons/programas_b.png"),
     screen: "TusProgramas",
   },
   {
     id: "4",
     name: "Resultados",
-    image: require("../../assets/icons/resultados.png"),
+    image: require("../../assets/icons/resultados_b.png"),
     screen: "Resultados",
   },
   {
     id: "5",
     name: "Medicamentos",
-    image: require("../../assets/icons/medicamentos.png"),
+    image: require("../../assets/icons/medicamentos_b.png"),
     screen: "Medicamentos",
   },
   {
     id: "6",
     name: "Autocuidado",
-    image: require("../../assets/icons/autocuidado.png"),
+    image: require("../../assets/icons/autocuidado_b.png"),
     screen: "Autocuidado",
   },
 ];
@@ -290,12 +290,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-  width: screenWidth / 2 - 45,
-  height: screenWidth / 2 - 60, 
+  width: screenWidth / 2 - 40,
+  height: screenWidth / 2 - 45, 
   borderRadius: 12,
   overflow: "hidden", 
-  margin: 10,
-  elevation: 2,
+  margin: 8,
 },
 
 menuImage: {
