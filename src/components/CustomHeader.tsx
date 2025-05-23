@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   Platform,
   ViewStyle,
-  Modal,
-  Pressable,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -116,9 +114,9 @@ const CustomHeader: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    height: 110,
+    height: 120,
     paddingTop: Platform.OS === "android" ? 15 : 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

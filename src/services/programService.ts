@@ -7,12 +7,13 @@ export async function fetchProgramas(tipo: string, documento: string) {
   const data = await res.json();
   const resformateados = data.map((item: any, index: number) => ({
     id: index.toString(),
-    fecha_cita: item.fecha_cita?.split(" ")[0] ?? "No tienes citas agendadas",
+    fecha_cita: item.fecha_cita?.slice(0,10) ?? "No tienes citas agendadas",
     hora: item.hora_cita?.slice(0, 8) ?? " ",
     programa: item.Programa ?? null,
     medico: item.nombre_medico ?? "No tiene programa",
-    especialidad: item.Especialidad ?? "",
+    especialidad: item.especialidad_cita ?? "",
     estado: item.estado_cita ?? "Pendiente",
+    
   }));
 
   return resformateados;

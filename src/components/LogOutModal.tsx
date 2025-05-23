@@ -24,15 +24,15 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>¿Deseas cerrar sesión?</Text>
+          <Text style={styles.modalTitle}>¿Está seguro que quiere cerrar la sesión?</Text>
 
           <View style={styles.modalButtons}>
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-              <Text style={styles.cancelText}>Cancelar</Text>
+              <Text style={styles.cancelText}>No</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-              <Text style={styles.confirmText}>Cerrar sesión</Text>
+              <Text style={styles.confirmText}>Sí</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -44,7 +44,7 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro semitransparente
+    backgroundColor: "rgba(245, 240, 240, 0.36)", // Fondo oscuro semitransparente
     justifyContent: "center",
     alignItems: "center",
   },
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     padding: 25,
     borderRadius: 10,
-    width: "80%",
+    width: "70%",
     alignItems: "center",
     shadowColor: colors.preto,
     shadowOffset: {
@@ -64,38 +64,44 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: fonts.title,
-    color: colors.primary,
-    marginBottom: 20,
+    color: colors.preto,
+    marginVertical: 20,
+    paddingHorizontal: 10,
     textAlign: "center",
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
   },
   cancelButton: {
-    padding: 10,
+    paddingVertical: 15,
     flex: 1,
     alignItems: "center",
-    borderRadius: 5,
+    borderRadius: 50,
     backgroundColor: colors.secondary,
     marginRight: 10,
   },
   confirmButton: {
-    padding: 10,
+    paddingVertical: 15,
     flex: 1,
     alignItems: "center",
-    borderRadius: 5,
-    backgroundColor: colors.primary,
+    borderRadius: 50,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.primary,
   },
   cancelText: {
+    fontSize: 18,
     color: "white",
     fontFamily: fonts.title,
   },
   confirmText: {
-    color: "white",
+    fontSize: 18,
+    color: colors.primary,
     fontFamily: fonts.title,
   },
 });

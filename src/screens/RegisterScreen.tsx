@@ -194,9 +194,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Registro.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
+        
       >
         {/* Header transparente */}
         <CustomHeader
@@ -214,7 +215,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.subheaderContainer}>
             <Image
               source={require("../../assets/logo_zentria_sinfondo.png")}
-              style={{ width: 80, height: 80 }}
+              style={{ marginBottom: 10 }}
             />
             <Text style={styles.title}>Registro</Text>
             <Text style={styles.subtitle}>
@@ -273,17 +274,17 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                       name={
                         acceptedTerms ? "check-box" : "check-box-outline-blank"
                       }
-                      size={26}
+                      size={28}
                       color={colors.preto}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.checkboxLabel}>Acepto los</Text>
+                  <Text style={styles.checkboxLabel}>Acepto los </Text>
                   <TouchableOpacity
                     onPress={
                       () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
                     }
                   >
-                    <Text style={styles.termsText}>Términos y Condiciones</Text>
+                    <Text style={styles.termsText}>términos y condiciones</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -321,7 +322,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.subtitle,
     color: colors.primary,
   },
@@ -339,15 +340,14 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   termsText: {
-    marginLeft: 10,
     fontSize: 16,
     fontFamily: fonts.subtitle,
-    color: colors.primary, // o "#007AFF" para estilo link
+    color: colors.primary, 
     textDecorationLine: "underline",
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 30,
+    fontFamily: fonts.title,
     color: colors.preto,
   },
   container: {
@@ -359,34 +359,33 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 55,
+    height: 65,
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingLeft: 15,
-    marginBottom: 10,
-    color: "#333",
-    fontSize: 16,
+    paddingLeft: 25,
+    marginBottom: 15,
+    color: colors.preto,
+    fontSize: 18,
     fontFamily: fonts.body,
   },
   button: {
     marginTop: 20,
     backgroundColor: colors.primary,
-    width: "98%",
-    paddingVertical: 14,
-    borderRadius: 25,
+    width: "100%",
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
-    marginBottom: 15,
   },
   registerText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    fontFamily: fonts.body,
+    color: colors.white,
+    fontSize: 20,
+    fontFamily: fonts.title,
   },
   loginText: {
-    color: colors.preto,
-    fontSize: 16,
+    marginTop: 15,
+    color: colors.accent,
     fontFamily: fonts.subtitle,
+    fontSize: 16
   },
   checkboxContainer: {
     flexDirection: "row",

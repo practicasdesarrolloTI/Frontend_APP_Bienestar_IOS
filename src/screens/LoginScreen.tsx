@@ -75,7 +75,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    const passwordRegex = /^[a-zA-Z0-9]{2,12}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{2,20}$/;
     if (!passwordRegex.test(password)) {
       Toast.show({
         type: "error",
@@ -134,7 +134,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Inicio_de_sesión.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -154,7 +154,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.subheaderContainer}>
             <Image
               source={require("../../assets/logo_zentria_sinfondo.png")}
-              style={{ width: 80, height: 80 }}
+              style={{marginBottom: 10}}
             />
             <Text style={styles.title}>Inicio de sesión</Text>
             <Text style={styles.subtitle}>
@@ -198,7 +198,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   <MaterialIcons
                     name={showPassword ? "visibility-off" : "visibility"}
                     style={{ marginRight: 15 }}
-                    size={20}
+                    size={25}
                     color={"#bfbfbf"}
                   />
                 </TouchableOpacity>
@@ -208,7 +208,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   onPress={() => navigation.navigate("ForgotPassword")}
                 >
                   <Text style={styles.forgotText}>
-                    ¿Olvidaste tu contraseña?
+                    ¿Olvidó tu contraseña?
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -224,17 +224,17 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                       name={
                         acceptedTerms ? "check-box" : "check-box-outline-blank"
                       }
-                      size={26}
+                      size={28}
                       color={colors.preto}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.checkboxLabel}>Acepto los</Text>
+                  <Text style={styles.checkboxLabel}>Acepto los </Text>
                   <TouchableOpacity
                     onPress={
                       () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
                     }
                   >
-                    <Text style={styles.termsText}>Términos y Condiciones</Text>
+                    <Text style={styles.termsText}>términos y condiciones</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -254,7 +254,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
               <TouchableOpacity onPress={() => navigation.navigate("Register")}>
                 <Text style={styles.registerText}>
-                  ¿No tienes cuenta?{" "}
+                  ¿No tiene cuenta?{" "}
                   <Text style={styles.subtitle}>Regístrate</Text>
                 </Text>
               </TouchableOpacity>
@@ -282,23 +282,20 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingHorizontal: 3,
-    paddingVertical: 5,
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontFamily: fonts.title,
     color: colors.preto,
   },
   termsText: {
-    marginLeft: 10,
     fontSize: 16,
     fontFamily: fonts.subtitle,
-    color: colors.primary, // o "#007AFF" para estilo link
+    color: colors.primary, 
     textDecorationLine: "underline",
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.subtitle,
     color: colors.primary,
   },
@@ -315,23 +312,23 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 55,
+    height: 65,
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingLeft: 15,
-    marginBottom: 10,
-    color: "#333",
-    fontSize: 16,
+    paddingLeft: 25,
+    marginBottom: 15,
+    color: colors.preto,
+    fontSize: 18,
     fontFamily: fonts.body,
   },
   inputPasword: {
     width: "100%",
-    height: 55,
+    height: 65,
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingLeft: 15,
-    color: "#333",
-    fontSize: 16,
+    paddingLeft: 25,
+    color: colors.preto,
+    fontSize: 18,
     fontFamily: fonts.body,
   },
   termsContainer: {
@@ -341,26 +338,26 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: colors.primary,
     width: "100%",
-    paddingVertical: 14,
-    borderRadius: 25,
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
   },
   loginText: {
-    color: "#fff",
-    fontSize: 18,
+    color: colors.white,
+    fontSize: 20,
     fontFamily: fonts.title,
   },
   forgotText: {
-    marginTop: 5,
+    marginTop: 15,
     color: colors.accent,
     fontFamily: fonts.subtitle,
-    fontSize: 14,
+    fontSize: 16,
   },
   registerText: {
     marginTop: 15,
-    color: colors.preto,
+    color: colors.accent,
     fontFamily: fonts.subtitle,
-    fontSize: 16,
+    fontSize: 16
   },
   checkboxContainer: {
     marginTop: 20,

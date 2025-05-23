@@ -25,15 +25,7 @@ import {
 import Toast from "react-native-toast-message";
 import CustomHeader from "../components/CustomHeader";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-
-
-
-
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS";
-
-
 
 
 type Props = NativeStackScreenProps<RootStackParamList, "VerifyCode">;
@@ -75,7 +67,7 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
   }, [timer, resendAttempts]);
 
   const handleVerify = async () => {
-    console.log("tipo de documento", documentType);
+
     console.log("correo", mail);
     try {
       await verifyRecoveryCode(Number(document), value);
@@ -103,6 +95,7 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
   const handleResendCode = async () => {
     try {
       await sendRecoveryCode(Number(document), mail);
+      console.log("Código reenviado a:", mail);
       setResendAttempts((prev) => prev + 1);
       setTimer(120);
       console.log("Resend code attempts:", resendAttempts, " of ", maxAttempts);
@@ -123,7 +116,7 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Codigo.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -206,39 +199,36 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
+    title: {
+    fontSize: 30,
+    fontFamily: fonts.title,
+    color: colors.preto,
+    textAlign: "center",
+    marginBottom: 5,
+  },
   subtitle: {
-    marginTop: 10,
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.subtitle,
     color: colors.primary,
     textAlign: "center",
+    marginBottom: 50,
+    paddingHorizontal: 20,
   },
   subheaderContainer: {
-    marginBottom: 60,
+    marginBottom: 30,
     alignItems: "center",
     justifyContent: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontFamily: fonts.title,
-    color: colors.preto,
   },
   container: {
     flex: 1,
     padding: 30,
     justifyContent: "center",
   },
-  label: {
-    fontSize: 18,
-    fontFamily: fonts.subtitle,
-    color: colors.primary,
-    marginBottom: 10,
-  },
   instructions: {
     fontSize: 16,
     fontFamily: fonts.subtitle,
     marginBottom: 10,
-    marginTop: 10,
+    marginTop: 15,
     color: colors.primary,
     textAlign: "center",
   },
@@ -247,44 +237,44 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cell: {
-    width: 55,
-    height: 55,
+    width: 60,
+    height: 60,
     lineHeight: 50,
     fontSize: 24,
-    borderWidth: 1,
-    borderColor: colors.primary,
     borderRadius: 8,
     textAlign: "center",
-    marginHorizontal: 3,
+    marginHorizontal: 4,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.white,
   },
   cellFocused: {
+    borderWidth: 2,
     borderColor: colors.primary,
   },
   cellText: {
     fontFamily: fonts.title,
     fontSize: 20,
-    color: "#333",
+    color: colors.preto,
   },
   timerText: {
     fontSize: 16,
     fontFamily: fonts.subtitle,
     color: colors.secondary,
     textAlign: "center",
-    marginBottom: 5,
+    marginTop: 10,
   },
   button: {
+    marginTop: 40,
     backgroundColor: colors.primary,
-    paddingVertical: 14,
-    borderRadius: 25,
+    width: "100%",
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
-    marginTop: 20,
   },
   buttonText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.title,
   },
   buttonDisabled: {
@@ -292,17 +282,18 @@ const styles = StyleSheet.create({
     borderColor: "#cccccc",
   },
   buttonReenviar: {
-    backgroundColor: colors.background,
-    paddingVertical: 14,
-    borderRadius: 25,
+    marginTop: 20,
+    backgroundColor: colors.white,
+    borderColor: colors.preto,
+    borderWidth: 2,
+    width: "100%",
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
-    marginTop: 15,
-    borderWidth: 1,
-    borderColor: colors.primary,
   },
   buttonReenviarText: {
-    color: colors.primary,
-    fontSize: 16,
+    color: colors.preto,
+    fontSize: 18,
     fontFamily: fonts.title,
   },
 });

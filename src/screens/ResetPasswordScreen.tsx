@@ -71,7 +71,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           text2: "Usuario registrado correctamente.",
           position: "bottom",
         });
-        navigation.replace("Login");
+       navigation.replace("Home");
       }
     } else {
       if (!patient) {
@@ -107,7 +107,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Codigo.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -126,9 +126,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           >
             <View style={styles.subheaderContainer}>
               <Text style={styles.title}>Nueva Contraseña</Text>
-              <Text style={styles.subtitle}>
-                Ingresa tu nueva contraseña para continuar.
-              </Text>
+              <Text style={styles.subtitle}>Ingrese tu nueva contraseña</Text>
             </View>
             <View style={styles.passwordContainer}>
               <TextInput
@@ -148,7 +146,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <MaterialIcons
                   name={showPassword ? "visibility-off" : "visibility"}
-                  size={20}
+                  size={25}
                   color={"#bfbfbf"}
                   style={{ marginRight: 15 }}
                 />
@@ -172,7 +170,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
               >
                 <MaterialIcons
                   name={showConfirmPassword ? "visibility-off" : "visibility"}
-                  size={20}
+                  size={25}
                   color={"#bfbfbf"}
                   style={{ marginRight: 15 }}
                 />
@@ -185,8 +183,8 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
                   { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
                 ]}
               >
-                La contraseña debe tener mínimo 8 caracteres, una mayúscula, una
-                minúscula y un número.
+                La contraseña debe tener entre 4 y 12 caracteres, una mayúscula,
+                una minúscula y un número.
               </Text>
             </View>
 
@@ -213,22 +211,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
+  title: {
+    fontSize: 30,
+    fontFamily: fonts.title,
+    color: colors.preto,
+    textAlign: "center",
+    marginBottom: 5,
+  },
   subtitle: {
-    marginTop: 10,
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.subtitle,
     color: colors.primary,
     textAlign: "center",
+    paddingHorizontal: 20,
   },
   subheaderContainer: {
     marginBottom: 60,
     alignItems: "center",
     justifyContent: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontFamily: fonts.title,
-    color: colors.preto,
   },
   container: {
     flex: 1,
@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
   },
   inputPasword: {
     width: "100%",
-    height: 55,
+    height: 65,
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingLeft: 15,
-    color: "#333",
-    fontSize: 16,
+    paddingLeft: 25,
+    color: colors.preto,
+    fontSize: 18,
     fontFamily: fonts.body,
   },
   warning: {
@@ -254,17 +254,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: fonts.body,
   },
-
   button: {
-    backgroundColor: colors.primary,
-    paddingVertical: 14,
-    borderRadius: 25,
-    alignItems: "center",
     marginTop: 5,
+    backgroundColor: colors.primary,
+    width: "100%",
+    paddingVertical: 20,
+    borderRadius: 50,
+    alignItems: "center",
   },
   buttonText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: fonts.title,
   },
   passwordContainer: {

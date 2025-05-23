@@ -31,7 +31,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { getRemainingTime } from "../utils/getRemainingTimeUtils";
 import LoadingScreen from "../components/LoadingScreen";
 import SkeletonSurveyCard from "../components/SurveySkeleton";
-import { getPatientIndicators } from "../services/surveyService";
+import { fetchAutocuidado } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/LogOutModal";
 
@@ -134,7 +134,8 @@ const SelfCareScreen: React.FC = () => {
       const data = await getPatientByDocument(storedDoc);
       setPatient(data as unknown as Paciente);
 
-      const indicadoresData = await getPatientIndicators(storedTipo, storedDoc);
+      const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
+      console.log("Indicadores", indicadoresData);
       setIndicadores(indicadoresData);
     } catch (error) {
       Toast.show({

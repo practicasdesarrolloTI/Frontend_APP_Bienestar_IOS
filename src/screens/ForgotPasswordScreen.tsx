@@ -106,10 +106,11 @@ const ForgotPasswordScreen = ({
         correoPaciente || ""
       );
       if (result.success) {
+        console.log("Código enviado a:", correoPaciente);
         navigation.navigate("VerifyCode", {
           document: document,
           documentType: documentType as DocumentType,
-          mail: email,
+          mail: correoPaciente || "",
         });
       } else {
         if (result.retryAfterMinutes) {
@@ -145,7 +146,7 @@ const ForgotPasswordScreen = ({
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -156,45 +157,41 @@ const ForgotPasswordScreen = ({
           showProfileIcon={false}
           onLogout={() => {}}
         />
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.subheaderContainer}>
+            <Text style={styles.title}>Recuperar contraseña</Text>
+            <Text style={styles.subtitle}>
+              Ingrese esta información para verificar la autenticidad de la
+              cuenta
+            </Text>
+          </View>
+          <DocumentPicker selected={documentType} onSelect={setDocumentType} />
 
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
+          <TextInput
+            placeholder="Número de documento"
+            placeholderTextColor={colors.preto}
+            keyboardType="numeric"
+            style={styles.input}
+            value={document}
+            onChangeText={setDocument}
+          />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSendCode}
+            disabled={isLoading}
           >
-            <View style={styles.subheaderContainer}>
-              <Text style={styles.title}>Recuperar contraseña</Text>
-              <Text style={styles.subtitle}>
-                Ingresa tu información para continuar.
-              </Text>
-            </View>
-            <DocumentPicker
-              selected={documentType}
-              onSelect={setDocumentType}
-            />
-
-            <TextInput
-              placeholder="Número de documento"
-              placeholderTextColor={colors.preto}
-              keyboardType="numeric"
-              style={styles.input}
-              value={document}
-              onChangeText={setDocument}
-            />
-
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSendCode}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Enviar Código</Text>
-              )}
-            </TouchableOpacity>
-          </ScrollView>
-        </Pressable>
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Enviar Código</Text>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -206,27 +203,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
+  title: {
+    fontSize: 30,
+    fontFamily: fonts.title,
+    color: colors.preto,
+    textAlign: "center",
+    marginBottom: 5,
+  },
   subtitle: {
-    marginTop: 10,
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.subtitle,
     color: colors.primary,
     textAlign: "center",
+    marginBottom: 50,
   },
   subheaderContainer: {
     marginBottom: 60,
     alignItems: "center",
     justifyContent: "center",
   },
-  title: {
-    fontSize: 28,
-    fontFamily: fonts.title,
-    color: colors.preto,
-  },
   container: {
     flex: 1,
     padding: 30,
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   label: {
     fontSize: 18,
@@ -236,26 +236,26 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 55,
+    height: 65,
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingLeft: 15,
-    marginBottom: 10,
-    color: "#333",
-    fontSize: 16,
+    paddingLeft: 25,
+    marginBottom: 15,
+    color: colors.preto,
+    fontSize: 18,
     fontFamily: fonts.body,
   },
   button: {
-    marginTop: 20,
+    marginTop: 40,
     backgroundColor: colors.primary,
     width: "100%",
-    paddingVertical: 14,
-    borderRadius: 25,
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
   },
   buttonText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 20,
     fontFamily: fonts.title,
   },
 });

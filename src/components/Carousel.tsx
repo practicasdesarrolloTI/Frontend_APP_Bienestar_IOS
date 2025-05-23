@@ -20,7 +20,7 @@ const ImageCarousel: React.FC = () => {
     <View style={styles.container}>
       <Carousel
         width={width * 0.85}
-        height={180}
+        height={160}
         data={images}
         autoPlay
         loop
@@ -50,12 +50,12 @@ const ImageCarousel: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginTop: 20,
+    paddingVertical: 10,
   },
   imageWrapper: {
     borderRadius: 8,
     overflow: "hidden",
-    marginHorizontal: 1, // Espaciado entre imágenes
+    marginHorizontal: 2, 
     justifyContent: "center",
     alignItems: "center",
   },

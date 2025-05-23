@@ -26,7 +26,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fono_prueba_app.jpg")}
+        source={require("../../assets/Fondos/Landing.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -78,20 +78,22 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: 15,
   },
   phraseContainer: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "flex-start",
+    marginRight: 50,
+    marginLeft: 15,
   },
   text: {
-    fontSize: 36,
+    fontSize: 40,
+    
     textAlign: "left",
     color: colors.white,
   },
   body: {
-    fontFamily: fonts.subtitle,
+    fontFamily: fonts.title,
   },
   buttonContainer: {
     flex: 1,
@@ -101,27 +103,27 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: colors.secondary,
-    width: "98%",
-    paddingVertical: 14,
-    borderRadius: 25,
-    marginBottom: 15,
+    width: "95%",
+    paddingVertical: 20,
+    borderRadius: 50,
+    marginBottom: 20,
     alignItems: "center",
   },
   loginText: {
-    color: "#fff",
-    fontSize: 20,
+    color: colors.white,
+    fontSize: 22,
     fontFamily: fonts.title,
   },
   registerButton: {
     backgroundColor: colors.white,
-    width: "98%",
-    paddingVertical: 14,
-    borderRadius: 25,
+    width: "95%",
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
   },
   registerText: {
-    color: colors.primary,
-    fontSize: 20,
+    color: colors.preto,
+    fontSize: 22,
     fontFamily: fonts.title,
   },
 });

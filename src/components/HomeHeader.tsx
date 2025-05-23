@@ -85,10 +85,12 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
 
 const styles = StyleSheet.create({
   header: {
-    height: 110,
+    height: 120,
     paddingTop: Platform.OS === "android" ? 70 : 55,
     paddingHorizontal: 25,
-    justifyContent: "flex-end",
+    paddingVertical: 15,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "transparent",
   },
   content: {
@@ -118,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 4,
   },
-  
+
   menuItem: {
     paddingVertical: 8,
     fontSize: 16,

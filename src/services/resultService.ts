@@ -49,7 +49,7 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
       }));
     }
 
-    // 🟡 Caso especial: backend devolvió un mensaje
+    //  Caso especial: backend devolvió un mensaje
     if (rawData.message) {
       console.warn("⚠️ El backend respondió con un mensaje:", rawData.message);
       return []; // ← no hay exámenes, devolvemos lista vacía

@@ -66,12 +66,13 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     loadPrograms();
   }, []);
 
-const sinProgramas =
-  programas.length === 0 ||
-  programas.every(
-    (p) =>
-      !p.programa || p.programa.toLowerCase().includes("no tiene programa")
-  );
+  const sinProgramas =
+    programas.length === 0 ||
+    programas.every(
+      (p) =>
+        !p.programa ||
+        p.programa.toLowerCase().includes("no disponible por el momento")
+    );
 
   console.log("SINPROGRAMA:", sinProgramas);
   console.log("Programas:", programas);
@@ -188,6 +189,14 @@ const sinProgramas =
                         <Text style={styles.label}>Médico: </Text>
                         {capitalizeName(item.medico)}
                       </Text>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>Especialidad: </Text>
+                        {capitalizeName(item.especialidad)}
+                      </Text>
+                      {/* <Text style={styles.text}>
+                        <Text style={styles.label}>Hora proxima cita: </Text>
+                        {item.hora}{" "}
+                      </Text> */}
                     </View>
                   </View>
                 </View>

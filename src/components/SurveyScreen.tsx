@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
+  ImageBackground,
 } from "react-native";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -380,11 +381,16 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary}
-        translucent={false}
-      />
+    <StatusBar
+            barStyle="dark-content"
+            translucent
+            backgroundColor="transparent"
+          />
+          <ImageBackground
+            source={require("../../assets/Fondos/Pregunta_cuestionario.png")}
+            style={StyleSheet.absoluteFillObject}
+            resizeMode="cover"
+          >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
@@ -411,6 +417,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
           </TouchableOpacity>
         </View>
       </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
