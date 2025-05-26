@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
@@ -43,28 +43,39 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: colors.white,
-    padding: 20,
-    borderRadius: 10,
+    borderRadius: 16,
     width: "85%",
+    paddingHorizontal: 20,
+    paddingVertical: 30,
     alignItems: "center",
-    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
   },
   title: {
-    fontSize: 24,
-    color: colors.primary,
-    marginBottom: 10,
+    fontSize: 20,
     fontFamily: fonts.title,
+    color: colors.preto,
+    marginBottom: 12,
   },
   text: {
-    fontSize: 18,
-    marginBottom: 20,
+    fontSize: 16,
+    fontFamily: fonts.body,
+    color: colors.preto,
     textAlign: "center",
-    fontFamily: fonts.subtitle,
+    lineHeight: 22,
+    marginBottom: 25,
   },
   confirmButton: {
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 25,
+    backgroundColor: colors.secondary,
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
   buttonText: {
     color: colors.white,
