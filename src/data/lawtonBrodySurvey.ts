@@ -1,6 +1,7 @@
 export const lawtonBrodySurvey = {
   id: "lawtonbrody",
   nombre: "Encuesta LAWTON-BRODY",
+  image: require("../../assets/icons/lawton_b.png"),
   descripcion: "Evalúa el nivel de autonomía funcional en adultos mayores.",
   requiereEdad: false,
   requiereSexo: true,

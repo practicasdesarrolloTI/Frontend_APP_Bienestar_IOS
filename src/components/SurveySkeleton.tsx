@@ -41,11 +41,13 @@ const SurveySkeleton: React.FC = () => {
 
       <View style={styles.skeletonTextBig} />
       <View style={styles.skeletonTextSmall} />
-      <View style={styles.skeletonButton} />
+
     </View>
   );
 };
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#eee",
@@ -53,7 +55,8 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 12,
     overflow: "hidden",
-    height: 150,
+    width: screenWidth * 0.88,
+    height: screenHeight * 0.25,
   },
   shimmerWrapper: {
     ...StyleSheet.absoluteFillObject,
@@ -67,24 +70,18 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   skeletonTextBig: {
-    height: 20,
-    width: "60%",
+    height: "75%",
+    width: "99%",
     backgroundColor: "#ddd",
-    borderRadius: 4,
-    marginBottom: 12,
+    borderRadius: 25,
+    marginBottom: 5,
   },
   skeletonTextSmall: {
-    height: 14,
-    width: "90%",
+    height: "30%",
+    width: "99%",
     backgroundColor: "#ddd",
-    borderRadius: 4,
-    marginBottom: 20,
-  },
-  skeletonButton: {
-    height: 30,
-    width: 100,
-    backgroundColor: "#ccc",
-    borderRadius: 20,
+    borderRadius: 25,
+    marginBottom: 5,
   },
 });
 

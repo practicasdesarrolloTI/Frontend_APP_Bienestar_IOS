@@ -40,8 +40,10 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
- const [searchQuery, setSearchQuery] = useState("");
- const [filteredMedicamentos, setFilteredMedicamentos] = useState<Medicamento[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredMedicamentos, setFilteredMedicamentos] = useState<
+    Medicamento[]
+  >([]);
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -64,18 +66,16 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
 
       const data = await fetchMedicamentos(tipo, doc);
       setMedicamentos(data);
+      setFilteredMedicamentos(data);
     } catch (error) {
       return;
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
-  
-  
   useEffect(() => {
-    loadData()
+    loadData();
   }, []);
 
   /* Función para formatear el nombre del medicamento */
@@ -128,75 +128,75 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               setSearchQuery(text);
               const lowerText = text.toLowerCase();
               const filtered = medicamentos.filter((resultado) =>
-                [resultado.nombre]
-                  .join(" ")
-                  .toLowerCase()
-                  .includes(lowerText)
+                [resultado.nombre].join(" ").toLowerCase().includes(lowerText)
               );
               setFilteredMedicamentos(filtered);
             }}
             placeholder="Buscar medicamentos"
           />
 
-          <FlatList
-            data={filteredMedicamentos}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{
-              flexGrow: 1,
-              justifyContent:
-                medicamentos.length === 0 ? "center" : "flex-start",
-              paddingBottom: 100,
-            }}
-            ListEmptyComponent={
-              <EmptyState message="No se encontraron resultados de momento" />
-            }
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={styles.cardContent}>
-                  {/* Columna izquierda: Fecha */}
-                  <View style={styles.leftColumn}>
-                    <Text style={styles.dateText}>Fecha de Vencimiento: </Text>
-                    <Text style={styles.dateDay}>
-                      {new Date(item.fechaVencimiento).getDate()}
-                    </Text>
-                    <Text style={styles.dateMonth}>
-                      {new Date(item.fechaVencimiento).toLocaleDateString(
-                        "es-CO",
-                        {
-                          month: "long",
-                        }
-                      )}
-                    </Text>
-                    <Text style={styles.dateYear}>
-                      {new Date(item.fechaVencimiento).getFullYear()}
-                    </Text>
-                  </View>
+          {filteredMedicamentos.length === 0 ? (
+            <EmptyState message="No se encontraron medicamentos por el momento." />
+          ) : (
+            <FlatList
+              data={filteredMedicamentos}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent:
+                  medicamentos.length === 0 ? "center" : "flex-start",
+                paddingBottom: 100,
+              }}
+              renderItem={({ item }) => (
+                <View style={styles.card}>
+                  <View style={styles.cardContent}>
+                    {/* Columna izquierda: Fecha */}
+                    <View style={styles.leftColumn}>
+                      <Text style={styles.dateText}>
+                        Fecha de Vencimiento:{" "}
+                      </Text>
+                      <Text style={styles.dateDay}>
+                        {new Date(item.fechaVencimiento).getDate()}
+                      </Text>
+                      <Text style={styles.dateMonth}>
+                        {new Date(item.fechaVencimiento).toLocaleDateString(
+                          "es-CO",
+                          {
+                            month: "long",
+                          }
+                        )}
+                      </Text>
+                      <Text style={styles.dateYear}>
+                        {new Date(item.fechaVencimiento).getFullYear()}
+                      </Text>
+                    </View>
 
-                  {/* Columna derecha: Detalles */}
-                  <View style={styles.rightColumn}>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>
-                        Nombre:{" "}
-                        <Text style={styles.text}>
-                          {formatName(item.nombre)}
+                    {/* Columna derecha: Detalles */}
+                    <View style={styles.rightColumn}>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>
+                          Nombre:{" "}
+                          <Text style={styles.text}>
+                            {formatName(item.nombre)}
+                          </Text>
                         </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Cantidad: </Text>{" "}
-                      {item.cantidad}
-                    </Text>
-                    {item.presentacion && item.presentacion !== "NINGUNO" && (
                       <Text style={styles.text}>
-                        <Text style={styles.label}>Presentación: </Text>
-                        {capitalizeSentence(item.presentacion)}
+                        <Text style={styles.label}>Cantidad: </Text>{" "}
+                        {item.cantidad}
                       </Text>
-                    )}
+                      {item.presentacion && item.presentacion !== "NINGUNO" && (
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Presentación: </Text>
+                          {capitalizeSentence(item.presentacion)}
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 </View>
-              </View>
-            )}
-          />
+              )}
+            />
+          )}
 
           {/* Modal de Cerrar Sesión */}
           <LogOutModal

@@ -1,6 +1,7 @@
 export const moriskyGreenSurvey = {
   id: "moriskyGreen",
   nombre: "Test de Morisky-Green",
+   imagen: require("../../assets/icons/morisky_b.png"),
   descripcion:
     "Esta encuesta ayuda a conocer qué tanto sigues tu tratamiento médico.",
   requiereEdad: false,

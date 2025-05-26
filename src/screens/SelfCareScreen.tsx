@@ -44,6 +44,7 @@ type ResultadoEncuesta = {
 type Survey = {
   id: string;
   nombre: string;
+  image?: string;
   descripcion: string;
   preguntas: (
     | {
@@ -85,7 +86,6 @@ const SelfCareScreen: React.FC = () => {
       { bloqueada?: boolean; disponibleEn?: any; cargando?: boolean }
     >
   >({});
-
 
   const [modalVisible, setModalVisible] = useState(false);
   /** Función para cerrar sesión */
@@ -156,24 +156,28 @@ const SelfCareScreen: React.FC = () => {
       requiereEdad: true,
       requiereSexo: true,
       requiredIMC: true,
+      image: require("../../assets/icons/findrisc_b.png"),
     },
     {
       ...lawtonBrodySurvey,
       requiereEdad: false,
       requiereSexo: false,
       requiredIMC: false,
+      image: require("../../assets/icons/lawton_b.png"),
     },
     {
       ...framinghamSurvey,
       requiereEdad: true,
       requiereSexo: true,
       requiredIMC: false,
+      image: require("../../assets/icons/framingham_b.png"),
     },
     {
       ...moriskyGreenSurvey,
       requiereEdad: false,
       requiereSexo: false,
       requiredIMC: false,
+      image: require("../../assets/icons/morisky_b.png"),
     },
   ]);
 
@@ -258,6 +262,7 @@ const SelfCareScreen: React.FC = () => {
         key={survey.id}
         survey={{
           nombre: survey.nombre,
+          image: survey.image,
           descripcion: survey.descripcion,
           bloqueada: estado.bloqueada,
         }}
@@ -279,7 +284,7 @@ const SelfCareScreen: React.FC = () => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -326,9 +331,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 30,
-    paddingVertical: 10,
-  },
+    paddingHorizontal: 30,  },
 });
 
 export default SelfCareScreen;

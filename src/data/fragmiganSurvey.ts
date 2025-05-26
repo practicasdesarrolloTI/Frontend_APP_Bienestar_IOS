@@ -1,6 +1,7 @@
 export const framinghamSurvey = {
   id: 'framingham',
   nombre: 'Escala Framingham',
+  image: require('../../assets/icons/framingham_b.png'),
   descripcion: 'Estima el riesgo cardiovascular a 10 años.',
   requireIMC: false,
   requiereEdad: true,

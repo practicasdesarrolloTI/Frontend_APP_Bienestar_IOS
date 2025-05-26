@@ -34,7 +34,6 @@ type Respuesta =
 const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const { preguntas, surveyId, edad, sexo, survey, indicadores } = route.params;
 
-  console.log("Preguntas", preguntas);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -381,11 +380,11 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <StatusBar
-            barStyle="dark-content"
-            translucent
-            backgroundColor="transparent"
-          />
+     <StatusBar
+           barStyle="dark-content"
+           translucent
+           backgroundColor="transparent"
+         />
           <ImageBackground
             source={require("../../assets/Fondos/Pregunta_cuestionario.png")}
             style={StyleSheet.absoluteFillObject}
@@ -398,6 +397,10 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
       </View>
 
       <View style={styles.container}>
+        <Text style={styles.question}>
+           Pregunta {currentIndex + 1} de{" "}
+          {finalPreguntas.length}
+        </Text>
         {renderQuestion()}
         <View style={styles.buttonContainer}>
           {currentIndex > 0 && (
@@ -425,7 +428,6 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -441,18 +443,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 30,
-    backgroundColor: colors.background,
+
   },
   questionContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
   question: {
     fontSize: 22,
     fontFamily: fonts.title,
-    marginBottom: 20,
-    textAlign: "center",
+    marginBottom: 50,
+    textAlign: "left",
   },
   input: {
     width: "30%",
@@ -467,10 +469,11 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
   },
   optionButton: {
-    width: "80%",
-    padding: 12,
+    width: "99%",
+    paddingVertical: 20,
+    paddingHorizontal: 20,
     marginVertical: 5,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.white,
     borderRadius: 5,
     alignItems: "center",
   },
@@ -478,14 +481,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   optionText: {
-    color: colors.white,
+    color: colors.preto,
     fontSize: 18,
     fontFamily: fonts.subtitle,
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
+    
     marginTop: 20,
+    
   },
   previousButton: {
     backgroundColor: colors.secondary,

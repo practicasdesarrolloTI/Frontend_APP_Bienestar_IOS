@@ -1,6 +1,8 @@
+
 export const findriscSurvey = {
   id: "findrisc",
   nombre: "Encuesta FINDRISC",
+  imagen: require("../../assets/icons/findrisc_b.png"),
   descripcion: "Evalúa el riesgo de diabetes tipo 2",
   requiereEdad: true,
   requiereSexo: true,
