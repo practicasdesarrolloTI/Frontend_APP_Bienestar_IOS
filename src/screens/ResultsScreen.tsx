@@ -24,6 +24,7 @@ import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
 import Toast from "react-native-toast-message";
 import LogOutModal from "../components/LogOutModal";
+import Buscador from "../components/Buscador";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;
 
@@ -31,17 +32,19 @@ type Resultado = {
   id: string;
   fechaRealizacion: string;
   examen: string;
-  estado: string;
   programa: string;
+  medico_remisor: string;
 };
 
 const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   const [resultados, setResultados] = useState<Resultado[]>([]);
+  const [resultadosFiltrados, setResultadosFiltrados] = useState<Resultado[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const noHayResultados = resultados.length === 0;
+  const noHayResultados = resultados.length === 0 || resultadosFiltrados.length === 0;
+  const [searchQuery, setSearchQuery] = useState("");
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -61,9 +64,9 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         const tipo = await AsyncStorage.getItem("tipoDocumento");
         const doc = await AsyncStorage.getItem("documento");
         if (!tipo || !doc) throw new Error("Faltan datos del paciente");
-
         const data = await fetchResults(tipo, doc);
         setResultados(data);
+        setResultadosFiltrados(data);
       } catch (error) {
         console.error("Error al cargar resultados:", error);
       } finally {
@@ -72,23 +75,6 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     };
     loadData();
   }, []);
-
-  const resultadosOrdenadas = resultados.sort((a, b) => {
-    const fechaA = new Date(a.fechaRealizacion);
-    const fechaB = new Date(b.fechaRealizacion);
-    return fechaA.getTime() - fechaB.getTime();
-  });
-
-  const resultadosFiltrados = resultadosOrdenadas.filter((r) => {
-    if (!fechaInicio && !fechaFin) return true;
-    const fecha = new Date(r.fechaRealizacion);
-    const desde = fechaInicio ? new Date(fechaInicio) : null;
-    const hasta = fechaFin ? new Date(fechaFin) : null;
-
-    if (desde && fecha < desde) return false;
-    if (hasta && fecha > hasta) return false;
-    return true;
-  });
 
   const openLabResultsWeb = async () => {
     const url =
@@ -101,7 +87,6 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         type: "error",
         text2: "No se pudo abrir el enlace.",
       });
-      Alert.alert("Error", "No se pudo abrir el enlace.");
     }
   };
 
@@ -151,23 +136,28 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
         />
 
         <View style={styles.contentContainer}>
-          <CustomDateRangeFilter
-            fechaInicio={fechaInicio}
-            fechaFin={fechaFin}
-            onChangeInicio={setFechaInicio}
-            onChangeFin={setFechaFin}
+          {/* Buscador */}
+          <Buscador
+            value={searchQuery}
+            onChange={(text) => {
+              setSearchQuery(text);
+              const lowerText = text.toLowerCase();
+              const filtered = resultados.filter((resultado) =>
+                [resultado.examen, resultado.programa, resultado.medico_remisor]
+                  .join(" ")
+                  .toLowerCase()
+                  .includes(lowerText)
+              );
+              setResultadosFiltrados(filtered);
+            }}
+            placeholder="Buscar resultados"
           />
 
           <FlatList
             data={resultadosFiltrados}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{
-              // flexGrow: 1,
-              // justifyContent: resultados.length === 0 ? "center" : "flex-start",
-              paddingBottom: 120,
-            }}
             ListEmptyComponent={
-              <EmptyState message="Aún no se han registrado resultados de exámenes para ti." />
+              <EmptyState message="No se encontraron resultados de momento" />
             }
             renderItem={({ item }) => (
               <View style={styles.card}>
@@ -204,7 +194,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
                       </Text>
                     )}
                   </View>
-                  
+
                   {/* Columna derecha: Detalles */}
                   <View style={styles.rightColumn}>
                     <Text style={styles.text}>
@@ -214,7 +204,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
                     </Text>
                     <Text style={styles.text}>
                       <Text style={styles.label}>Médico Remisor: </Text>
-                      {capitalizeName(item.programa)}
+                      {capitalizeName(item.medico_remisor)}
                     </Text>
                   </View>
                 </View>
@@ -266,38 +256,69 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: colors.preto,
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   cardContent: {
-    height: 160,
+    height: 140,
     width: "100%",
     flexDirection: "row",
     alignItems: "stretch",
   },
   text: {
     fontSize: 16,
-    marginBottom: 2,
+    marginBottom: 5,
     color: colors.preto,
     fontFamily: fonts.body,
   },
   label: {
     fontSize: 16,
-    color: colors.primary,
-    fontFamily: fonts.subtitle,
+    color: colors.preto,
+    fontFamily: fonts.title,
   },
-footerButtonContainer: {
-  marginTop: 10,
-  paddingHorizontal: 30,
-},
+  leftColumn: {
+    width: "25%",
+    height: "100%",
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+  },
+  dateDay: {
+    fontSize: 36,
+    color: colors.white,
+    fontFamily: fonts.title,
+  },
+  dateMonth: {
+    fontSize: 18,
+    color: colors.white,
+    fontFamily: fonts.title,
+    textTransform: "capitalize",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
+  },
+  dateYear: {
+    fontSize: 18,
+    color: colors.white,
+    fontFamily: fonts.body,
+    marginTop: 2,
+  },
+  rightColumn: {
+    flex: 1,
+    paddingHorizontal: 15,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  footerButtonContainer: {
+    marginTop: 10,
+    paddingHorizontal: 30,
+  },
   footerButton: {
     backgroundColor: colors.secondary,
-    paddingVertical: 14,
-    borderRadius: 25,
+    paddingVertical: 20,
+    borderRadius: 50,
     alignItems: "center",
     marginBottom: 20,
   },
@@ -308,40 +329,6 @@ footerButtonContainer: {
   },
   footerButtonDisabled: {
     backgroundColor: "#ccc",
-  },
-  leftColumn: {
-    width: "20%",
-    height: "100%",
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 4,
-  },
-  dateDay: {
-    fontSize: 22,
-    color: "white",
-    fontFamily: fonts.title,
-  },
-  dateMonth: {
-    fontSize: 16,
-    color: "white",
-    fontFamily: fonts.body,
-    textTransform: "capitalize",
-  },
-  dateYear: {
-    fontSize: 18,
-    color: "white",
-    fontFamily: fonts.subtitle,
-    borderTopWidth: 1,
-    borderTopColor: "white",
-  },
-  rightColumn: {
-    flex: 1,
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "flex-start",
   },
 });
 

@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   disabledItem: {
-    backgroundColor: "#f0f0f0", // un gris claro de fondo
+    backgroundColor: "#f0f0f0", 
     borderColor: "#ccc",
   },
   title: {

@@ -24,6 +24,7 @@ import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/LogOutModal";
+import Buscador from "../components/Buscador";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
 
@@ -40,9 +41,8 @@ type Cita = {
 const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   const [citas, setCitas] = useState<Cita[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -76,7 +76,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         const citasFormateadas = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
-          hora: item.fecha_cita?.slice(11, 16) || "",
+          hora: item.turno || "",
           especialidad: item.especialidad || "",
           programa: item.programa || "—",
           medico: item.nombre_medico || "",
@@ -92,36 +92,13 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     loadData();
   }, []);
 
-  const citasFiltradas = citas.filter((cita) => cita.estado === "AUTORIZADO");
-  const citasOrdenadas = citasFiltradas.sort((a, b) => {
-    const fechaA = new Date(a.fecha);
-    const fechaB = new Date(b.fecha);
-    return fechaA.getTime() - fechaB.getTime();
-  });
-
-  const citasFiltradasPorFecha = citasOrdenadas.filter((c) => {
-    const fecha = new Date(c.fecha);
-    const desde = fechaInicio ? new Date(fechaInicio) : null;
-    const hasta = fechaFin ? new Date(fechaFin) : null;
-
-    if (desde && fecha < desde) return false;
-    if (hasta && fecha > hasta) return false;
-    return true;
-  });
-
-  /* Función para formatear la hora */
-  const formatHora = (hora: string) => {
-    if (!hora) return "";
-    const [hours, minutes] = hora.split(":");
-    const date = new Date();
-    date.setHours(Number(hours));
-    date.setMinutes(Number(minutes));
-    return date.toLocaleTimeString("es-CO", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
+  const filteredCitas = citas
+    .filter((c) => c.estado === "AUTORIZADO")
+    .filter((c) =>
+      [c.medico, c.especialidad].some((field) =>
+        field.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
 
   /* Función para capitalizar el nombre */
   const capitalizeName = (text: string): string => {
@@ -152,7 +129,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -166,24 +143,22 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         />
 
         <View style={styles.container}>
-          <CustomDateRangeFilter
-            fechaInicio={fechaInicio}
-            fechaFin={fechaFin}
-            onChangeInicio={setFechaInicio}
-            onChangeFin={setFechaFin}
+          <Buscador
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Buscar cita"
           />
 
           {/* Lista de Citas */}
-          {citasFiltradasPorFecha.length === 0 ? (
-            <EmptyState message="No tienes citas agendadas por el momento." />
+          {filteredCitas.length === 0 ? (
+            <EmptyState message="No se encontraron citas agendadas por el momento." />
           ) : (
             <FlatList
-              data={citasFiltradasPorFecha}
+              data={filteredCitas}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <View style={styles.card}>
                   <View style={styles.cardContent}>
-
                     {/* Columna izquierda: Fecha */}
                     <View style={styles.leftColumn}>
                       <Text style={styles.dateDay}>
@@ -203,10 +178,10 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
                     <View style={styles.rightColumn}>
                       <Text style={styles.text}>
                         <Text style={styles.label}>Hora: </Text>
-                        {formatHora(item.hora)}
+                        {item.hora}
                       </Text>
                       <Text style={styles.text}>
-                        <Text style={styles.label}>Médico: </Text>{" "}
+                        <Text style={styles.label}>Médico: </Text>
                         {capitalizeName(item.medico)}
                       </Text>
                       <Text style={styles.text}>
@@ -243,25 +218,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  header: {
-    width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
-  },
-  backButton: {
-    top: 30,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
-  },
   title: {
     fontSize: 24,
     fontFamily: fonts.title,
@@ -269,78 +225,58 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: colors.preto,
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   cardContent: {
-    height: 140,
+    height: 160,
     width: "100%",
     flexDirection: "row",
     alignItems: "stretch",
   },
   text: {
-    fontSize: 17,
-    marginBottom: 2,
-    color: "#333",
+    fontSize: 16,
+    marginBottom: 5,
+    color: colors.preto,
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: 17,
-    color: colors.primary,
-    fontFamily: fonts.subtitle,
-  },
-  errorText: {
-    fontSize: 18,
-    color: colors.primary,
-    textAlign: "center",
-    marginTop: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
     fontSize: 16,
-    color: colors.primary,
-    fontWeight: "bold",
+    color: colors.preto,
+    fontFamily: fonts.title,
   },
   leftColumn: {
-    width: "20%",
+    width: "25%",
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 4,
   },
   dateDay: {
-    fontSize: 22,
-    color: "white",
+    fontSize: 36,
+    color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: 16,
-    color: "white",
-    fontFamily: fonts.body,
+    fontSize: 18,
+    color: colors.white,
+    fontFamily: fonts.title,
     textTransform: "capitalize",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
   dateYear: {
     fontSize: 18,
-    color: "white",
-    fontFamily: fonts.subtitle,
-    borderTopWidth: 1,
-    borderTopColor: "white",
+    color: colors.white,
+    fontFamily: fonts.body,
+    marginTop: 2,
   },
   rightColumn: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 15,
     justifyContent: "center",
     alignItems: "flex-start",
   },

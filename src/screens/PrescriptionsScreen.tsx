@@ -12,36 +12,18 @@ import {
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { fetchMedicamentos} from "../services/medicamentService";
+import { fetchMedicamentos } from "../services/medicamentService";
 import { fonts } from "../themes/fonts";
 import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
-import { getPatientByDocument } from "../services/patientService";
 import Toast from "react-native-toast-message";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/LogOutModal";
+import Buscador from "../components/Buscador";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Medicamentos">;
-
-type Paciente = {
-  primer_nombre: string;
-  segundo_nombre?: string;
-  primer_apellido: string;
-  segundo_apellido?: string;
-  tipo_documento: string;
-  documento: string;
-  fecha_nacimiento: string;
-  codigo_ips: number;
-  sexo: string;
-  celular: number;
-  telefono: number;
-  correo: string;
-  eps: string;
-  iat: number;
-  tipo_documento_abreviado: string;
-};
 
 type Medicamento = {
   id: string;
@@ -54,11 +36,12 @@ type Medicamento = {
 
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
-  const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [loading, setLoading] = useState(true);
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+ const [searchQuery, setSearchQuery] = useState("");
+ const [filteredMedicamentos, setFilteredMedicamentos] = useState<Medicamento[]>([]);
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -82,62 +65,17 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       const data = await fetchMedicamentos(tipo, doc);
       setMedicamentos(data);
     } catch (error) {
-      // Toast.show({
-      //   type: "error",
-      //   text1: "Error",
-      //   text2: "No se pudo cargar la información de los medicamentos.",
-      //   visibilityTime: 4000,
-      // });
       return;
+    }
+    finally {
+      setLoading(false);
     }
   };
 
-  const loadPatient = async () => {
-    try {
-      const storedDoc = await AsyncStorage.getItem("documento");
-      if (!storedDoc ) {
-        Toast.show({
-          type: "error",
-          text2: "No se encontró el documento del paciente.",
-          position: "bottom",
-        });
-        return;
-      }
-
-      const data = await getPatientByDocument( storedDoc);
-      setPaciente(data as unknown as Paciente);
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text2: "No se pudo cargar la información del paciente.",
-        position: "bottom",
-      });
-      return;
-    }
-  };
-
-  const medicamentosFiltrados = medicamentos.filter((m) => {
-    if (!fechaInicio && !fechaFin) return true;
-
-    const fecha = new Date(m.fechaVencimiento);
-    const desde = fechaInicio ? new Date(fechaInicio) : null;
-    const hasta = fechaFin ? new Date(fechaFin) : null;
-
-    if (desde && fecha < desde) return false;
-    if (hasta && fecha > hasta) return false;
-    return true;
-  });
-
+  
+  
   useEffect(() => {
-    const loadEverything = async () => {
-      try {
-        await Promise.all([loadPatient(), loadData()]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadEverything();
+    loadData()
   }, []);
 
   /* Función para formatear el nombre del medicamento */
@@ -184,15 +122,24 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         />
 
         <View style={styles.container}>
-          <CustomDateRangeFilter
-            fechaInicio={fechaInicio}
-            fechaFin={fechaFin}
-            onChangeInicio={setFechaInicio}
-            onChangeFin={setFechaFin}
+          <Buscador
+            value={searchQuery}
+            onChange={(text) => {
+              setSearchQuery(text);
+              const lowerText = text.toLowerCase();
+              const filtered = medicamentos.filter((resultado) =>
+                [resultado.nombre]
+                  .join(" ")
+                  .toLowerCase()
+                  .includes(lowerText)
+              );
+              setFilteredMedicamentos(filtered);
+            }}
+            placeholder="Buscar medicamentos"
           />
 
           <FlatList
-            data={medicamentosFiltrados}
+            data={filteredMedicamentos}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{
               flexGrow: 1,
@@ -201,12 +148,11 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               paddingBottom: 100,
             }}
             ListEmptyComponent={
-              <EmptyState message="Aún no tienes medicamentos registrados." />
+              <EmptyState message="No se encontraron resultados de momento" />
             }
             renderItem={({ item }) => (
               <View style={styles.card}>
                 <View style={styles.cardContent}>
-                  
                   {/* Columna izquierda: Fecha */}
                   <View style={styles.leftColumn}>
                     <Text style={styles.dateText}>Fecha de Vencimiento: </Text>
@@ -230,16 +176,15 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                   <View style={styles.rightColumn}>
                     <Text style={styles.text}>
                       <Text style={styles.label}>
-                        {formatName(item.nombre)}
+                        Nombre:{" "}
+                        <Text style={styles.text}>
+                          {formatName(item.nombre)}
+                        </Text>
                       </Text>
                     </Text>
                     <Text style={styles.text}>
                       <Text style={styles.label}>Cantidad: </Text>{" "}
                       {item.cantidad}
-                    </Text>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Dosis: </Text>
-                      {item.dosificacion ?? "No disponible"}
                     </Text>
                     {item.presentacion && item.presentacion !== "NINGUNO" && (
                       <Text style={styles.text}>
@@ -270,7 +215,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-
   title: {
     fontSize: 24,
     fontFamily: fonts.title,
@@ -283,69 +227,67 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: colors.preto,
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   cardContent: {
-    height: 190,
+    height: 145,
     width: "100%",
     flexDirection: "row",
     alignItems: "stretch",
   },
   text: {
     fontSize: 16,
-    marginBottom: 2,
-    color: "#333",
+    marginBottom: 5,
+    color: colors.preto,
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: 17,
-    color: colors.primary,
-    fontFamily: fonts.subtitle,
+    fontSize: 16,
+    color: colors.preto,
+    fontFamily: fonts.title,
   },
   leftColumn: {
-    width: "24%",
+    width: "26%",
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 4,
   },
   dateText: {
-    fontSize: 10,
+    fontSize: 11,
     color: "white",
     fontFamily: fonts.body,
     marginBottom: 2,
   },
   dateDay: {
-    fontSize: 22,
-    color: "white",
+    fontSize: 36,
+    color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: 16,
-    color: "white",
-    fontFamily: fonts.body,
+    fontSize: 18,
+    color: colors.white,
+    fontFamily: fonts.title,
     textTransform: "capitalize",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
   dateYear: {
     fontSize: 18,
-    color: "white",
-    fontFamily: fonts.subtitle,
-    borderTopWidth: 1,
-    borderTopColor: "white",
+    color: colors.white,
+    fontFamily: fonts.body,
+    marginTop: 2,
   },
   rightColumn: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 15,
     justifyContent: "center",
-    alignItems: "flex-start"},
+    alignItems: "flex-start",
+  },
 });
 
 export default MedicamentScreen;

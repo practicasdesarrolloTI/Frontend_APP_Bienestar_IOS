@@ -134,7 +134,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Inicio_de_sesión.png")}
+        source={require("../../assets/Fondos/Inicio_de_sesion.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >

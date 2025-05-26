@@ -20,6 +20,7 @@ import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/LogOutModal";
 import Toast from "react-native-toast-message";
 import EmptyState from "../components/EmptyState";
+import Buscador from "../components/Buscador";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusProgramas">;
 
@@ -35,8 +36,10 @@ type Programa = {
 
 const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   const [programas, setProgramas] = useState<Programa[]>([]);
+  const [filteredProgramas, setFilteredProgramas] = useState<Programa[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -58,6 +61,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         if (!tipo || !doc) throw new Error("Datos incompletos");
         const data = await fetchProgramas(tipo, doc);
         setProgramas(data);
+        setFilteredProgramas(data);
       } catch (err) {
       } finally {
         setLoading(false);
@@ -66,39 +70,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     loadPrograms();
   }, []);
 
-  const sinProgramas =
-    programas.length === 0 ||
-    programas.every(
-      (p) =>
-        !p.programa ||
-        p.programa.toLowerCase().includes("no disponible por el momento")
-    );
-
-  console.log("SINPROGRAMA:", sinProgramas);
-  console.log("Programas:", programas);
-
-  // const programasFiltrados = programas.filter(
-  //   (programa) => programa.estado === "Pendiente"
-  // );
-  const programasOrdenados = programas.sort((a, b) => {
-    const fechaA = new Date(a.fecha_cita);
-    const fechaB = new Date(b.fecha_cita);
-    return fechaA.getTime() - fechaB.getTime();
-  });
-
-  /* Función para formatear la hora */
-  const formatHora = (hora: string) => {
-    if (!hora) return "";
-    const [hours, minutes] = hora.split(":");
-    const date = new Date();
-    date.setHours(Number(hours));
-    date.setMinutes(Number(minutes));
-    return date.toLocaleTimeString("es-CO", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
 
   /* Función para capitalizar el nombre */
   const capitalizeName = (text: string): string => {
@@ -120,7 +91,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -133,13 +104,30 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
           onLogout={() => setModalVisible(true)}
         />
 
-        <View style={styles.container}>
+
+        <View style={styles.container}>          
+        {/* Buscador */}
+        <Buscador
+          value={searchQuery}
+          onChange={(text) => {
+            setSearchQuery(text);
+            const lowerText = text.toLowerCase();
+            const filtered = programas.filter((programa) =>
+              [programa.programa, programa.medico, programa.especialidad]
+                .join(" ")
+                .toLowerCase()
+                .includes(lowerText)
+            );
+            setFilteredProgramas(filtered);
+          }}
+          placeholder="Buscar programas"
+        />
           {/* Lista de Programas */}
-          {sinProgramas ? (
-            <EmptyState message="No estás inscrito en ningún programa en este momento." />
+          {filteredProgramas.length === 0 ? (
+            <EmptyState message="No se encontraron programas de momento" />
           ) : (
             <FlatList
-              data={programasOrdenados}
+              data={filteredProgramas}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <View style={styles.card}>
@@ -175,12 +163,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 
                     {/* Columna derecha: Detalles */}
                     <View style={styles.rightColumn}>
-                      {item.hora && item.hora.trim() !== "" && (
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Hora: </Text>
-                          {formatHora(item.hora)}
-                        </Text>
-                      )}
+                      
                       <Text style={styles.text}>
                         <Text style={styles.label}>Programa: </Text>
                         {item.programa}
@@ -193,10 +176,12 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
                         <Text style={styles.label}>Especialidad: </Text>
                         {capitalizeName(item.especialidad)}
                       </Text>
-                      {/* <Text style={styles.text}>
-                        <Text style={styles.label}>Hora proxima cita: </Text>
-                        {item.hora}{" "}
-                      </Text> */}
+                      {item.hora && item.hora.trim() !== "" && (
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Hora: </Text>
+                          {item.hora}
+                        </Text>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -226,7 +211,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-
   title: {
     fontSize: 24,
     fontFamily: fonts.title,
@@ -234,78 +218,58 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: 8,
-    marginBottom: 10,
-    shadowColor: colors.preto,
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   cardContent: {
-    height: 150,
+    height: 200,
     width: "100%",
     flexDirection: "row",
     alignItems: "stretch",
   },
   text: {
-    fontSize: 17,
-    marginBottom: 2,
-    color: "#333",
+    fontSize: 16,
+    marginBottom: 5,
+    color: colors.preto,
     fontFamily: fonts.body,
   },
-  status: {
-    fontSize: 18,
-    textAlign: "center",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 10,
-    fontFamily: fonts.subtitle,
-  },
-  pending: {
-    backgroundColor: colors.secondary,
-    color: "#fff",
-  },
-  completed: {
-    backgroundColor: colors.primary,
-    color: "#fff",
-  },
   label: {
-    fontSize: 17,
-    color: colors.primary,
-    fontWeight: "bold",
-    fontFamily: fonts.subtitle,
+    fontSize: 16,
+    color: colors.preto,
+    fontFamily: fonts.title,
   },
   leftColumn: {
-    width: "20%",
+    width: "25%",
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: 5,
     paddingHorizontal: 4,
   },
   dateDay: {
-    fontSize: 22,
-    color: "white",
+    fontSize: 36,
+    color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: 16,
-    color: "white",
-    fontFamily: fonts.body,
+    fontSize: 18,
+    color: colors.white,
+    fontFamily: fonts.title,
     textTransform: "capitalize",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.secondary,
   },
   dateYear: {
     fontSize: 18,
-    color: "white",
-    fontFamily: fonts.subtitle,
-    borderTopWidth: 1,
-    borderTopColor: "white",
+    color: colors.white,
+    fontFamily: fonts.body,
+    marginTop: 2,
   },
   rightColumn: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 15,
     justifyContent: "center",
     alignItems: "flex-start",
   },

@@ -1,5 +1,5 @@
 export const moriskyGreenSurvey = {
-  id: "morisky-green",
+  id: "moriskyGreen",
   nombre: "Test de Morisky-Green",
   descripcion:
     "Esta encuesta ayuda a conocer qué tanto sigues tu tratamiento médico.",

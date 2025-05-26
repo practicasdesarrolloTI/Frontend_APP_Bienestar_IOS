@@ -40,12 +40,6 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
 
         {/* Contenido */}
         <View style={styles.container}>
-          <View style={styles.phraseContainer}>
-            <Text style={styles.text}>
-              <Text style={styles.body}>Un modelo de atención </Text>
-              <Text style={styles.body}>integral y cercano</Text>
-            </Text>
-          </View>
 
           {/* Botones de inicio de sesión */}
           <View style={styles.buttonContainer}>
@@ -79,21 +73,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 15,
-  },
-  phraseContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    marginRight: 50,
-    marginLeft: 15,
-  },
-  text: {
-    fontSize: 40,
-    
-    textAlign: "left",
-    color: colors.white,
-  },
-  body: {
-    fontFamily: fonts.title,
   },
   buttonContainer: {
     flex: 1,

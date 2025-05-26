@@ -11,7 +11,7 @@ type Props = {
 const EmptyState: React.FC<Props> = ({ message }) => {
   return (
     <View style={styles.container}>
-      <MaterialIcons name="search-off" size={60} color={colors.primary} />
+      <MaterialIcons name="search-off" size={64} color={colors.preto} />
       <Text style={styles.text}>{message}</Text>
     </View>
   );
@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    marginTop: 50,
+    paddingVertical: 10,
   },
   text: {
-    marginTop: 20,
-    fontSize: 18,
+    marginTop: 5,
+    fontSize: 20,
     fontFamily: fonts.subtitle,
-    color: colors.primary,
+    color: colors.preto,
     textAlign: "center",
   },
 });

@@ -45,7 +45,7 @@ export const fetchResults = async (tipoDocumento: string, numeroDocumento: strin
         fechaRealizacion: item.fecha_orden || "",
         examen: item.nombre_cups ?? '',
         programa: item.nombre_medico_remisor ?? '',
-        estado: 'Disponible',
+        medico_remisor: item.nombre_medico_remisor ?? '',
       }));
     }
 

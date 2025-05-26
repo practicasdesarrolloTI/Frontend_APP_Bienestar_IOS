@@ -86,6 +86,7 @@ const SelfCareScreen: React.FC = () => {
     >
   >({});
 
+
   const [modalVisible, setModalVisible] = useState(false);
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -135,7 +136,6 @@ const SelfCareScreen: React.FC = () => {
       setPatient(data as unknown as Paciente);
 
       const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
-      console.log("Indicadores", indicadoresData);
       setIndicadores(indicadoresData);
     } catch (error) {
       Toast.show({

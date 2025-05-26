@@ -5,8 +5,8 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
-  Modal,
-  Pressable,
+  Image,
+  Dimensions,
 } from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -49,10 +49,10 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
             style={styles.profileIcon}
             onPress={() => setMenuVisible(!menuVisible)}
           >
-            <MaterialIcons
-              name="person-outline"
-              size={26}
-              color={colors.preto}
+            <Image
+              source={require("../../assets/icons/perfil.png")}
+              style={{ width: 28, height: 28 }}
+              resizeMode="contain"
             />
           </TouchableOpacity>
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   header: {
     height: 120,
     paddingTop: Platform.OS === "android" ? 70 : 55,
-    paddingHorizontal: 25,
+    paddingHorizontal: 30,
     paddingVertical: 15,
     justifyContent: "center",
     alignItems: "center",
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4,
+    elevation: 1,
   },
 
   menuItem: {

@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   Platform,
   ViewStyle,
+  Image,
+  Dimensions,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -50,10 +51,10 @@ const CustomHeader: React.FC<HeaderProps> = ({
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons
-            name="chevron-left"
-            size={28}
-            color={transparent ? colors.preto : "white"}
+          <Image
+            source={require("../../assets/icons/atras.png")}
+            style={{ width: 26, height: 26 }}
+            resizeMode="contain"
           />
         </TouchableOpacity>
       )}
@@ -78,11 +79,11 @@ const CustomHeader: React.FC<HeaderProps> = ({
             style={styles.profileIcon}
             onPress={() => setMenuVisible(!menuVisible)}
           >
-            <MaterialIcons
-              name="person-outline"
-              size={26}
-              color={transparent ? colors.preto : "white"}
-            />
+           <Image
+            source={require("../../assets/icons/perfil.png")}
+            style={{ width: 28, height:28 }}
+            resizeMode="contain"
+          />
           </TouchableOpacity>
 
           {menuVisible && (
@@ -112,11 +113,12 @@ const CustomHeader: React.FC<HeaderProps> = ({
   );
 };
 
+const screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
   header: {
-    height: 120,
+    height: 130,
     paddingTop: Platform.OS === "android" ? 15 : 10,
-    paddingHorizontal: 25,
+    paddingHorizontal: 30,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -141,32 +143,30 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 50,
     backgroundColor: colors.white,
-    elevation: 5,
   },
   profileIcon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 50,
     backgroundColor: colors.white,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4,
   },
   menuItem: {
     paddingVertical: 5,
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: fonts.subtitle,
   },
   inlineMenu: {
     position: "absolute",
     top: 55,
     right: 0,
-    width: 140,
-    backgroundColor: "#fff",
+    width: screenWidth * 0.35,
+    backgroundColor: colors.white,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    shadowColor: "#000",
+    shadowColor: colors.preto,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,

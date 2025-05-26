@@ -105,11 +105,12 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           });
           return;
         }
-        const dataregistro = await getPatientAPP(Number(storedDoc));
+        const dataregistro = await getPatientAPP(storedDocType, Number(storedDoc));
         const data = await getPatientByDocument(storedDoc);
 
         setPaciente(data as unknown as Paciente);
         setPacienteRegistro(dataregistro as unknown as PacienteRegistro);
+
       } catch (error) {
         Toast.show({
           type: "error",
@@ -136,7 +137,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/Fondos/Informacion.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -150,61 +151,56 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
         />
 
         <View style={styles.container}>
-          {/* Icono de perfil centrado */}
-          <View style={styles.profileIconContainer}>
-            <MaterialIcons
-              name="account-circle"
-              size={100}
-              color={colors.preto}
-            />
-          </View>
-
           <ScrollView>
             {/* Información del Paciente */}
             <View style={styles.infoContainer}>
               <View>
-                <Text style={styles.label}>Nombre:</Text>
+                <Text style={styles.label}>Nombre completo</Text>
                 <Text style={styles.labelinfo}>
-                  {formatName(paciente?.primer_nombre ?? " ")}{" "}
+                  {formatName(paciente?.primer_nombre ?? "Información no disponible")}{" "}
                   {formatName(paciente?.segundo_nombre ?? " ")}{" "}
                   {formatName(paciente?.primer_apellido ?? " ")}{" "}
                   {formatName(paciente?.segundo_apellido ?? " ")}
                 </Text>
-                <Text style={styles.label}>Documento:</Text>
+                <Text style={styles.label}>Documento</Text>
                 <Text style={styles.labelinfo}>
-                  {paciente?.tipo_documento_abreviado} {paciente?.documento}
+                  {paciente?.tipo_documento_abreviado || "Información no disponible"} {paciente?.documento || ""} 
                 </Text>
-                <Text style={styles.label}>Sexo:</Text>
+                <Text style={styles.label}>Sexo</Text>
                 <Text style={styles.labelinfo}>
-                  {paciente?.sexo === "M" ? "Masculino" : "Femenino"}
+                  {paciente?.sexo === "M"
+                    ? "Masculino"
+                    : paciente?.sexo === "F"
+                    ? "Femenino"
+                    : "Información no disponible"}
                 </Text>
-                <Text style={styles.label}>Fecha de Nacimiento:</Text>
+                <Text style={styles.label}>Fecha de Nacimiento</Text>
                 <Text style={styles.labelinfo}>
                   {paciente?.fecha_nacimiento &&
                   esFechaValida(paciente.fecha_nacimiento)
                     ? paciente.fecha_nacimiento
                     : "Información no disponible"}
                 </Text>
-                <Text style={styles.label}>Edad:</Text>
+                <Text style={styles.label}>Edad</Text>
                 <Text style={styles.labelinfo}>
                   {paciente?.fecha_nacimiento &&
                   esFechaValida(paciente.fecha_nacimiento)
                     ? `${calcularEdad(paciente.fecha_nacimiento)} años`
                     : "Información no disponible"}
                 </Text>
-                <Text style={styles.label}>Correo:</Text>
+                <Text style={styles.label}>Correo</Text>
                 <Text style={styles.labelinfo}>
-                  {paciente?.correo || "No tiene correo registrado"}
+                  {pacienteRegistro?.mail || "No tiene correo registrado"}
                 </Text>
-                <Text style={styles.label}>Teléfono:</Text>
+                <Text style={styles.label}>Teléfono</Text>
                 <Text style={styles.labelinfo}>
                   {paciente?.celular ||
                     paciente?.telefono ||
                     "No tiene número teléfonico registrado"}
                 </Text>
-                <Text style={styles.label}>EPS:</Text>
+                <Text style={styles.label}>EPS</Text>
                 <Text style={styles.labelinfo}>
-                  {formatName(paciente?.eps ?? "")}
+                  {formatName(paciente?.eps ?? "Información no disponible")}
                 </Text>
               </View>
             </View>
@@ -232,21 +228,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
   },
-  profileIconContainer: {
-    alignItems: "center",
-    marginVertical: 20,
-  },
   infoContainer: {
     alignSelf: "center",
     backgroundColor: colors.white,
-    padding: 20,
-    borderRadius: 10,
-    width: screenWidth - 50,
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    marginTop: screenHeight * 0.15,
+    width: screenWidth * 0.75,
   },
   label: {
     fontSize: 16,
@@ -255,10 +241,10 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
   },
   labelinfo: {
-    fontSize: 16,
-    marginBottom: 15,
-    color: "#333",
-    fontFamily: fonts.title,
+    fontSize: 17,
+    marginBottom: 18,
+    color: colors.preto,
+    fontFamily: fonts.body,
   },
 });
 

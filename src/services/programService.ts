@@ -8,13 +8,14 @@ export async function fetchProgramas(tipo: string, documento: string) {
   const resformateados = data.map((item: any, index: number) => ({
     id: index.toString(),
     fecha_cita: item.fecha_cita?.slice(0,10) ?? "No tienes citas agendadas",
-    hora: item.hora_cita?.slice(0, 8) ?? " ",
+    hora: item.turno?.slice(0, 8) ?? " ",
     programa: item.Programa ?? null,
-    medico: item.nombre_medico ?? "No tiene programa",
-    especialidad: item.especialidad_cita ?? "",
+    medico: item.nombre_medico ?? null,
+    especialidad: item.especialidad ?? "",
     estado: item.estado_cita ?? "Pendiente",
     
   }));
+  // console.log("Programas formateados:", resformateados);
 
   return resformateados;
 }
