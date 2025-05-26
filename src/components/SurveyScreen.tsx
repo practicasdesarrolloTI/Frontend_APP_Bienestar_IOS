@@ -34,7 +34,6 @@ type Respuesta =
 const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const { preguntas, surveyId, edad, sexo, survey, indicadores } = route.params;
 
-  console.log("Preguntas", preguntas);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 

@@ -32,9 +32,9 @@ type Respuesta =
   | string
   | number
   | {
-      texto: string;
-      valor: number;
-    };
+    texto: string;
+    valor: number;
+  };
 
 type Paciente = {
   primer_nombre: string;
@@ -57,7 +57,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
   const { surveyId, puntaje, edad, sexo, survey, imc } = route.params;
   const { responses } = route.params as unknown as { responses: Respuesta[] };
   const [paciente, setPaciente] = useState<Paciente | null>(null);
-  const otrasRespuestas = responses.slice(2); // después de estatura/peso
+  const otrasRespuestas = responses;
 
   const obtenerRecomendacion = (): string => {
     if (!survey?.recomendaciones) return "";
@@ -95,7 +95,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
       const loadPatient = async () => {
         const storedTipo = await AsyncStorage.getItem('tipoDocumento');
         const storedDoc = await AsyncStorage.getItem("documento");
-        if  (!storedDoc || !storedTipo) {
+        if (!storedDoc || !storedTipo) {
           Alert.alert("Error", "No se encontró el documento del paciente.");
           return null;
         }
@@ -115,9 +115,8 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         surveyId,
         patientTypeId: storedTipo ?? "",
         patientId: storedDoc.documento,
-        patientName: `${storedDoc.primer_nombre} ${
-          storedDoc.segundo_nombre || ""
-        } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
+        patientName: `${storedDoc.primer_nombre} ${storedDoc.segundo_nombre || ""
+          } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
         surveyName: survey.nombre,
         responses: responses.map((r) =>
           typeof r === "object" && "texto" in r ? r.texto : String(r)
@@ -153,73 +152,69 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-     <StatusBar
-            barStyle="dark-content"
-            translucent
-            backgroundColor="transparent"
-          />
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
 
-       {/* Header transparente */}
-        <CustomHeader
-          title="Resumen de Encuesta"
-          showBack
-          transparent
-          showProfileIcon
-          onLogout={() => setModalVisible(true)}
-        />
+      {/* Header transparente */}
+      <CustomHeader
+        title="Resumen de Encuesta"
+        showBack
+        transparent
+        showProfileIcon
+        onLogout={() => setModalVisible(true)}
+      />
 
       <View style={styles.container}>
         <View style={styles.summaryContainer}>
           <View style={styles.summaryInfo}>
-            <Text style={styles.response}>
-              <Text style={styles.bold}>Edad:</Text> {edad}
-            </Text>
-            <Text style={styles.response}>
-              <Text style={styles.bold}>Sexo:</Text> {sexo}
-            </Text>
+            <View>
+              <View style={styles.item}>
+                <Text style={styles.label}>Edad</Text>
+                <Text style={styles.value}>{edad} años</Text>
+              </View>
 
-            {/* {!isNaN(estatura) && estatura > 0 && (
-              <Text style={styles.response}>
-                <Text style={styles.bold}>Estatura:</Text> {estatura} m
-              </Text>
-            )}
+              <View style={styles.item}>
+                <Text style={styles.label}>Sexo</Text>
+                <Text style={styles.value}>{sexo}</Text>
+              </View>
 
-            {!isNaN(peso) && peso > 0 && (
-              <Text style={styles.response}>
-                <Text style={styles.bold}>Peso:</Text> {peso} kg
-              </Text>
-            )} */}
+              {!isNaN(imc) && imc > 0 && (
+                <View style={styles.item}>
+                  <Text style={styles.label}>IMC Calculado</Text>
+                  <Text style={styles.value}>{imc.toFixed(2)} kg/m²</Text>
+                </View>
+              )}
 
-            {!isNaN(imc) && imc > 0 && (
-              <Text style={styles.response}>
-                <Text style={styles.bold}>IMC Calculado:</Text> {imc.toFixed(2)}{" "}
-                kg/m²
-              </Text>
-            )}
+              <View style={styles.separator} />
 
-            {otrasRespuestas.map((r, i) => (
-              <Text key={i} style={styles.response}>
-                <Text style={styles.bold}>Pregunta {i + 1}:</Text>{" "}
-                {typeof r === "object" ? `${r.texto} (${r.valor})` : r}
-              </Text>
-            ))}
+              {otrasRespuestas.map((r, i) => (
+                <View key={i} style={styles.item}>
+                  <Text style={styles.label}>Pregunta #{i + 1}</Text>
+                  <Text style={styles.value}>
+                    {typeof r === "object" ? r.texto : r}
+                  </Text>
+                </View>
+              ))}
+              <TouchableOpacity style={styles.button} onPress={handleShowModal}>
+                <Text style={styles.buttonText}>Enviar Encuesta</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleShowModal}>
-          <Text style={styles.buttonText}>Enviar Encuesta</Text>
-        </TouchableOpacity>
-        <RecommendationModal
-          visible={modalVisible}
-          recomendacion={obtenerRecomendacion()}
-          onClose={() => setModalVisible(false)}
-          onConfirm={() => {
-            setModalVisible(false);
-            handleSubmit();
-          }}
-        />
       </View>
-    </SafeAreaView>
+      <RecommendationModal
+        visible={modalVisible}
+        recomendacion={obtenerRecomendacion()}
+        onClose={() => setModalVisible(false)}
+        onConfirm={() => {
+          setModalVisible(false);
+          handleSubmit();
+        }}
+      />
+    </SafeAreaView >
   );
 };
 
@@ -228,7 +223,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-   title: {
+  title: {
     fontSize: 24,
     fontFamily: fonts.title,
     color: colors.white,
@@ -249,24 +244,43 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    padding: 20,
-    width: "92%",
+    paddingHorizontal: 20,
+    width: "100%",
   },
   summaryInfo: {
-    alignSelf: "center",
+    flex: 1,
     backgroundColor: colors.white,
     padding: 20,
-    borderRadius: 10,
-    width: "95%",
-    elevation: 1,
+    borderRadius: 20,
+    width: "100%",
+    elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    justifyContent: "space-between",
   },
-
+  item: {
+    marginBottom: 18,
+  },
+  label: {
+    fontSize: 14,
+    color: colors.lightGray,
+    fontFamily: fonts.subtitle,
+  },
+  value: {
+    fontSize: 16,
+    color: colors.preto,
+    fontFamily: fonts.body,
+    marginTop: 4,
+  },
+  separator: {
+    borderBottomColor: colors.accent,
+    borderBottomWidth: 1,
+    marginVertical: 15,
+  },
   response: {
     fontSize: 18,
     marginBottom: 10,
@@ -278,11 +292,11 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: colors.primary,
-    padding: 12,
+    paddingVertical: 16,
     alignItems: "center",
-    width: "90%",
     borderRadius: 25,
-    marginBottom: 35,
+    marginTop: 20,
+    justifyContent: "center",
   },
   buttonText: {
     color: "#fff",
