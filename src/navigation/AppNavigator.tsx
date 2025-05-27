@@ -59,6 +59,7 @@ export type RootStackParamList = {
     navigation: any;
     route: any;
   };
+  SelfCareScreen: undefined;
   Landing: undefined;
   SurveySummary: {
     surveyId: string;
@@ -135,6 +136,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Autocuidado" component={SelfCareScreen} />
         <Stack.Screen name="SurveyScreen" component={SurveyScreen} />
         <Stack.Screen name="SurveySummary" component={SurveySummary} />
+        <Stack.Screen name="SelfCareScreen" component={SelfCareScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
         <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />

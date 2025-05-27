@@ -28,7 +28,6 @@ import LogOutModal from "../components/LogOutModal";
 import Carousel from "../components/Carousel";
 import CustomHeader from "../components/CustomHeader";
 import { fetchProgramas } from "../services/programService";
-import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 

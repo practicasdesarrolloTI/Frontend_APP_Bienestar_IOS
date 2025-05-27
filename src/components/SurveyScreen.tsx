@@ -10,6 +10,8 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  Image,
+  Dimensions,
 } from "react-native";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -18,6 +20,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
+import SelfCareScreen from "../screens/SelfCareScreen";
 
 type SurveyScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -355,7 +358,9 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
     return (
       <View style={styles.questionContainer}>
+       
         <Text style={styles.question}>{currentQuestion.pregunta}</Text>
+      <View style={styles.optionContainer}>
         {currentQuestion.opciones
           .filter(
             (op) => !op.sexo || op.sexo.toLowerCase() === sexo.toLowerCase()
@@ -365,7 +370,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
               key={index}
               style={[
                 styles.optionButton,
-                selectedOption === op.valor && styles.selectedOption,
+                selectedOption === op.valor && styles.selectedOption ,
               ]}
               onPress={() =>
                 handleResponseChange({ texto: op.texto, valor: op.valor })
@@ -374,56 +379,79 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
               <Text style={styles.optionText}>{op.texto}</Text>
             </TouchableOpacity>
           ))}
+          </View>
       </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-     <StatusBar
-           barStyle="dark-content"
-           translucent
-           backgroundColor="transparent"
-         />
-          <ImageBackground
-            source={require("../../assets/Fondos/Pregunta_cuestionario.png")}
-            style={StyleSheet.absoluteFillObject}
-            resizeMode="cover"
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <ImageBackground
+        source={require("../../assets/Fondos/Pregunta_cuestionario.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              if (currentIndex === 0) {
+                navigation.navigate("SelfCareScreen");
+              } else {
+                handlePrevious(); 
+              }
+            }}
           >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+            <Image
+              source={require("../../assets/icons/atras.png")}
+              style={{ width: 26, height: 26 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <View style={styles.closeButton}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("SelfCareScreen")}
+            >
+              <MaterialIcons name="close" size={32} color={colors.preto} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      <View style={styles.container}>
-        <Text style={styles.question}>
-           Pregunta {currentIndex + 1} de{" "}
-          {finalPreguntas.length}
-        </Text>
-        {renderQuestion()}
-        <View style={styles.buttonContainer}>
-          {currentIndex > 0 && (
+        <View style={styles.container}>
+          <Text style={styles.pagination}>
+            Pregunta {currentIndex + 1} de {finalPreguntas.length}
+          </Text>
+          {renderQuestion()}
+          <View style={styles.buttonContainer}>
+            {currentIndex > 0 && (
             <TouchableOpacity
               style={styles.previousButton}
               onPress={handlePrevious}
             >
-              <Text style={styles.previousButtonText}>Anterior</Text>
+              <Text style={styles.nextButtonText}>Anterior</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-            <Text style={styles.nextButtonText}>
-              {currentIndex < finalPreguntas.length - 1
-                ? "Siguiente"
-                : "Finalizar"}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+              <Text style={styles.nextButtonText}>
+                {currentIndex < finalPreguntas.length - 1
+                  ? "Siguiente"
+                  : "Finalizar"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
       </ImageBackground>
     </SafeAreaView>
   );
 };
+
+const screenHeight = Dimensions.get("window").height;
+const screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -432,18 +460,35 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    height: 70,
-    backgroundColor: colors.primary,
+    height: screenHeight * 0.18,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    justifyContent: "flex-start",
-    gap: 16,
+    justifyContent: "space-between",
+    paddingHorizontal: 25,
+  },
+  backButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+    backgroundColor: colors.white,
+  },
+  closeButton: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
     flex: 1,
-    padding: 30,
-
+    paddingHorizontal: 34,
+    paddingVertical: 10,
+  },
+  pagination: {
+    fontFamily: fonts.body,
+    fontSize: 18,
+    marginTop: 20,
+    marginBottom: 10,
   },
   questionContainer: {
     flex: 1,
@@ -451,7 +496,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   question: {
-    fontSize: 22,
+    fontSize: 26,
     fontFamily: fonts.title,
     marginBottom: 50,
     textAlign: "left",
@@ -468,17 +513,24 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontFamily: fonts.body,
   },
+  optionContainer:{
+    flexDirection: "column",
+    width: "100%",
+    marginTop: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
   optionButton: {
-    width: "99%",
+    width: "100%",
     paddingVertical: 20,
     paddingHorizontal: 20,
-    marginVertical: 5,
     backgroundColor: colors.white,
     borderRadius: 5,
     alignItems: "center",
   },
   selectedOption: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   optionText: {
     color: colors.preto,
@@ -488,30 +540,23 @@ const styles = StyleSheet.create({
   buttonContainer: {
     justifyContent: "center",
     alignItems: "center",
-    
-    marginTop: 20,
-    
+    paddingVertical: 20,
   },
   previousButton: {
     backgroundColor: colors.secondary,
-    width: "45%",
-    paddingVertical: 14,
-    borderRadius: 25,
+    width: "99%",
+    paddingVertical: 18,
+    borderRadius: 50,
     marginBottom: 15,
     alignItems: "center",
   },
   nextButton: {
     backgroundColor: colors.primary,
-    width: "45%",
-    paddingVertical: 14,
-    borderRadius: 25,
+    width: "99%",
+    paddingVertical: 18,
+    borderRadius: 50,
     marginBottom: 15,
     alignItems: "center",
-  },
-  previousButtonText: {
-    color: colors.white,
-    fontSize: 18,
-    fontFamily: fonts.title,
   },
   nextButtonText: {
     color: colors.white,

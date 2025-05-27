@@ -79,11 +79,11 @@ const CustomHeader: React.FC<HeaderProps> = ({
             style={styles.profileIcon}
             onPress={() => setMenuVisible(!menuVisible)}
           >
-           <Image
-            source={require("../../assets/icons/perfil.png")}
-            style={{ width: 28, height:28 }}
-            resizeMode="contain"
-          />
+            <Image
+              source={require("../../assets/icons/perfil.png")}
+              style={{ width: 28, height: 28 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
 
           {menuVisible && (
@@ -114,11 +114,11 @@ const CustomHeader: React.FC<HeaderProps> = ({
 };
 
 const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   header: {
-    height: 130,
-    paddingTop: Platform.OS === "android" ? 15 : 10,
-    paddingHorizontal: 30,
+    height: screenHeight * 0.18,
+    paddingHorizontal: 25,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

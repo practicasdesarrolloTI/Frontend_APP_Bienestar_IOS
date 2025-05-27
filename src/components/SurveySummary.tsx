@@ -10,6 +10,8 @@ import {
   Platform,
   StatusBar,
   SafeAreaView,
+  ImageBackground,
+  Dimensions,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -32,9 +34,9 @@ type Respuesta =
   | string
   | number
   | {
-    texto: string;
-    valor: number;
-  };
+      texto: string;
+      valor: number;
+    };
 
 type Paciente = {
   primer_nombre: string;
@@ -93,7 +95,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
   const handleSubmit = async () => {
     try {
       const loadPatient = async () => {
-        const storedTipo = await AsyncStorage.getItem('tipoDocumento');
+        const storedTipo = await AsyncStorage.getItem("tipoDocumento");
         const storedDoc = await AsyncStorage.getItem("documento");
         if (!storedDoc || !storedTipo) {
           Alert.alert("Error", "No se encontró el documento del paciente.");
@@ -106,7 +108,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
       };
 
       const storedDoc = await loadPatient();
-      const storedTipo = await AsyncStorage.getItem('tipoDocumento');
+      const storedTipo = await AsyncStorage.getItem("tipoDocumento");
       if (!storedDoc) return;
 
       const recomendacion = obtenerRecomendacion();
@@ -115,8 +117,9 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         surveyId,
         patientTypeId: storedTipo ?? "",
         patientId: storedDoc.documento,
-        patientName: `${storedDoc.primer_nombre} ${storedDoc.segundo_nombre || ""
-          } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
+        patientName: `${storedDoc.primer_nombre} ${
+          storedDoc.segundo_nombre || ""
+        } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
         surveyName: survey.nombre,
         responses: responses.map((r) =>
           typeof r === "object" && "texto" in r ? r.texto : String(r)
@@ -158,65 +161,73 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         backgroundColor="transparent"
       />
 
-      {/* Header transparente */}
-      <CustomHeader
-        title="Resumen de Encuesta"
-        showBack
-        transparent
-        showProfileIcon
-        onLogout={() => setModalVisible(true)}
-      />
+      <ImageBackground
+        source={require("../../assets/Fondos/Resumen_encuesta.png")}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+      >
+        {/* Header transparente */}
+        <CustomHeader
+          title="Resumen de Encuesta"
+          showBack
+          transparent
+          onLogout={() => setModalVisible(true)}
+        />
 
-      <View style={styles.container}>
-        <View style={styles.summaryContainer}>
-          <View style={styles.summaryInfo}>
-            <View>
-              <View style={styles.item}>
-                <Text style={styles.label}>Edad</Text>
-                <Text style={styles.value}>{edad} años</Text>
-              </View>
-
-              <View style={styles.item}>
-                <Text style={styles.label}>Sexo</Text>
-                <Text style={styles.value}>{sexo}</Text>
-              </View>
-
-              {!isNaN(imc) && imc > 0 && (
+        <View style={styles.container}>
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryInfo}>
+              <View>
                 <View style={styles.item}>
-                  <Text style={styles.label}>IMC Calculado</Text>
-                  <Text style={styles.value}>{imc.toFixed(2)} kg/m²</Text>
+                  <Text style={styles.label}>Edad</Text>
+                  <Text style={styles.value}>{edad} años</Text>
                 </View>
-              )}
 
-              <View style={styles.separator} />
-
-              {otrasRespuestas.map((r, i) => (
-                <View key={i} style={styles.item}>
-                  <Text style={styles.label}>Pregunta #{i + 1}</Text>
-                  <Text style={styles.value}>
-                    {typeof r === "object" ? r.texto : r}
-                  </Text>
+                <View style={styles.item}>
+                  <Text style={styles.label}>Sexo</Text>
+                  <Text style={styles.value}>{sexo}</Text>
                 </View>
-              ))}
-              <TouchableOpacity style={styles.button} onPress={handleShowModal}>
-                <Text style={styles.buttonText}>Enviar Encuesta</Text>
-              </TouchableOpacity>
+
+                {!isNaN(imc) && imc > 0 && (
+                  <View style={styles.item}>
+                    <Text style={styles.label}>IMC Calculado</Text>
+                    <Text style={styles.value}>{imc.toFixed(2)} kg/m²</Text>
+                  </View>
+                )}
+
+                <View style={styles.separator} />
+
+                {otrasRespuestas.map((r, i) => (
+                  <View key={i} style={styles.item}>
+                    <Text style={styles.label}>Pregunta #{i + 1}</Text>
+                    <Text style={styles.value}>
+                      {typeof r === "object" ? r.texto : r}
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
+          <TouchableOpacity style={styles.button} onPress={handleShowModal}>
+            <Text style={styles.buttonText}>Enviar Encuesta</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-      <RecommendationModal
-        visible={modalVisible}
-        recomendacion={obtenerRecomendacion()}
-        onClose={() => setModalVisible(false)}
-        onConfirm={() => {
-          setModalVisible(false);
-          handleSubmit();
-        }}
-      />
-    </SafeAreaView >
+        <RecommendationModal
+          visible={modalVisible}
+          recomendacion={obtenerRecomendacion()}
+          onClose={() => setModalVisible(false)}
+          onConfirm={() => {
+            setModalVisible(false);
+            handleSubmit();
+          }}
+        />
+      </ImageBackground>
+    </SafeAreaView>
   );
 };
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -230,37 +241,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     alignItems: "center",
-  },
-  backButton: {
-    top: 30,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 5,
   },
   summaryContainer: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingHorizontal: 20,
-    width: "100%",
+    width: screenWidth - 30,
   },
   summaryInfo: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 20,
     borderRadius: 20,
-    width: "100%",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    justifyContent: "space-between",
+    width: screenWidth - 110,
   },
   item: {
     marginBottom: 18,
@@ -277,6 +270,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   separator: {
+    borderStyle: "dashed",
     borderBottomColor: colors.accent,
     borderBottomWidth: 1,
     marginVertical: 15,
@@ -292,14 +286,14 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: colors.primary,
-    paddingVertical: 16,
+    width: screenWidth - 100,
+    paddingVertical: 18,
+    borderRadius: 50,
+    marginBottom: 35,
     alignItems: "center",
-    borderRadius: 25,
-    marginTop: 20,
-    justifyContent: "center",
   },
   buttonText: {
-    color: "#fff",
+    color: colors.white,
     fontSize: 20,
     fontFamily: fonts.title,
   },
