@@ -1,5 +1,12 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
@@ -23,13 +30,11 @@ const RecommendationModal: React.FC<Props> = ({
           <Text style={styles.title}>¡Recomendación!</Text>
           <Text style={styles.text}>{recomendacion}</Text>
 
-          <View>
             <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
               <Text style={styles.buttonText}>Aceptar</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
     </Modal>
   );
 };
@@ -37,50 +42,52 @@ const RecommendationModal: React.FC<Props> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.8)",
+    backgroundColor: "rgba(245, 240, 240, 0.36)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalContainer: {
     backgroundColor: colors.white,
-    borderRadius: 16,
-    width: "85%",
-    paddingHorizontal: 20,
-    paddingVertical: 30,
+    padding: 30,
+    borderRadius: 10,
+    width: "80%",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 10,
+    shadowColor: colors.preto,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.55,
+    shadowRadius: 4,
+    elevation: 5,
   },
   title: {
-    fontSize: 20,
+    fontSize: 26,
     fontFamily: fonts.title,
     color: colors.preto,
+    marginTop: 10,
     marginBottom: 12,
   },
   text: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fonts.body,
     color: colors.preto,
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 25,
+    marginBottom: 30,
   },
   confirmButton: {
-    backgroundColor: colors.secondary,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
     width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    alignItems: "center",
+    borderRadius: 50,
+    backgroundColor: colors.secondary,
   },
   buttonText: {
     color: colors.white,
     fontFamily: fonts.title,
-    fontSize: 16,
+    fontSize: 18,
   },
 });
 

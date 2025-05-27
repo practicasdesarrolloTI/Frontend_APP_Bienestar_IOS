@@ -20,7 +20,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
-import SelfCareScreen from "../screens/SelfCareScreen";
+import LogOutModal from "../components/LogOutModal";
 
 type SurveyScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -43,6 +43,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<Respuesta[]>([]);
   const [selectedOption, setSelectedOption] = useState<any>("");
+  const [modalClosed, setModalClosed] = useState(false);
 
   const estatura = indicadores?.Altura / 100;
   const peso = indicadores?.Peso;
@@ -286,15 +287,25 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         }
       }
 
-      const puntajeTotal = [...responses, ...respuestasExtra].reduce(
-        (acc, r) => {
-          if (typeof r === "object" && r.valor !== undefined) {
-            return acc + r.valor;
-          }
-          return acc;
-        },
-        0
-      );
+      const puntajeTotal =
+        surveyId === "moriskyGreen"
+          ? responses.every((r, i) => {
+              if (typeof r === "object") {
+                if (i === 0 && r.texto !== "No") return false;
+                if (i === 1 && r.texto !== "Sí") return false;
+                if (i === 2 && r.texto !== "No") return false;
+                if (i === 3 && r.texto !== "No") return false;
+              }
+              return true;
+            })
+            ? 1
+            : 0
+          : [...responses].reduce((acc, r) => {
+              if (typeof r === "object" && r.valor !== undefined) {
+                return acc + r.valor;
+              }
+              return acc;
+            }, 0);
 
       navigation.navigate("SurveySummary", {
         surveyId,
@@ -358,28 +369,34 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
     return (
       <View style={styles.questionContainer}>
-       
         <Text style={styles.question}>{currentQuestion.pregunta}</Text>
-      <View style={styles.optionContainer}>
-        {currentQuestion.opciones
-          .filter(
-            (op) => !op.sexo || op.sexo.toLowerCase() === sexo.toLowerCase()
-          )
-          .map((op, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.optionButton,
-                selectedOption === op.valor && styles.selectedOption ,
-              ]}
-              onPress={() =>
-                handleResponseChange({ texto: op.texto, valor: op.valor })
-              }
-            >
-              <Text style={styles.optionText}>{op.texto}</Text>
-            </TouchableOpacity>
-          ))}
-          </View>
+        <View style={styles.optionContainer}>
+          {currentQuestion.opciones
+            .filter(
+              (op) => !op.sexo || op.sexo.toLowerCase() === sexo.toLowerCase()
+            )
+            .map((op, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.optionButton,
+                  selectedOption === op.valor && styles.selectedOption,
+                ]}
+                onPress={() =>
+                  handleResponseChange({ texto: op.texto, valor: op.valor })
+                }
+              >
+                <Text
+                  style={[
+                    styles.optionText,
+                    selectedOption === op.valor && styles.selectedOptionText,
+                  ]}
+                >
+                  {op.texto}
+                </Text>
+              </TouchableOpacity>
+            ))}
+        </View>
       </View>
     );
   };
@@ -397,26 +414,20 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         resizeMode="cover"
       >
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => {
-              if (currentIndex === 0) {
-                navigation.navigate("SelfCareScreen");
-              } else {
-                handlePrevious(); 
-              }
-            }}
-          >
-            <Image
-              source={require("../../assets/icons/atras.png")}
-              style={{ width: 26, height: 26 }}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <View style={styles.closeButton}>
+          {currentIndex > 0 && (
             <TouchableOpacity
-              onPress={() => navigation.navigate("SelfCareScreen")}
+              style={styles.backButton}
+              onPress={handlePrevious}
             >
+              <Image
+                source={require("../../assets/icons/atras.png")}
+                style={{ width: 26, height: 26 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          )}
+          <View style={styles.closeButton}>
+            <TouchableOpacity onPress={() => setModalClosed(true)}>
               <MaterialIcons name="close" size={32} color={colors.preto} />
             </TouchableOpacity>
           </View>
@@ -429,13 +440,13 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
           {renderQuestion()}
           <View style={styles.buttonContainer}>
             {currentIndex > 0 && (
-            <TouchableOpacity
-              style={styles.previousButton}
-              onPress={handlePrevious}
-            >
-              <Text style={styles.nextButtonText}>Anterior</Text>
-            </TouchableOpacity>
-          )}
+              <TouchableOpacity
+                style={styles.previousButton}
+                onPress={handlePrevious}
+              >
+                <Text style={styles.nextButtonText}>Anterior</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
               <Text style={styles.nextButtonText}>
                 {currentIndex < finalPreguntas.length - 1
@@ -445,6 +456,12 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
             </TouchableOpacity>
           </View>
         </View>
+        <LogOutModal
+          text="¿Estás seguro de que quieres abandonar esta encuesta?"
+          visible={modalClosed}
+          onCancel={() => setModalClosed(false)}
+          onConfirm={() => navigation.navigate("SelfCareScreen")}
+        />
       </ImageBackground>
     </SafeAreaView>
   );
@@ -513,7 +530,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontFamily: fonts.body,
   },
-  optionContainer:{
+  optionContainer: {
     flexDirection: "column",
     width: "100%",
     marginTop: 30,
@@ -526,11 +543,14 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     backgroundColor: colors.white,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: "center",
   },
   selectedOption: {
     backgroundColor: colors.secondary,
+  },
+  selectedOptionText: {
+    color: colors.white,
   },
   optionText: {
     color: colors.preto,

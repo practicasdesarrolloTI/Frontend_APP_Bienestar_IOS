@@ -12,12 +12,12 @@ import {
   SafeAreaView,
   ImageBackground,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { submitSurvey } from "../services/surveyService";
 import colors from "../themes/colors";
-import { MaterialIcons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -168,13 +168,14 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
       >
         {/* Header transparente */}
         <CustomHeader
-          title="Resumen de Encuesta"
+          title="Resumen de encuesta"
           showBack
           transparent
           onLogout={() => setModalVisible(true)}
         />
 
         <View style={styles.container}>
+          <ScrollView>
           <View style={styles.summaryContainer}>
             <View style={styles.summaryInfo}>
               <View>
@@ -208,6 +209,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
               </View>
             </View>
           </View>
+          </ScrollView>
           <TouchableOpacity style={styles.button} onPress={handleShowModal}>
             <Text style={styles.buttonText}>Enviar Encuesta</Text>
           </TouchableOpacity>
@@ -271,8 +273,8 @@ const styles = StyleSheet.create({
   },
   separator: {
     borderStyle: "dashed",
-    borderBottomColor: colors.accent,
-    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+    borderBottomWidth: 2,
     marginVertical: 15,
   },
   response: {

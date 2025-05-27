@@ -6,26 +6,34 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  Image,
 } from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
-
 type Props = {
+  text: string;
   visible: boolean;
   onCancel: () => void;
   onConfirm: () => void;
 };
 
-const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
-
-  /** Función para cerrar sesión */
- return (
+const LogOutModal: React.FC<Props> = ({
+  text,
+  visible,
+  onCancel,
+  onConfirm,
+}) => {
+  return (
     <Modal transparent visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>¿Está seguro que quiere cerrar la sesión?</Text>
-
+          <Image
+            source={require("../../assets/icons/warning.png")}
+            style={{ width: 50, height: 50 }}
+            resizeMode="contain"
+          />
+          <Text style={styles.modalTitle}> {text}</Text>
           <View style={styles.modalButtons}>
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
               <Text style={styles.cancelText}>No</Text>
@@ -44,13 +52,13 @@ const LogOutModal: React.FC<Props> = ({ visible, onCancel, onConfirm }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(245, 240, 240, 0.36)", // Fondo oscuro semitransparente
+    backgroundColor: "rgba(245, 240, 240, 0.36)", 
     justifyContent: "center",
     alignItems: "center",
   },
   modalContainer: {
     backgroundColor: colors.white,
-    padding: 25,
+    padding: 30,
     borderRadius: 10,
     width: "70%",
     alignItems: "center",
@@ -64,7 +72,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontFamily: fonts.title,
     color: colors.preto,
     marginVertical: 20,

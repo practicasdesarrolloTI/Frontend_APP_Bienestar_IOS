@@ -310,6 +310,7 @@ const SelfCareScreen: React.FC = () => {
         )}
         {/* Modal de Cerrar Sesión */}
         <LogOutModal
+          text="¿Estás seguro de que deseas cerrar sesión?"
           visible={modalVisible}
           onCancel={() => setModalVisible(false)}
           onConfirm={handleLogout}
@@ -331,7 +332,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 30,  },
+    paddingHorizontal: 30,
+  },
 });
 
 export default SelfCareScreen;

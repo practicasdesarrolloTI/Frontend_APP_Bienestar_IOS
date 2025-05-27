@@ -194,9 +194,9 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
               )}
             />
           )}
-
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}
             onConfirm={handleLogout}

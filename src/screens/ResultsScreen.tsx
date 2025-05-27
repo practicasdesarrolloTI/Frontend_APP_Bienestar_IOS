@@ -43,7 +43,8 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   );
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const noHayResultados = resultados.length === 0 || resultadosFiltrados.length === 0;
+  const noHayResultados =
+    resultados.length === 0 || resultadosFiltrados.length === 0;
   const [searchQuery, setSearchQuery] = useState("");
 
   /** Función para cerrar sesión */
@@ -213,6 +214,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
           />
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}
             onConfirm={handleLogout}

@@ -208,7 +208,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   onPress={() => navigation.navigate("ForgotPassword")}
                 >
                   <Text style={styles.forgotText}>
-                    ¿Olvidó tu contraseña?
+                    ¿Olvidó su contraseña?
                   </Text>
                 </TouchableOpacity>
               </View>

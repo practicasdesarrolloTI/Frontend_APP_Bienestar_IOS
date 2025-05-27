@@ -70,7 +70,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
     loadPrograms();
   }, []);
 
-
   /* Función para capitalizar el nombre */
   const capitalizeName = (text: string): string => {
     return text
@@ -104,24 +103,23 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
           onLogout={() => setModalVisible(true)}
         />
 
-
-        <View style={styles.container}>          
-        {/* Buscador */}
-        <Buscador
-          value={searchQuery}
-          onChange={(text) => {
-            setSearchQuery(text);
-            const lowerText = text.toLowerCase();
-            const filtered = programas.filter((programa) =>
-              [programa.programa, programa.medico, programa.especialidad]
-                .join(" ")
-                .toLowerCase()
-                .includes(lowerText)
-            );
-            setFilteredProgramas(filtered);
-          }}
-          placeholder="Buscar programas"
-        />
+        <View style={styles.container}>
+          {/* Buscador */}
+          <Buscador
+            value={searchQuery}
+            onChange={(text) => {
+              setSearchQuery(text);
+              const lowerText = text.toLowerCase();
+              const filtered = programas.filter((programa) =>
+                [programa.programa, programa.medico, programa.especialidad]
+                  .join(" ")
+                  .toLowerCase()
+                  .includes(lowerText)
+              );
+              setFilteredProgramas(filtered);
+            }}
+            placeholder="Buscar programas"
+          />
           {/* Lista de Programas */}
           {filteredProgramas.length === 0 ? (
             <EmptyState message="No se encontraron programas de momento" />
@@ -163,7 +161,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
 
                     {/* Columna derecha: Detalles */}
                     <View style={styles.rightColumn}>
-                      
                       <Text style={styles.text}>
                         <Text style={styles.label}>Programa: </Text>
                         {item.programa}
@@ -188,9 +185,9 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
               )}
             />
           )}
-
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}
             onConfirm={handleLogout}

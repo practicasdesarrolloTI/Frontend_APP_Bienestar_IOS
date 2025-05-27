@@ -86,7 +86,11 @@ const SurveyCard: React.FC<Props> = ({
         onPress={handlePress}
         style={[
           styles.card,
-          survey.bloqueada && { borderRadius: 30, backgroundColor: colors.lightGray, opacity: 0.5 },
+          survey.bloqueada && {
+            borderRadius: 30,
+            backgroundColor: colors.lightGray,
+            opacity: 0.5,
+          },
         ]}
         activeOpacity={survey.bloqueada ? 1 : 0.7}
       >
@@ -165,39 +169,52 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(245, 240, 240, 0.36)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "white",
-    padding: 25,
+    backgroundColor: colors.white,
+    padding: 30,
     borderRadius: 10,
-    width: "85%",
-    alignItems: "center",
+    width: "80%",
+    shadowColor: colors.preto,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.55,
+    shadowRadius: 4,
+    elevation: 5,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: colors.primary,
+    fontSize: 24,
+    fontFamily: fonts.title,
+    color: colors.preto,
+    marginVertical: 20,
+    paddingHorizontal: 10,
+    textAlign: "center",
   },
   modalText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
+    fontSize: 18,
+    fontFamily: fonts.body,
     color: colors.preto,
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 30,
   },
   modalButton: {
-    backgroundColor: colors.secondary,
-    paddingVertical: 10,
+    width: "100%",
     paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: "center",
+    borderRadius: 50,
+    backgroundColor: colors.secondary,
   },
   modalButtonText: {
     color: colors.white,
-    fontWeight: "bold",
-    fontSize: 16,
+    fontFamily: fonts.title,
+    fontSize: 18,
   },
 });
 

@@ -241,9 +241,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               );
             })}
           </ScrollView>
-
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}
             onConfirm={handleLogout}
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   disabledItem: {
-    backgroundColor: "#f0f0f0", 
+    backgroundColor: "#f0f0f0",
     borderColor: "#ccc",
   },
   title: {
@@ -289,17 +289,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuItem: {
-  width: screenWidth / 2 - 40,
-  height: screenWidth / 2 - 45, 
-  borderRadius: 12,
-  overflow: "hidden", 
-  margin: 8,
-},
+    width: screenWidth / 2 - 40,
+    height: screenWidth / 2 - 45,
+    borderRadius: 12,
+    overflow: "hidden",
+    margin: 8,
+  },
 
-menuImage: {
-  width: "100%",
-  height: "100%",
-},
+  menuImage: {
+    width: "100%",
+    height: "100%",
+  },
   label: {
     marginLeft: 15,
     fontSize: 20,
