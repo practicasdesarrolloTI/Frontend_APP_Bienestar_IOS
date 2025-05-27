@@ -231,7 +231,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   <Text style={styles.checkboxLabel}>Acepto los </Text>
                   <TouchableOpacity
                     onPress={
-                      () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
+                      () => Linking.openURL("https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf") 
                     }
                   >
                     <Text style={styles.termsText}>términos y condiciones</Text>

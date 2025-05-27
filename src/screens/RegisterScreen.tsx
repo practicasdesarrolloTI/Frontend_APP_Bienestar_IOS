@@ -197,7 +197,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         source={require("../../assets/Fondos/Registro.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
-        
       >
         {/* Header transparente */}
         <CustomHeader
@@ -280,8 +279,10 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                   </TouchableOpacity>
                   <Text style={styles.checkboxLabel}>Acepto los </Text>
                   <TouchableOpacity
-                    onPress={
-                      () => Linking.openURL("https://tusitio.com/terminos") // reemplaza por tu enlace real
+                    onPress={() =>
+                      Linking.openURL(
+                        "https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf"
+                      )
                     }
                   >
                     <Text style={styles.termsText}>términos y condiciones</Text>
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
   termsText: {
     fontSize: 16,
     fontFamily: fonts.subtitle,
-    color: colors.primary, 
+    color: colors.primary,
     textDecorationLine: "underline",
   },
   title: {
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: colors.accent,
     fontFamily: fonts.subtitle,
-    fontSize: 16
+    fontSize: 16,
   },
   checkboxContainer: {
     flexDirection: "row",
