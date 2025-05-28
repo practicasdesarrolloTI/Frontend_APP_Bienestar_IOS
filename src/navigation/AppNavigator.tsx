@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -12,8 +11,8 @@ import ProgramsScreen from "../screens/ProgramsScreen";
 import ResultsScreen from "../screens/ResultsScreen";
 import PrescriptionsScreen from "../screens/PrescriptionsScreen";
 import SelfCareScreen from "../screens/SelfCareScreen";
-import SurveyScreen from "../components/SurveyScreen";
-import SurveySummary from "../components/SurveySummary";
+import SurveyScreen from "../screens/SurveyScreen";
+import SurveySummary from "../screens/SurveySummary";
 import LandingScreen from "../screens/LandingScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import VerifyCodeScreen from "../screens/VerifyCodeScreen";

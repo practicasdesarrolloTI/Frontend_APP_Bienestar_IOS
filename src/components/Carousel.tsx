@@ -3,23 +3,43 @@ import { View, Image, StyleSheet, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import colors from "../themes/colors";
 import { fetchBanners } from "../services/bannerService";
+import SkeletonLoading from "./SkeletonLoading";
 
 const { width } = Dimensions.get("window");
 
 const DOT_SIZE = 8;
 
 const ImageUrlCarousel: React.FC = () => {
-  const [banners, setBanners] = useState<{ id: string; title: string; imageUrl: string }[]>([]);
+  const [banners, setBanners] = useState<
+    { id: string; title: string; imageUrl: string }[]
+  >([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadBanners = async () => {
-      const data = await fetchBanners();
-      console.log("Banners fetched:", data[0].imageUrl);
-      setBanners(data);
+      try {
+        const data = await fetchBanners();
+        setBanners(data);
+      } catch (err) {
+        console.error("Error cargando banners", err);
+      } finally {
+        setLoading(false);
+      }
     };
     loadBanners();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <SkeletonLoading
+          style={{ width: "85%", height: 168, marginBottom: 10 }}
+          borderRadius={8}
+        />
+      </View>
+    );
+  }
 
   if (banners.length === 0) return null;
 
@@ -31,14 +51,18 @@ const ImageUrlCarousel: React.FC = () => {
         data={banners}
         autoPlay
         loop
-        scrollAnimationDuration={4000}
+        scrollAnimationDuration={3000}
         onSnapToItem={(index) => setActiveIndex(index)}
         style={{ borderRadius: 8 }}
         renderItem={({ item }) => (
           <View style={styles.imageUrlWrapper}>
-            <Image source={{
-              uri: item.imageUrl
-            }} style={styles.imageUrl} resizeMode="cover" />
+            <Image
+              source={{
+                uri: item.imageUrl,
+              }}
+              style={styles.imageUrl}
+              resizeMode="cover"
+            />
           </View>
         )}
       />

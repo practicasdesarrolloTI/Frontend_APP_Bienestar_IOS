@@ -3,7 +3,7 @@ import {
   View,
   FlatList,
   StyleSheet,
-  Alert,
+  Dimensions,
   SafeAreaView,
   StatusBar,
   Platform,
@@ -30,7 +30,7 @@ import Toast from "react-native-toast-message";
 import { ActivityIndicator } from "react-native-paper";
 import { getRemainingTime } from "../utils/getRemainingTimeUtils";
 import LoadingScreen from "../components/LoadingScreen";
-import SkeletonSurveyCard from "../components/SurveySkeleton";
+import SkeletonLoading from "../components/SkeletonLoading";
 import { fetchAutocuidado } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
 import WarningModal from "../components/WarningModal";
@@ -74,6 +74,8 @@ type Paciente = {
   edad: number;
   sexo: string;
 };
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const SelfCareScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -136,9 +138,7 @@ const SelfCareScreen: React.FC = () => {
 
       const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -250,7 +250,12 @@ const SelfCareScreen: React.FC = () => {
       cargando: true,
     };
     if (estado.cargando) {
-      return <SkeletonSurveyCard />;
+      return (
+        <SkeletonLoading
+          style={{ width: "100%", height: 238, marginBottom: 10 }}
+          borderRadius={25}
+        />
+      );
     }
     return (
       <SurveyCard

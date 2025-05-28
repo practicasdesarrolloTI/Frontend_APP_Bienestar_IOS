@@ -142,6 +142,7 @@ const SurveyCard: React.FC<Props> = ({
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+console.log("Screen dimensions:", screenWidth, screenHeight);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
