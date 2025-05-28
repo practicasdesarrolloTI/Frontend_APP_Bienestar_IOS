@@ -24,22 +24,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
 import HomeHeader from "../components/HomeHeader";
-import LogOutModal from "../components/LogOutModal";
+import LogOutModal from "../components/WarningModal";
 import Carousel from "../components/Carousel";
 import CustomHeader from "../components/CustomHeader";
-import { fetchProgramas } from "../services/programService";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
-
-type Programa = {
-  id: string;
-  fecha_cita: string;
-  programa: string;
-  hora: string;
-  medico: string;
-  especialidad: string;
-  estado: string;
-};
 
 /** Datos del menú con íconos de MaterialIcons y pantallas asociadas */
 const menuItems = [
@@ -87,7 +76,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [programas, setProgramas] = useState<Programa[]>([]);
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -116,64 +104,29 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }, [])
   );
 
-  /** Cargar el nombre del paciente desde AsyncStorage */
+  /** Cargar el nombre del paciente y el sexo */
   useEffect(() => {
-    const loadEverything = async () => {
+    const loadPaciente = async () => {
       try {
-        await Promise.all([loadPaciente(), loadPrograms()]);
+        const documento = await AsyncStorage.getItem("documento");
+        if (!documento) throw new Error("No hay documento");
+        const paciente = await getPatientByDocument(documento);
+
+        const nombreCompleto = `${paciente?.primer_nombre} ${
+          paciente?.segundo_nombre ?? ""
+        } ${paciente?.primer_apellido}`;
+        setNombrePaciente(nombreCompleto);
+        setSexo(paciente?.sexo ?? null);
+      } catch (error) {
+        console.error("Error al cargar paciente", error);
+        setHasError(true);
       } finally {
         setLoading(false);
       }
     };
 
-    loadEverything();
+    loadPaciente();
   }, []);
-
-  /** Cargar el nombre del paciente y los programas */
-  const loadPrograms = async () => {
-    try {
-      const documento = await AsyncStorage.getItem("documento");
-      if (!documento) throw new Error("No hay documento");
-      const tipoDocumento = await AsyncStorage.getItem("tipoDocumento");
-      if (tipoDocumento && documento) {
-        const programas = await fetchProgramas(tipoDocumento, documento);
-        setProgramas(programas);
-      } else {
-        setHasError(true);
-      }
-    } catch (error) {
-      console.error("Error al cargar programas", error);
-      setHasError(true); // activa la bandera de error
-    }
-  };
-
-  const loadPaciente = async () => {
-    try {
-      const documento = await AsyncStorage.getItem("documento");
-      if (!documento) throw new Error("No hay documento");
-
-      const paciente = await getPatientByDocument(documento);
-      if (paciente) {
-        const nombreCompleto = `${paciente.primer_nombre} ${
-          paciente.segundo_nombre ?? ""
-        } ${paciente.primer_apellido}`;
-        setNombrePaciente(nombreCompleto);
-        setSexo(paciente.sexo);
-      } else {
-        setHasError(true);
-      }
-    } catch (error) {
-      console.error("Error al cargar paciente", error);
-      setHasError(true); // activa la bandera de error
-    }
-  };
-
-  const sinProgramas =
-    programas.length === 0 ||
-    programas.every(
-      (p) =>
-        !p.programa || p.programa.toLowerCase().includes("no tiene programa")
-    );
 
   if (loading) {
     return <LoadingScreen />;
@@ -220,14 +173,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             showsVerticalScrollIndicator={false}
           >
             {menuItems.map((item) => {
-              const isAutocuidado = item.name === "Autocuidado";
-              const disabled = isAutocuidado && sinProgramas;
-
               return (
                 <TouchableOpacity
                   key={item.id}
-                  style={[styles.menuItem, disabled && styles.disabledItem]}
-                  disabled={disabled}
+                  style={[styles.menuItem]}
                   onPress={() =>
                     item.screen && navigation.navigate(item.screen as any)
                   }

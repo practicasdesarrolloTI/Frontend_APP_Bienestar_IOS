@@ -144,6 +144,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           transparent={true}
           showProfileIcon={false}
           onLogout={() => {}}
+          goBackTo="Landing"
         />
 
         <ScrollView

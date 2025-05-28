@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Dimensions,
   Image,
 } from "react-native";
 import colors from "../themes/colors";
@@ -18,7 +17,7 @@ type Props = {
   onConfirm: () => void;
 };
 
-const LogOutModal: React.FC<Props> = ({
+const WarningModal: React.FC<Props> = ({
   text,
   visible,
   onCancel,
@@ -52,7 +51,7 @@ const LogOutModal: React.FC<Props> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(245, 240, 240, 0.36)", 
+    backgroundColor: "rgba(245, 240, 240, 0.36)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -114,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LogOutModal;
+export default WarningModal;

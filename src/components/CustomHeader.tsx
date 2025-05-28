@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
   ViewStyle,
   Image,
   Dimensions,
@@ -20,10 +19,13 @@ type HeaderProps = {
   transparent?: boolean;
   showProfileIcon?: boolean;
   onLogout: () => void;
+  goBackTo?: keyof RootStackParamList;
 };
 
 type RootStackParamList = {
   Informacion: undefined;
+  Home: undefined;
+  Landing: undefined;
 };
 
 const CustomHeader: React.FC<HeaderProps> = ({
@@ -33,6 +35,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
   transparent = false,
   showProfileIcon = false,
   onLogout,
+  goBackTo,
 }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [menuVisible, setMenuVisible] = useState(false);
@@ -49,7 +52,13 @@ const CustomHeader: React.FC<HeaderProps> = ({
       {showBack && (
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            if (goBackTo) {
+              navigation.navigate(goBackTo);
+            } else {
+              navigation.goBack();
+            }
+          }}
         >
           <Image
             source={require("../../assets/icons/atras.png")}

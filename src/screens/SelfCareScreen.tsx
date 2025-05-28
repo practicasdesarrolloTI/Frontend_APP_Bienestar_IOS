@@ -33,7 +33,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import SkeletonSurveyCard from "../components/SurveySkeleton";
 import { fetchAutocuidado } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
-import LogOutModal from "../components/LogOutModal";
+import WarningModal from "../components/WarningModal";
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -110,7 +110,6 @@ const SelfCareScreen: React.FC = () => {
     if (!storedDoc) return;
     try {
       const data = await getSurveyResultsByDocument(storedDoc);
-
       setResultados(data as ResultadoEncuesta[]);
     } catch (error) {
     } finally {
@@ -138,11 +137,7 @@ const SelfCareScreen: React.FC = () => {
       const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text2: "Error al obtener información del paciente.",
-        position: "bottom",
-      });
+      
     }
   };
 
@@ -261,6 +256,7 @@ const SelfCareScreen: React.FC = () => {
       <SurveyCard
         key={survey.id}
         survey={{
+          id: survey.id,
           nombre: survey.nombre,
           image: survey.image,
           descripcion: survey.descripcion,
@@ -295,6 +291,7 @@ const SelfCareScreen: React.FC = () => {
           transparent
           showProfileIcon
           onLogout={() => setModalVisible(true)}
+          goBackTo="Home"
         />
 
         {loading ? (
@@ -309,7 +306,7 @@ const SelfCareScreen: React.FC = () => {
           </View>
         )}
         {/* Modal de Cerrar Sesión */}
-        <LogOutModal
+        <WarningModal
           text="¿Estás seguro de que deseas cerrar sesión?"
           visible={modalVisible}
           onCancel={() => setModalVisible(false)}

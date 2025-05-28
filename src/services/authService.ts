@@ -32,7 +32,15 @@ export const registerUser = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ documentType, document, mail, password }),
     });
-    return {success: true, message: "Usuario registrado correctamente"};
+    const data = await response.json();
+
+    if (!data.token) {
+      throw new Error("Token no recibido en la respuesta del servidor");
+    }
+
+    await AsyncStorage.setItem("token", data.token); // Guardar token JWT en el almacenamiento
+    console.log("Token guardado en AsyncStorage:", data.token);
+    return {success: true, data};
   } catch (error: any) {
     Toast.show({
       type: "error",

@@ -17,7 +17,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../components/CustomHeader";
-import LogOutModal from "../components/LogOutModal";
+import LogOutModal from "../components/WarningModal";
 import Toast from "react-native-toast-message";
 import EmptyState from "../components/EmptyState";
 import Buscador from "../components/Buscador";

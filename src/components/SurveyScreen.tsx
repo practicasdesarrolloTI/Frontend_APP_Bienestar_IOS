@@ -20,7 +20,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
-import LogOutModal from "../components/LogOutModal";
+import WarningModal from "./WarningModal";
 
 type SurveyScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -456,7 +456,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
             </TouchableOpacity>
           </View>
         </View>
-        <LogOutModal
+        <WarningModal
           text="¿Estás seguro de que quieres abandonar esta encuesta?"
           visible={modalClosed}
           onCancel={() => setModalClosed(false)}

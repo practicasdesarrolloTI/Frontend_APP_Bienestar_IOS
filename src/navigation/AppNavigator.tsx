@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -16,6 +18,7 @@ import LandingScreen from "../screens/LandingScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import VerifyCodeScreen from "../screens/VerifyCodeScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
+import { getToken } from "../services/authService";
 
 type DocumentType =
   | "RC"
@@ -120,29 +123,97 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const AppNavigator = () => {
+const AppNavigator: React.FC = () => {
+  const [initialRoute, setInitialRoute] = useState<"Home" | "Landing" | null>(
+    null
+  );
+
+  useEffect(() => {
+    (async () => {
+      const token = await getToken(); // obtiene el JWT si existe :contentReference[oaicite:1]{index=1}
+      setInitialRoute(token ? "Home" : "Landing");
+    })();
+  }, []);
+
+  // Mientras determinamos la ruta inicial, mostramos un loader
+  if (!initialRoute) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Landing" component={LandingScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Informacion" component={PatientInfoScreen} />
-        <Stack.Screen name="TusCitas" component={AppointmentScreen} />
-        <Stack.Screen name="TusProgramas" component={ProgramsScreen} />
-        <Stack.Screen name="Resultados" component={ResultsScreen} />
-        <Stack.Screen name="Medicamentos" component={PrescriptionsScreen} />
-        <Stack.Screen name="Autocuidado" component={SelfCareScreen} />
-        <Stack.Screen name="SurveyScreen" component={SurveyScreen} />
-        <Stack.Screen name="SurveySummary" component={SurveySummary} />
-        <Stack.Screen name="SelfCareScreen" component={SelfCareScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
-        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      <Stack.Navigator
+        initialRouteName={initialRoute}
+        screenOptions={{ headerShown: false }}
+      >
+        {initialRoute === "Landing" ? (
+          // Stack de autenticación
+          <>
+            <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Informacion" component={PatientInfoScreen} />
+            <Stack.Screen name="TusCitas" component={AppointmentScreen} />
+            <Stack.Screen name="TusProgramas" component={ProgramsScreen} />
+            <Stack.Screen name="Resultados" component={ResultsScreen} />
+            <Stack.Screen name="Medicamentos" component={PrescriptionsScreen} />
+            <Stack.Screen name="Autocuidado" component={SelfCareScreen} />
+            <Stack.Screen name="SurveyScreen" component={SurveyScreen} />
+            <Stack.Screen name="SurveySummary" component={SurveySummary} />
+            <Stack.Screen name="SelfCareScreen" component={SelfCareScreen} />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordScreen}
+            />
+            <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
+            <Stack.Screen
+              name="ResetPassword"
+              component={ResetPasswordScreen}
+            />
+          </>
+        ) : (
+          // Stack principal de la app
+          <>
+            <Stack.Screen name="Landing" component={LandingScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Informacion" component={PatientInfoScreen} />
+            <Stack.Screen name="TusCitas" component={AppointmentScreen} />
+            <Stack.Screen name="TusProgramas" component={ProgramsScreen} />
+            <Stack.Screen name="Resultados" component={ResultsScreen} />
+            <Stack.Screen name="Medicamentos" component={PrescriptionsScreen} />
+            <Stack.Screen name="Autocuidado" component={SelfCareScreen} />
+            <Stack.Screen name="SurveyScreen" component={SurveyScreen} />
+            <Stack.Screen name="SurveySummary" component={SurveySummary} />
+            <Stack.Screen name="SelfCareScreen" component={SelfCareScreen} />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordScreen}
+            />
+            <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
+            <Stack.Screen
+              name="ResetPassword"
+              component={ResetPasswordScreen}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default AppNavigator;

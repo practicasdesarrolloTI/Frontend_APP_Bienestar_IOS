@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
 } from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -20,7 +19,6 @@ type Props = {
 const RecommendationModal: React.FC<Props> = ({
   visible,
   recomendacion,
-  onClose,
   onConfirm,
 }) => {
   return (

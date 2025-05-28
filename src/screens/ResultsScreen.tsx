@@ -23,7 +23,7 @@ import EmptyState from "../components/EmptyState";
 import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
 import Toast from "react-native-toast-message";
-import LogOutModal from "../components/LogOutModal";
+import LogOutModal from "../components/WarningModal";
 import Buscador from "../components/Buscador";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Resultados">;

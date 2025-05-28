@@ -39,7 +39,7 @@ export const submitSurveyResult = async ({
     type SurveyResultData = {
       message: string;
     };
-    
+
     const res = await axios.post<SurveyResultData>(
       API_URL,
       {
@@ -60,7 +60,7 @@ export const submitSurveyResult = async ({
         },
       }
     );
-    
+
     return { success: true, message: res.data.message };
   } catch (error: any) {
     return {
@@ -70,11 +70,12 @@ export const submitSurveyResult = async ({
 };
 
 export const getSurveyResultsByDocument = async (documento: string) => {
-  const token = await AsyncStorage.getItem('token');
+  const token = await AsyncStorage.getItem("token");
   const response = await axios.get(`${API_URL}/${documento}`, {
     headers: {
-      Authorization: token || '',
+      Authorization: token || "",
     },
   });
+  
   return response.data;
 };

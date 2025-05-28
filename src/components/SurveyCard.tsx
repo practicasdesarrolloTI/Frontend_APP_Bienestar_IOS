@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,11 +13,14 @@ import { fonts } from "../themes/fonts";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import { ActivityIndicator } from "react-native-paper";
+import { getSurveyResultsByDocument } from "../services/surveyResultService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 dayjs.extend(duration);
 
 type Props = {
   survey: {
+    id: string;
     nombre: string;
     descripcion: string;
     image?: any;
@@ -35,6 +38,11 @@ type Props = {
   onPress: () => void;
 };
 
+type Recomendacion = {
+  surveyId: string;
+  recomendacion: string;
+};
+
 const SurveyCard: React.FC<Props> = ({
   survey,
   tiempoRestante,
@@ -42,6 +50,7 @@ const SurveyCard: React.FC<Props> = ({
   onPress,
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const [recomendacion, setRecomendacion] = useState<string | null>(null);
 
   const getTiempoDisponibleEn = () => {
     if (!tiempoRestante) return "";
@@ -55,25 +64,26 @@ const SurveyCard: React.FC<Props> = ({
       partes.push(
         `${tiempoRestante.dias} día${tiempoRestante.dias === 1 ? "" : "s"}`
       );
-    if (tiempoRestante.horas > 0)
-      partes.push(
-        `${tiempoRestante.horas} hora${tiempoRestante.horas === 1 ? "" : "s"}`
-      );
-    if (tiempoRestante.minutos && tiempoRestante.minutos > 0)
-      partes.push(`${tiempoRestante.minutos} min`);
-    if (tiempoRestante.segundos > 0) {
-      partes.push(
-        `${tiempoRestante.segundos} segundo${
-          tiempoRestante.segundos === 1 ? "" : "s"
-        }`
-      );
-    }
 
     return partes.join(", ");
   };
 
-  const handlePress = () => {
+  const handlePress = async () => {
     if (survey.bloqueada) {
+      const document = await AsyncStorage.getItem("documento");
+      if (document) {
+        try {
+          const data = (await getSurveyResultsByDocument(
+            document
+          )) as Recomendacion[];
+          const result = data.find((res: any) => res.surveyId === survey.id);
+          setRecomendacion(
+            result?.recomendacion || "No hay recomendación disponible."
+          );
+        } catch (error) {
+          setRecomendacion("Error al cargar la recomendación.");
+        }
+      }
       setShowModal(true);
     } else {
       onPress();
@@ -109,6 +119,11 @@ const SurveyCard: React.FC<Props> = ({
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Encuesta completada</Text>
+
+            <Text style={styles.recomendacionTitle}>Último resultado:</Text>
+            <Text style={styles.modalText}>
+              <Text style={styles.modalText}>{recomendacion}</Text>
+            </Text>
             <Text style={styles.modalText}>
               Podrás volver a realizarla en {getTiempoDisponibleEn()}.
             </Text>
@@ -195,13 +210,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     textAlign: "center",
   },
+  recomendacionTitle: {
+    fontSize: 20,
+    fontFamily: fonts.title,
+    color: colors.primary,
+    marginBottom: 10,
+    textAlign: "center",
+  },
   modalText: {
     fontSize: 18,
     fontFamily: fonts.body,
     color: colors.preto,
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 30,
+    marginBottom: 10,
   },
   modalButton: {
     width: "100%",
@@ -210,6 +232,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 50,
     backgroundColor: colors.secondary,
+    marginTop: 20,
   },
   modalButtonText: {
     color: colors.white,

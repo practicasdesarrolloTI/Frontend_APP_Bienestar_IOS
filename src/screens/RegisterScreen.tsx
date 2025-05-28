@@ -30,6 +30,7 @@ import DocumentPicker from "../components/DocumentPicker";
 import Toast from "react-native-toast-message";
 import { sendRecoveryCode } from "../services/authService";
 import CustomHeader from "../components/CustomHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type DocumentType =
   | "RC"
@@ -133,6 +134,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         documentType,
         Number(documentNumber)
       );
+        await AsyncStorage.setItem("documento", documentNumber);
+      await AsyncStorage.setItem("tipoDocumento", String(documentType));
       const patientByMail = await checkPatientByMail(email);
 
       if (patientByMail) {
@@ -204,6 +207,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           transparent={true}
           showProfileIcon={false}
           onLogout={() => {}}
+          goBackTo="Landing"
         />
         <ScrollView
           contentContainerStyle={styles.scrollContainer}

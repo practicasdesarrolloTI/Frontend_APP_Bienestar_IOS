@@ -3,15 +3,12 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   StatusBar,
   Platform,
   ImageBackground,
-  Image,
 } from "react-native";
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -21,9 +18,8 @@ import { fonts } from "../themes/fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import EmptyState from "../components/EmptyState";
-import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
-import LogOutModal from "../components/LogOutModal";
+import WarningModal from "../components/WarningModal";
 import Buscador from "../components/Buscador";
 
 type Props = NativeStackScreenProps<RootStackParamList, "TusCitas">;
@@ -62,17 +58,8 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         const tipoDocumento =
           (await AsyncStorage.getItem("tipoDocumento")) ?? "";
         const numeroDocumento = (await AsyncStorage.getItem("documento")) ?? "";
-
         const data = await fetchCitas(tipoDocumento, numeroDocumento);
-
         // Formateamos los datos según el tipo `Cita`
-        if (data.length === 0) {
-          Toast.show({
-            type: "info",
-            text1: "No tienes citas agendadas por el momento.",
-            position: "bottom",
-          });
-        }
         const citasFormateadas = data.map((item: any, index: number) => ({
           id: index.toString(),
           fecha: item.fecha_cita?.split(" ")[0] || "",
@@ -140,6 +127,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
           transparent
           showProfileIcon
           onLogout={() => setModalVisible(true)}
+          goBackTo="Home"
         />
 
         <View style={styles.container}>
@@ -195,7 +183,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
             />
           )}
           {/* Modal de Cerrar Sesión */}
-          <LogOutModal
+          <WarningModal
             text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}

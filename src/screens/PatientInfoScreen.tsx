@@ -10,7 +10,6 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -23,9 +22,8 @@ import LoadingScreen from "../components/LoadingScreen";
 import { fonts } from "../themes/fonts";
 import { calcularEdad } from "../utils/dateUtils";
 import CustomHeader from "../components/CustomHeader";
-import LogOutModal from "../components/LogOutModal";
+import WarningModal from "../components/WarningModal";
 import Toast from "react-native-toast-message";
-import { Scroll } from "lucide-react-native";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Informacion">;
 
@@ -105,12 +103,14 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           });
           return;
         }
-        const dataregistro = await getPatientAPP(storedDocType, Number(storedDoc));
+        const dataregistro = await getPatientAPP(
+          storedDocType,
+          Number(storedDoc)
+        );
         const data = await getPatientByDocument(storedDoc);
 
         setPaciente(data as unknown as Paciente);
         setPacienteRegistro(dataregistro as unknown as PacienteRegistro);
-
       } catch (error) {
         Toast.show({
           type: "error",
@@ -157,14 +157,18 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               <View>
                 <Text style={styles.label}>Nombre completo</Text>
                 <Text style={styles.labelinfo}>
-                  {formatName(paciente?.primer_nombre ?? "Información no disponible")}{" "}
+                  {formatName(
+                    paciente?.primer_nombre ?? "Información no disponible"
+                  )}{" "}
                   {formatName(paciente?.segundo_nombre ?? " ")}{" "}
                   {formatName(paciente?.primer_apellido ?? " ")}{" "}
                   {formatName(paciente?.segundo_apellido ?? " ")}
                 </Text>
                 <Text style={styles.label}>Documento</Text>
                 <Text style={styles.labelinfo}>
-                  {paciente?.tipo_documento_abreviado || "Información no disponible"} {paciente?.documento || ""} 
+                  {paciente?.tipo_documento_abreviado ||
+                    "Información no disponible"}{" "}
+                  {paciente?.documento || ""}
                 </Text>
                 <Text style={styles.label}>Sexo</Text>
                 <Text style={styles.labelinfo}>
@@ -206,7 +210,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </ScrollView>
           {/* Modal de Cerrar Sesión */}
-          <LogOutModal
+          <WarningModal
             text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
             onCancel={() => setModalVisible(false)}
