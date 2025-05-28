@@ -15,7 +15,6 @@ const ImageUrlCarousel: React.FC = () => {
   useEffect(() => {
     const loadBanners = async () => {
       const data = await fetchBanners();
-      console.log("Banners fetched:", data[0].imageUrl);
       setBanners(data);
     };
     loadBanners();

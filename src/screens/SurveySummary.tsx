@@ -16,7 +16,6 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { submitSurvey } from "../services/surveyService";
 import colors from "../themes/colors";
 import Toast from "react-native-toast-message";
 import { fonts } from "../themes/fonts";
@@ -76,21 +75,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
     setModalVisible(true);
   };
 
-  const handleConfirm = async () => {
-    setModalVisible(false);
-    const result = await submitSurvey(
-      surveyId,
-      responses.map((r) =>
-        typeof r === "object" && "texto" in r ? r.texto : String(r)
-      )
-    );
-    if (result.error) {
-      Alert.alert("Error", result.error);
-    } else {
-      Alert.alert("Éxito", "Encuesta enviada correctamente");
-      navigation.navigate("Home");
-    }
-  };
+  
 
   const handleSubmit = async () => {
     try {
@@ -98,7 +83,11 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         const storedTipo = await AsyncStorage.getItem("tipoDocumento");
         const storedDoc = await AsyncStorage.getItem("documento");
         if (!storedDoc || !storedTipo) {
-          Alert.alert("Error", "No se encontró el documento del paciente.");
+          Toast.show({
+            type: "error",
+            text2: "No se encontró información del paciente.",
+            position: "bottom",
+          });
           return null;
         }
 
@@ -125,8 +114,8 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
           typeof r === "object" && "texto" in r ? r.texto : String(r)
         ),
         puntaje,
-        sexo,
         edad,
+        sexo,
         recomendacion,
       });
 
