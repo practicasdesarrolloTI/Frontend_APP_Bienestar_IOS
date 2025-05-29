@@ -12,10 +12,9 @@ import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import { ActivityIndicator } from "react-native-paper";
 import { getSurveyResultsByDocument } from "../services/surveyResultService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import SkeletonLoading from "./SkeletonLoading";
 dayjs.extend(duration);
 
 type Props = {
@@ -34,7 +33,6 @@ type Props = {
     minutos?: number;
     segundos: number;
   };
-  cargando?: boolean;
   onPress: () => void;
 };
 
@@ -43,14 +41,10 @@ type Recomendacion = {
   recomendacion: string;
 };
 
-const SurveyCard: React.FC<Props> = ({
-  survey,
-  tiempoRestante,
-  cargando,
-  onPress,
-}) => {
+const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
   const [showModal, setShowModal] = useState(false);
   const [recomendacion, setRecomendacion] = useState<string | null>(null);
+
 
   const getTiempoDisponibleEn = () => {
     if (!tiempoRestante) return "";
@@ -102,24 +96,16 @@ const SurveyCard: React.FC<Props> = ({
             opacity: 0.5,
           },
         ]}
+        
         activeOpacity={survey.bloqueada ? 1 : 0.7}
       >
-        {cargando ? (
-          <ActivityIndicator size="small" color={colors.primary} />
-        ) : (
-          <Image
-            source={survey.image}
-            resizeMode="cover"
-            style={styles.image}
-          />
-        )}
+        <Image source={survey.image} resizeMode="cover" style={styles.image} />
       </TouchableOpacity>
 
       <Modal visible={showModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Encuesta completada</Text>
-
             <Text style={styles.recomendacionTitle}>Último resultado:</Text>
             <Text style={styles.modalText}>
               <Text style={styles.modalText}>{recomendacion}</Text>

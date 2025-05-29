@@ -41,7 +41,16 @@ const ImageUrlCarousel: React.FC = () => {
     );
   }
 
-  if (banners.length === 0) return null;
+  if (banners.length === 0) {
+    return (
+      <View style={styles.container}>
+        <SkeletonLoading
+          style={{ width: "85%", height: 168, marginBottom: 10 }}
+          borderRadius={8}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

@@ -11,9 +11,6 @@ export function getRemainingTime(fechaUltimaEncuesta: string) {
   const completado = diffMs <= 0;
   const duracion = dayjs.duration(Math.max(diffMs, 0));
 
-  const totalTiempo = fechaDisponible.diff(fechaEncuesta);
-  const tiempoRestante = Math.max(diffMs, 0);
-  const porcentajeCompletado = Math.min(1, (totalTiempo - tiempoRestante) / totalTiempo);
 
   return {
     meses: duracion.months(),
@@ -22,6 +19,5 @@ export function getRemainingTime(fechaUltimaEncuesta: string) {
     minutos: duracion.minutes(),
     segundos: duracion.seconds(),
     completado,
-    porcentajeCompletado,
   };
 }

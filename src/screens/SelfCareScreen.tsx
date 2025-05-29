@@ -8,6 +8,7 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -27,13 +28,12 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 import SurveyCard from "../components/SurveyCard";
 import Toast from "react-native-toast-message";
-import { ActivityIndicator } from "react-native-paper";
 import { getRemainingTime } from "../utils/getRemainingTimeUtils";
-import LoadingScreen from "../components/LoadingScreen";
-import SkeletonLoading from "../components/SkeletonLoading";
 import { fetchAutocuidado } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
 import WarningModal from "../components/WarningModal";
+import SkeletonLoading from "../components/SkeletonLoading";
+import LoadingScreen from "../components/LoadingScreen";
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -74,77 +74,20 @@ type Paciente = {
   edad: number;
   sexo: string;
 };
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 
 const SelfCareScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [resultados, setResultados] = useState<ResultadoEncuesta[]>([]);
+  const [resultados, setResultados] = useState<ResultadoEncuesta[] | null>(
+    null
+  );
+  const [Paciente, setPatient] = useState<Paciente | null>(null);
   const [indicadores, setIndicadores] = useState<any>(null);
+  const [encuestasListas, setEncuestasListas] = useState(false);
   const [loading, setLoading] = useState(true);
   const [estadoEncuestas, setEstadoEncuestas] = useState<
-    Record<
-      string,
-      { bloqueada?: boolean; disponibleEn?: any; cargando?: boolean }
-    >
+    Record<string, { bloqueada?: boolean; disponibleEn?: any }>
   >({});
 
-  const [modalVisible, setModalVisible] = useState(false);
-  /** Función para cerrar sesión */
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("documento");
-    Toast.show({
-      type: "success",
-      text2: "Has cerrado sesión correctamente.",
-      position: "bottom",
-    });
-    navigation.navigate("Login");
-  };
-
-  const loadResultados = async () => {
-    const storedDoc = await AsyncStorage.getItem("documento");
-    const initialState: Record<string, any> = {};
-    encuestas.forEach((encuesta) => {
-      initialState[encuesta.id] = { cargando: true };
-    });
-    setEstadoEncuestas(initialState);
-    if (!storedDoc) return;
-    try {
-      const data = await getSurveyResultsByDocument(storedDoc);
-      setResultados(data as ResultadoEncuesta[]);
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const [Paciente, setPatient] = useState<Paciente | null>(null);
-  const loadPatient = async () => {
-    try {
-      const storedDoc = await AsyncStorage.getItem("documento");
-      const storedTipo = await AsyncStorage.getItem("tipoDocumento");
-      if (!storedDoc || !storedTipo) {
-        Toast.show({
-          type: "error",
-          text2: "No se encontró el documento del paciente.",
-          position: "bottom",
-        });
-        return;
-      }
-
-      const data = await getPatientByDocument(storedDoc);
-      setPatient(data as unknown as Paciente);
-
-      const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
-      setIndicadores(indicadoresData);
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    loadPatient();
-    loadResultados();
-  }, []);
   const [encuestas] = useState<Survey[]>([
     {
       ...findriscSurvey,
@@ -176,41 +119,86 @@ const SelfCareScreen: React.FC = () => {
     },
   ]);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  /** Función para cerrar sesión */
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("documento");
+    Toast.show({
+      type: "success",
+      text2: "Has cerrado sesión correctamente.",
+      position: "bottom",
+    });
+    navigation.navigate("Login");
+  };
+
+  const loadPatient = async () => {
+    try {
+      const storedDoc = await AsyncStorage.getItem("documento");
+      const storedTipo = await AsyncStorage.getItem("tipoDocumento");
+      if (!storedDoc || !storedTipo) {
+        Toast.show({
+          type: "error",
+          text2: "No se encontró el documento del paciente.",
+          position: "bottom",
+        });
+        return;
+      }
+
+      const data = await getPatientByDocument(storedDoc);
+      setPatient(data as unknown as Paciente);
+
+      const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
+      setIndicadores(indicadoresData);
+    } catch (error) {}
+  };
+
+  const loadResultados = async () => {
+    const storedDoc = await AsyncStorage.getItem("documento");
+    const initialState: Record<string, any> = {};
+    encuestas.forEach((encuesta) => {
+      initialState[encuesta.id] = { bloqueada: false };
+    });
+    setEstadoEncuestas(initialState);
+    if (!storedDoc) return;
+    try {
+      const data = await getSurveyResultsByDocument(storedDoc);
+      setResultados(data as ResultadoEncuesta[]);
+    } catch (error) {
+      setResultados([]); 
+    }
+  };
+
   useEffect(() => {
-    if (!encuestas.length) return;
+    loadPatient(), loadResultados();
+  }, []);
 
-    const intervalo = setInterval(() => {
-      const nuevosEstados: Record<string, any> = { ...estadoEncuestas };
-      encuestas.forEach((encuesta) => {
-        const resultado = resultados.find((r) => r.surveyId === encuesta.id);
+  useEffect(() => {
+    if (!encuestas.length || resultados === null) return;
 
-        if (!resultado) {
-          nuevosEstados[encuesta.id] = { bloqueada: false, cargando: false };
-        } else {
-          const fechaEncuesta = resultado.createdAt;
-          if (!fechaEncuesta) return;
-          const tiempoRestante = getRemainingTime(fechaEncuesta);
+    const nuevosEstados: Record<string, any> = {};
 
-          const completado = tiempoRestante.completado;
+    encuestas.forEach((encuesta) => {
+      const resultado = resultados.find((r) => r.surveyId === encuesta.id);
 
-          nuevosEstados[encuesta.id] = {
-            bloqueada: !completado,
-            disponibleEn: tiempoRestante,
-            cargando: false,
-          };
-        }
-      });
+      if (!resultado) {
+        nuevosEstados[encuesta.id] = { bloqueada: false };
+      } else {
+        const tiempoRestante = getRemainingTime(resultado.createdAt);
+        nuevosEstados[encuesta.id] = {
+          bloqueada: !tiempoRestante.completado,
+          disponibleEn: tiempoRestante,
+        };
+      }
+    });
 
-      setEstadoEncuestas(nuevosEstados);
-    }, 1000);
-
-    return () => clearInterval(intervalo);
+    setEstadoEncuestas(nuevosEstados);
+    setEncuestasListas(true);
   }, [encuestas, resultados]);
 
   const handleOpenSurvey = (survey: Survey) => {
     if (!Paciente) return;
 
-    const resultado = resultados.find((r) => r.surveyId === survey.id);
     const estado = estadoEncuestas[survey.id];
 
     if (estado?.bloqueada) {
@@ -245,11 +233,9 @@ const SelfCareScreen: React.FC = () => {
   };
 
   const renderSurvey = (survey: Survey) => {
-    const estado = estadoEncuestas[survey.id] || {
-      bloqueada: false,
-      cargando: true,
-    };
-    if (estado.cargando) {
+    const estado = estadoEncuestas[survey.id];
+
+    if (!encuestasListas || !estado) {
       return (
         <SkeletonLoading
           style={{ width: "100%", height: 238, marginBottom: 10 }}
@@ -268,14 +254,10 @@ const SelfCareScreen: React.FC = () => {
           bloqueada: estado.bloqueada,
         }}
         tiempoRestante={estado.disponibleEn}
-        cargando={estado.cargando}
         onPress={() => handleOpenSurvey(survey)}
       />
     );
   };
-  if (loading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -299,17 +281,14 @@ const SelfCareScreen: React.FC = () => {
           goBackTo="Home"
         />
 
-        {loading ? (
-          <ActivityIndicator size="large" color={styles.title.color} />
-        ) : (
-          <View style={styles.container}>
-            <FlatList
-              data={encuestas}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => renderSurvey(item)}
-            />
-          </View>
-        )}
+        <View style={styles.container}>
+          <FlatList
+            data={encuestas}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => renderSurvey(item)}
+          />
+        </View>
+
         {/* Modal de Cerrar Sesión */}
         <WarningModal
           text="¿Estás seguro de que deseas cerrar sesión?"

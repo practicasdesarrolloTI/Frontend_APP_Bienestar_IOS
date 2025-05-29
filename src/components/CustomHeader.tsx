@@ -126,7 +126,8 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   header: {
-    height: screenHeight * 0.18,
+    height: screenHeight * 0.15,
+    paddingTop: screenHeight * 0.05,
     paddingHorizontal: 25,
     flexDirection: "row",
     alignItems: "center",
