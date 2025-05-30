@@ -16,6 +16,7 @@ import {
   Image,
   Linking,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -134,7 +135,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         documentType,
         Number(documentNumber)
       );
-        await AsyncStorage.setItem("documento", documentNumber);
+      await AsyncStorage.setItem("documento", documentNumber);
       await AsyncStorage.setItem("tipoDocumento", String(documentType));
       const patientByMail = await checkPatientByMail(email);
 
@@ -197,7 +198,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Registro.png")}
+        source={require("../../assets/backgrounds/Inicio_de_sesion2.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -217,12 +218,13 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           {/* Subheader */}
           <View style={styles.subheaderContainer}>
             <Image
-              source={require("../../assets/logo_zentria_sinfondo.png")}
-              style={{ marginBottom: 10 }}
+              source={require("../../assets/logos/LogoCuidarMe.png")}
+              resizeMode="contain"
+              style={styles.logo}
             />
             <Text style={styles.title}>Registro</Text>
             <Text style={styles.subtitle}>
-              Ingrese sus datos para registrarse
+              Ingresa tus datos para registrarse
             </Text>
           </View>
 
@@ -241,7 +243,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Número de documento"
-                placeholderTextColor={colors.preto}
+                placeholderTextColor={colors.lightGray}
                 keyboardType="numeric"
                 value={documentNumber}
                 onChangeText={setDocumentNumber}
@@ -251,7 +253,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Correo electrónico"
-                placeholderTextColor={colors.preto}
+                placeholderTextColor={colors.lightGray}
                 keyboardType="email-address"
                 value={email}
                 onChangeText={(text) => setEmail(text.toLowerCase())}
@@ -260,7 +262,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Confirmar correo electrónico"
-                placeholderTextColor={colors.preto}
+                placeholderTextColor={colors.lightGray}
                 keyboardType="email-address"
                 value={confirmEmail}
                 onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
@@ -303,14 +305,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 {isLoading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.registerText}>Continuar</Text>
+                  <Text style={styles.buttonText}>Continuar</Text>
                 )}
               </TouchableOpacity>
 
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Text style={styles.loginText}>
                   ¿Ya tienes cuenta?
-                  <Text style={styles.subtitle}> Inicia sesión</Text>
+                  <Text style={styles.loginLinkText}> Inicia sesión</Text>
                 </Text>
               </TouchableOpacity>
             </ScrollView>
@@ -326,83 +328,90 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  subtitle: {
-    fontSize: 18,
-    fontFamily: fonts.subtitle,
-    color: colors.primary,
-  },
-  termsContainer: {
-    marginTop: 20,
-  },
-  subheaderContainer: {
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingHorizontal: 3,
-    paddingVertical: 5,
+    paddingHorizontal: scale(15),
   },
-  termsText: {
-    fontSize: 16,
-    fontFamily: fonts.subtitle,
-    color: colors.primary,
-    textDecorationLine: "underline",
+  subheaderContainer: {
+    alignItems: "center",
+    marginBottom: verticalScale(20),
+  },
+  logo: {
+    width: scale(90),
+    height: verticalScale(75),
   },
   title: {
-    fontSize: 30,
+    fontSize: moderateScale(28),
     fontFamily: fonts.title,
     color: colors.preto,
+    marginBottom: verticalScale(5),
+  },
+  subtitle: {
+    fontSize: moderateScale(15),
+    fontFamily: fonts.subtitle,
+    color: colors.gray,
   },
   container: {
-    flex: 1,
-    justifyContent: "flex-start",
+    flexGrow: 1,
     alignItems: "center",
-    padding: 30,
-    marginTop: 60,
+    padding: moderateScale(20),
   },
-  input: {
-    width: "100%",
-    height: 65,
+ input: {
+    width: scale(300),
+    height: verticalScale(45),
     backgroundColor: colors.white,
-    borderRadius: 10,
-    paddingLeft: 25,
-    marginBottom: 15,
+    borderRadius: scale(8),
+    paddingHorizontal: scale(15),
+    marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: 18,
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
   },
-  button: {
-    marginTop: 20,
-    backgroundColor: colors.primary,
-    width: "100%",
-    paddingVertical: 20,
-    borderRadius: 50,
-    alignItems: "center",
-  },
-  registerText: {
-    color: colors.white,
-    fontSize: 20,
-    fontFamily: fonts.title,
-  },
-  loginText: {
-    marginTop: 15,
-    color: colors.accent,
-    fontFamily: fonts.subtitle,
-    fontSize: 16,
+  termsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: scale(300),
+    marginVertical: verticalScale(10),
   },
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
   },
-  checkboxLabel: {
-    marginLeft: 10,
-    fontSize: 16,
+ checkboxLabel: {
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.preto,
+    marginLeft: scale(8),
+  },
+  termsText: {
+    fontSize: moderateScale(14),
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
+    textDecorationLine: "underline",
+  },
+  button: {
+    backgroundColor: colors.primary,
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
+    marginBottom: verticalScale(10),
+    alignItems: "center",
+  },
+  buttonText: {
+    color: colors.white,
+    fontSize: moderateScale(18),
+    fontFamily: fonts.title,
+  },
+  loginText: {
+    color: colors.accent,
+    fontSize: moderateScale(14),
+    fontFamily: fonts.subtitle,
+  },
+  loginLinkText: {
+    color: colors.purple,
+    fontSize: moderateScale(14),
+    fontFamily: fonts.subtitle,
   },
 });
-
 export default RegisterScreen;

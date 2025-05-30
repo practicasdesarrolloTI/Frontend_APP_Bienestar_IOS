@@ -1,25 +1,24 @@
-import React from "react";
+// src/screens/HomeScreen.tsx
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
   Platform,
   BackHandler,
   ImageBackground,
-  Dimensions,
   ScrollView,
   Image,
+  StyleSheet,
+  Dimensions,
 } from "react-native";
-import colors from "../themes/colors";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { fonts } from "../themes/fonts";
 import { getPatientByDocument } from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import LoadingScreen from "../components/LoadingScreen";
 import Toast from "react-native-toast-message";
@@ -30,42 +29,46 @@ import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
-/** Datos del menú con íconos de MaterialIcons y pantallas asociadas */
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const ITEM_WIDTH = SCREEN_WIDTH * 0.41;
+const ITEM_HEIGHT = SCREEN_HEIGHT * 0.18; 
+
 const menuItems = [
   {
     id: "1",
     name: "Información",
-    image: require("../../assets/icons/informacion_b.png"),
+    image: require("../../assets/buttons/informacion.png"),
     screen: "Informacion",
   },
   {
     id: "2",
     name: "Citas",
-    image: require("../../assets/icons/citas_b.png"),
+    image: require("../../assets/buttons/citas.png"),
     screen: "TusCitas",
   },
   {
     id: "3",
     name: "Programas",
-    image: require("../../assets/icons/programas_b.png"),
+    image: require("../../assets/buttons/programas.png"),
     screen: "TusProgramas",
   },
   {
     id: "4",
     name: "Resultados",
-    image: require("../../assets/icons/resultados_b.png"),
+    image: require("../../assets/buttons/resultados.png"),
     screen: "Resultados",
   },
   {
     id: "5",
     name: "Medicamentos",
-    image: require("../../assets/icons/medicamentos_b.png"),
+    image: require("../../assets/buttons/medicamentos.png"),
     screen: "Medicamentos",
   },
   {
     id: "6",
     name: "Autocuidado",
-    image: require("../../assets/icons/autocuidado_b.png"),
+    image: require("../../assets/buttons/autocuidado.png"),
     screen: "Autocuidado",
   },
 ];
@@ -77,7 +80,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  /** Función para cerrar sesión */
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("documento");
@@ -89,7 +91,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     navigation.replace("Login");
   };
 
-  /** Manejar el evento de retroceso del hardware */
   useFocusEffect(
     React.useCallback(() => {
       const backHandler = BackHandler.addEventListener(
@@ -99,38 +100,30 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           return true;
         }
       );
-
       return () => backHandler.remove();
     }, [])
   );
 
-  /** Cargar el nombre del paciente y el sexo */
   useEffect(() => {
-    const loadPaciente = async () => {
+    (async () => {
       try {
         const documento = await AsyncStorage.getItem("documento");
         if (!documento) throw new Error("No hay documento");
-        const paciente = await getPatientByDocument(documento);
-
-        const nombreCompleto = `${paciente?.primer_nombre} ${
-          paciente?.segundo_nombre ?? ""
-        } ${paciente?.primer_apellido}`;
-        setNombrePaciente(nombreCompleto);
-        setSexo(paciente?.sexo ?? null);
-      } catch (error) {
-        console.error("Error al cargar paciente", error);
+        const p = await getPatientByDocument(documento);
+        const nombre = `${p?.primer_nombre ?? ""} ${p?.segundo_nombre ?? ""} ${
+          p?.primer_apellido ?? ""
+        }`.trim();
+        setNombrePaciente(nombre);
+        setSexo(p?.sexo ?? null);
+      } catch {
         setHasError(true);
       } finally {
         setLoading(false);
       }
-    };
-
-    loadPaciente();
+    })();
   }, []);
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -140,30 +133,28 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Inicio.png")}
+        source={require("../../assets/backgrounds/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
-        {!loading &&
-          (hasError ? (
-            <CustomHeader
-              title="Inicio"
-              showBack={false}
-              transparent={true}
-              showProfileIcon={true}
+        {hasError ? (
+          <CustomHeader
+            title="Inicio"
+            showBack={false}
+            transparent
+            showProfileIcon
+            onLogout={() => setModalVisible(true)}
+          />
+        ) : (
+          nombrePaciente &&
+          sexo && (
+            <HomeHeader
+              nombre={nombrePaciente}
+              sexo={sexo}
               onLogout={() => setModalVisible(true)}
             />
-          ) : (
-            nombrePaciente &&
-            sexo && (
-              <HomeHeader
-                nombre={nombrePaciente}
-                sexo={sexo}
-                onLogout={() => setModalVisible(true)}
-              />
-            )
-          ))}
+          )
+        )}
 
         <Carousel />
 
@@ -172,95 +163,59 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             contentContainerStyle={styles.grid}
             showsVerticalScrollIndicator={false}
           >
-            {menuItems.map((item) => {
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[styles.menuItem]}
-                  onPress={() =>
-                    item.screen && navigation.navigate(item.screen as any)
-                  }
-                >
-                  <Image
-                    source={item.image}
-                    style={styles.menuImage}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              );
-            })}
+            {menuItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.menuItem}
+                onPress={() => navigation.navigate(item.screen as any)}
+              >
+                <Image
+                  source={item.image}
+                  style={styles.menuImage}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            ))}
           </ScrollView>
-          {/* Modal de Cerrar Sesión */}
-          <LogOutModal
-            text="¿Estás seguro de que deseas cerrar sesión?"
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
         </View>
+
+        <LogOutModal
+          text="¿Estás seguro de que deseas cerrar sesión?"
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={handleLogout}
+        />
       </ImageBackground>
     </SafeAreaView>
   );
 };
 
-const screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-  },
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 3,
-    paddingVertical: 5,
+  container: {
+    flex: 1,
+    paddingHorizontal: scale(10),
+    paddingBottom: verticalScale(10),
   },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    paddingHorizontal: 5,
-    paddingBottom: 10,
-  },
-  disabledItem: {
-    backgroundColor: "#f0f0f0",
-    borderColor: "#ccc",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.primary,
-    marginBottom: 20,
+    paddingHorizontal: scale(5),
+    paddingBottom: verticalScale(10),
   },
   menuItem: {
-    width: screenWidth / 2 - 40,
-    height: screenWidth / 2 - 45,
-    borderRadius: 12,
+    width: ITEM_WIDTH,
+    height: ITEM_HEIGHT,
+    borderRadius: scale(12),
     overflow: "hidden",
-    margin: 8,
+    margin: scale(5),
   },
-
   menuImage: {
     width: "100%",
     height: "100%",
-  },
-  label: {
-    marginLeft: 15,
-    fontSize: 20,
-    color: colors.preto,
-    fontFamily: fonts.body,
-  },
-  labelName: {
-    marginLeft: 15,
-    fontSize: 20,
-    marginBottom: 15,
-    color: colors.preto,
-    fontFamily: fonts.title,
   },
 });
 

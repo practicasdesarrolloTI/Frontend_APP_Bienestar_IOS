@@ -6,11 +6,10 @@ import {
   Platform,
   TouchableOpacity,
   Image,
-  Dimensions,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 type Props = {
@@ -85,12 +84,12 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
 
 const styles = StyleSheet.create({
   header: {
-    height: 120,
-    paddingTop: Platform.OS === "android" ? 70 : 55,
-    paddingHorizontal: 30,
-    paddingVertical: 15,
+    height: verticalScale(90),
+    paddingTop:
+      Platform.OS === "android" ? verticalScale(50) : verticalScale(55),
+    paddingHorizontal: scale(24),
+    paddingBottom: verticalScale(10),
     justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "transparent",
   },
   content: {
@@ -102,45 +101,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   saludo: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontFamily: fonts.body,
     color: colors.preto,
   },
   nombre: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
     color: colors.preto,
   },
+  profileWrapper: {
+    position: "relative",
+  },
   profileIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: scale(45),
+    height: scale(45),
+    borderRadius: scale(50),
     backgroundColor: colors.white,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 1,
+    elevation: 3,
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(1) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(2),
   },
-
-  menuItem: {
-    paddingVertical: 8,
-    fontSize: 16,
-    fontWeight: "500",
+  icon: {
+    width: scale(24),
+    height: scale(24),
   },
   inlineMenu: {
     position: "absolute",
-    top: 55,
+    top: verticalScale(44),
     right: 0,
-    width: 140,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    width: scale(120),
+    backgroundColor: colors.white,
+    borderRadius: scale(8),
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: scale(15),
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.2,
-    shadowRadius: 5,
+    shadowRadius: verticalScale(3),
     elevation: 5,
     zIndex: 999,
+  },
+  menuItem: {
+    paddingVertical: verticalScale(6),
+    fontSize: moderateScale(15),
+    fontFamily: fonts.subtitle,
+    color: colors.preto,
   },
 });
 

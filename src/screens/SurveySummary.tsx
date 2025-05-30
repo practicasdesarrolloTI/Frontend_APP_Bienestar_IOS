@@ -151,7 +151,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
       />
 
       <ImageBackground
-        source={require("../../assets/Fondos/Resumen_encuesta.png")}
+        source={require("../../assets/backgrounds/Resumen_encuesta.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >

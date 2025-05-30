@@ -60,6 +60,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         const doc = await AsyncStorage.getItem("documento");
         if (!tipo || !doc) throw new Error("Datos incompletos");
         const data = await fetchProgramas(tipo, doc);
+        console.log("Programas obtenidos:", data);
         setProgramas(data);
         setFilteredProgramas(data);
       } catch (err) {
@@ -90,7 +91,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Inicio.png")}
+        source={require("../../assets/backgrounds/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -127,62 +128,90 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
             <FlatList
               data={filteredProgramas}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.card}>
-                  <View style={styles.cardContent}>
-                    {/* Columna izquierda: Fecha */}
-                    <View style={styles.leftColumn}>
-                      {item.fecha_cita &&
-                      !isNaN(new Date(item.fecha_cita).getTime()) ? (
-                        <>
-                          <Text style={styles.dateDay}>
-                            {new Date(item.fecha_cita).getDate()}
+              renderItem={({ item }) => {
+                const sinCitas =
+                  item.fecha_cita === null || item.medico === null;
+                if (sinCitas) {
+                  return (
+                    <View style={styles.card}>
+                      <View style={styles.cardContent}>
+                        {/* Columna izquierda: Fecha */}
+                        <View style={styles.leftColumn}>
+                          <Text
+                            style={[styles.dateMonth, { textAlign: "center" }]}
+                          >
+                            Sin cita{"\n"}próxima
                           </Text>
-                          <Text style={styles.dateMonth}>
-                            {new Date(item.fecha_cita).toLocaleDateString(
-                              "es-CO",
-                              {
-                                month: "long",
-                              }
-                            )}
-                          </Text>
-                          <Text style={styles.dateYear}>
-                            {new Date(item.fecha_cita).getFullYear()}
-                          </Text>
-                        </>
-                      ) : (
-                        <Text
-                          style={[styles.dateMonth, { textAlign: "center" }]}
-                        >
-                          Sin cita{"\n"}próxima
-                        </Text>
-                      )}
-                    </View>
+                        </View>
 
-                    {/* Columna derecha: Detalles */}
-                    <View style={styles.rightColumn}>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Programa: </Text>
-                        {item.programa}
-                      </Text>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Médico: </Text>
-                        {capitalizeName(item.medico)}
-                      </Text>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Especialidad: </Text>
-                        {capitalizeName(item.especialidad)}
-                      </Text>
-                      {item.hora && item.hora.trim() !== "" && (
+                        {/* Columna derecha: Detalles */}
+                        <View style={styles.rightColumn}>
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Programa: </Text>
+                            {item.programa}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  );
+                }
+                return (
+                  <View style={styles.card}>
+                    <View style={styles.cardContent}>
+                      {/* Columna izquierda: Fecha */}
+                      <View style={styles.leftColumn}>
+                        {item.fecha_cita &&
+                        !isNaN(new Date(item.fecha_cita).getTime()) ? (
+                          <>
+                            <Text style={styles.dateDay}>
+                              {new Date(item.fecha_cita).getDate()}
+                            </Text>
+                            <Text style={styles.dateMonth}>
+                              {new Date(item.fecha_cita).toLocaleDateString(
+                                "es-CO",
+                                {
+                                  month: "long",
+                                }
+                              )}
+                            </Text>
+                            <Text style={styles.dateYear}>
+                              {new Date(item.fecha_cita).getFullYear()}
+                            </Text>
+                          </>
+                        ) : (
+                          <Text
+                            style={[styles.dateMonth, { textAlign: "center" }]}
+                          >
+                            Sin cita{"\n"}próxima
+                          </Text>
+                        )}
+                      </View>
+
+                      {/* Columna derecha: Detalles */}
+                      <View style={styles.rightColumn}>
                         <Text style={styles.text}>
-                          <Text style={styles.label}>Hora: </Text>
-                          {item.hora}
+                          <Text style={styles.label}>Programa: </Text>
+                          {item.programa}
                         </Text>
-                      )}
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Médico: </Text>
+                          {capitalizeName(item.medico)}
+                        </Text>
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Especialidad: </Text>
+                          {capitalizeName(item.especialidad)}
+                        </Text>
+                        {item.hora && item.hora.trim() !== "" && (
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Hora: </Text>
+                            {item.hora}
+                          </Text>
+                        )}
+                      </View>
                     </View>
                   </View>
-                </View>
-              )}
+                );
+              }}
             />
           )}
           {/* Modal de Cerrar Sesión */}

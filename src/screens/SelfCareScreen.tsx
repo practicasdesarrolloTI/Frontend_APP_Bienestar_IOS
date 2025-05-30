@@ -8,7 +8,6 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
-  ActivityIndicator,
 } from "react-native";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -267,7 +266,7 @@ const SelfCareScreen: React.FC = () => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Inicio.png")}
+        source={require("../../assets/backgrounds/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >

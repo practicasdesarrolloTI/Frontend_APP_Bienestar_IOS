@@ -8,7 +8,13 @@ import {
   Platform,
   ImageBackground,
   SafeAreaView,
+  Image,
 } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import colors from "../themes/colors";
@@ -26,7 +32,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Landing.png")}
+        source={require("../../assets/backgrounds/Landing.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -40,7 +46,6 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
 
         {/* Contenido */}
         <View style={styles.container}>
-
           {/* Botones de inicio de sesión */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -58,6 +63,14 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.registerText}>Crear cuenta</Text>
             </TouchableOpacity>
           </View>
+          {/* Logo de la aplicación */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../../assets/logos/LogoZentriablanco.png")}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </View>
         </View>
       </ImageBackground>
     </SafeAreaView>
@@ -67,43 +80,52 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 15,
+    paddingHorizontal: scale(15),
   },
+ 
   buttonContainer: {
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: verticalScale(5),
   },
   loginButton: {
-    backgroundColor: colors.secondary,
-    width: "95%",
-    paddingVertical: 20,
-    borderRadius: 50,
-    marginBottom: 20,
+    backgroundColor: colors.primary,
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
+    marginBottom: verticalScale(10),
     alignItems: "center",
   },
   loginText: {
     color: colors.white,
-    fontSize: 22,
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
   },
   registerButton: {
-    backgroundColor: colors.white,
-    width: "95%",
-    paddingVertical: 20,
-    borderRadius: 50,
+    backgroundColor: colors.secondary,
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
+    marginBottom: verticalScale(10),
     alignItems: "center",
   },
   registerText: {
-    color: colors.preto,
-    fontSize: 22,
+    color: colors.white,
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: verticalScale(12),
+  },  
+  image: {
+    width: scale(200),
+    aspectRatio: 0.8,
   },
 });
 

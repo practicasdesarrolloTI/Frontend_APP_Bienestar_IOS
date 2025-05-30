@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ViewStyle,
   Image,
-  Dimensions,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -46,9 +46,10 @@ const CustomHeader: React.FC<HeaderProps> = ({
         styles.header,
         transparent
           ? styles.transparent
-          : { backgroundColor: backgroundColor || colors.preto },
+          : { backgroundColor: backgroundColor || colors.primary },
       ]}
     >
+      {/*Botón para atrás */}
       {showBack && (
         <TouchableOpacity
           style={styles.backButton}
@@ -62,19 +63,19 @@ const CustomHeader: React.FC<HeaderProps> = ({
         >
           <Image
             source={require("../../assets/icons/atras.png")}
-            style={{ width: 26, height: 26 }}
+            style={styles.icon}
             resizeMode="contain"
           />
         </TouchableOpacity>
       )}
 
-      <View style={styles.tittleStyles}>
+      {/* Título del header */}
+     <View style={styles.titleContainer}>
         {!!title && (
           <Text
-            style={[
-              styles.title,
-              { color: transparent ? colors.preto : "white" },
-            ]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[styles.headerTitle, transparent && { color: colors.preto }]}
           >
             {title}
           </Text>
@@ -90,7 +91,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
           >
             <Image
               source={require("../../assets/icons/perfil.png")}
-              style={{ width: 28, height: 28 }}
+              style={{ width: scale(24), height: scale(24) }}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -122,66 +123,87 @@ const CustomHeader: React.FC<HeaderProps> = ({
   );
 };
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   header: {
-    height: screenHeight * 0.15,
-    paddingTop: screenHeight * 0.05,
-    paddingHorizontal: 25,
+    height: verticalScale(75),
+    paddingTop: verticalScale(16),
+    paddingHorizontal: scale(22),
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "space-between",
     zIndex: 10,
   },
   transparent: {
     backgroundColor: "transparent" as ViewStyle["backgroundColor"],
   },
-  tittleStyles: {
-    marginLeft: 15,
-    flex: 1,
-    alignItems: "flex-start",
-  },
-  title: {
-    fontSize: 22,
-    fontFamily: fonts.title,
-  },
   backButton: {
+    width: scale(35),
+    height: scale(35),
+    borderRadius: scale(20),
+    backgroundColor: "#FEFEFE",
     alignItems: "center",
     justifyContent: "center",
-    width: 45,
-    height: 45,
-    borderRadius: 50,
-    backgroundColor: colors.white,
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(3),
+    elevation: 5,
+  },
+  profileWrapper: {
+    position: "relative",
   },
   profileIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
+    width: scale(45),
+    height: scale(45),
+    borderRadius: scale(50),
     backgroundColor: colors.white,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(3),
+    elevation: 5,
   },
-  menuItem: {
-    paddingVertical: 5,
-    fontSize: 16,
-    fontFamily: fonts.subtitle,
+  icon: {
+    width: scale(24),
+    height: scale(24),
+  },
+  titleContainer: {
+    justifyContent: "flex-start",
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "row",
+    padding: verticalScale(4),
+    paddingLeft: scale(10),
+  },
+  headerTitle: {
+    alignContent: "center",
+    justifyContent: "flex-start",
+    fontSize: moderateScale(20),
+    fontFamily: fonts.title,
   },
   inlineMenu: {
     position: "absolute",
-    top: 55,
+    top: verticalScale(44),
     right: 0,
-    width: screenWidth * 0.35,
+    width: scale(120),
     backgroundColor: colors.white,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    borderRadius: scale(8),
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: scale(15),
     shadowColor: colors.preto,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.2,
-    shadowRadius: 5,
+    shadowRadius: verticalScale(3),
     elevation: 5,
     zIndex: 999,
+  },
+  menuItem: {
+    paddingVertical: verticalScale(6),
+    fontSize: moderateScale(15),
+    fontFamily: fonts.subtitle,
+    color: colors.preto,
   },
 });
 

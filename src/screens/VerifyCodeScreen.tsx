@@ -116,7 +116,7 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Codigo.png")}
+        source={require("../../assets/backgrounds/Codigo.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >

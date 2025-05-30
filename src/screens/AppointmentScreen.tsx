@@ -8,7 +8,9 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  Image,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -116,7 +118,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Inicio.png")}
+        source={require("../../assets/backgrounds/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -144,129 +146,164 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
             <FlatList
               data={filteredCitas}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.card}>
-                  <View style={styles.cardContent}>
-                    {/* Columna izquierda: Fecha */}
-                    <View style={styles.leftColumn}>
-                      <Text style={styles.dateDay}>
-                        {new Date(item.fecha).getDate()}
-                      </Text>
-                      <Text style={styles.dateMonth}>
-                        {new Date(item.fecha).toLocaleDateString("es-CO", {
-                          month: "long",
-                        })}
-                      </Text>
-                      <Text style={styles.dateYear}>
-                        {new Date(item.fecha).getFullYear()}
-                      </Text>
-                    </View>
+              renderItem={({ item }) => {
+                const dt = new Date(item.fecha);
+                const weekday = dt.toLocaleDateString("es-CO", {
+                  weekday: "long",
+                });
+                return (
+                  <View style={styles.card}>
+                    <View style={styles.cardContent}>
+                      {/* PANEL IZQUIERDO: FECHA */}
+                      <View style={styles.leftColumn}>
+                        <Text style={styles.weekday}>
+                          {weekday.charAt(0).toUpperCase() + weekday.slice(1)}
+                        </Text>
+                        <Text style={styles.dateDay}>{dt.getDate()}</Text>
+                        <Text style={styles.dateMonth}>
+                          {dt.toLocaleDateString("es-CO", {
+                            month: "long",
+                          })}
+                        </Text>
+                        <Text style={styles.dateYear}>{dt.getFullYear()}</Text>
+                      </View>
 
-                    {/* Columna derecha: Detalles */}
-                    <View style={styles.rightColumn}>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Hora: </Text>
-                        {item.hora}
-                      </Text>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Médico: </Text>
-                        {capitalizeName(item.medico)}
-                      </Text>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Especialidad: </Text>
-                        {capitalizeSentence(item.especialidad)}
-                      </Text>
+                      {/* PANEL DERECHO: ICONO + DETALLES */}
+                      <View style={styles.rightColumn}>
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Hora: </Text>
+                          {item.hora}
+                        </Text>
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Especialidad: </Text>
+                          {capitalizeSentence(item.especialidad)}
+                        </Text>
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Médico: </Text>
+                          {capitalizeName(item.medico)}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.iconWrapper}>
+                      <Image
+                        source={require("../../assets/icons/calendar.png")}
+                        style={styles.calendarIcon}
+                      />
                     </View>
                   </View>
-                </View>
-              )}
+                );
+              }}
             />
           )}
-          {/* Modal de Cerrar Sesión */}
-          <WarningModal
-            text="¿Estás seguro de que deseas cerrar sesión?"
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
         </View>
+
+        <WarningModal
+          text="¿Estás seguro de que deseas cerrar sesión?"
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={handleLogout}
+        />
       </ImageBackground>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 30,
-  },
   safeArea: {
     flex: 1,
-    backgroundColor: colors.primary,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
+  container: {
+    flex: 1,
+    paddingHorizontal: moderateScale(24),
+    paddingTop: verticalScale(8),
+  },
+  listContent: {
+    paddingBottom: verticalScale(16),
   },
   card: {
+    position: "relative",
     backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: 20,
+    borderRadius: moderateScale(12),
+    overflow: "hidden",
+    marginBottom: verticalScale(16),
   },
   cardContent: {
-    height: 160,
-    width: "100%",
     flexDirection: "row",
-    alignItems: "stretch",
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: colors.preto,
-    fontFamily: fonts.body,
-  },
-  label: {
-    fontSize: 16,
-    color: colors.preto,
-    fontFamily: fonts.title,
+    width: "100%",
+    height: verticalScale(120),
+    alignItems: "center",
   },
   leftColumn: {
-    width: "25%",
+    width: scale(80),
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 4,
+    paddingVertical: verticalScale(12),
+    borderColor: colors.secondary,
+    borderRadius: moderateScale(12),
+  },
+  weekday: {
+    fontSize: moderateScale(12),
+    color: colors.white,
+    textTransform: "capitalize",
+    marginBottom: verticalScale(4),
+    fontFamily: fonts.subtitle,
   },
   dateDay: {
-    fontSize: 36,
+    fontSize: moderateScale(28),
     color: colors.white,
     fontFamily: fonts.title,
+    lineHeight: moderateScale(34),
   },
   dateMonth: {
-    fontSize: 18,
+    fontSize: moderateScale(14),
     color: colors.white,
-    fontFamily: fonts.title,
+    fontFamily: fonts.subtitle,
     textTransform: "capitalize",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.secondary,
   },
   dateYear: {
-    fontSize: 18,
+    fontSize: moderateScale(14),
     color: colors.white,
     fontFamily: fonts.body,
-    marginTop: 2,
+    marginTop: verticalScale(4),
   },
   rightColumn: {
     flex: 1,
-    paddingHorizontal: 15,
+    padding: moderateScale(20),
+  },
+  iconWrapper: {
+    position: "absolute",
+    left: moderateScale(80) - moderateScale(10),  
+    top: "50%",
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(50),
+    backgroundColor: colors.white,
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "flex-start",
+    marginBottom: verticalScale(8),
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(3),
+    elevation: 5,
+  },
+  calendarIcon: {
+    width: scale(25),
+    height: scale(25),
+  },
+  text: {
+    fontSize: moderateScale(14),
+    color: colors.preto,
+    marginBottom: verticalScale(4),
+    fontFamily: fonts.body,
+  },
+  label: {
+    fontSize: moderateScale(14),
+    fontFamily: fonts.title,
+    color: colors.preto,
   },
 });
-
 export default AppointmentScreen;

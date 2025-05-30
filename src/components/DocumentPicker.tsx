@@ -7,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -50,7 +51,7 @@ const DocumentPicker: React.FC<Props> = ({ selected, onSelect }) => {
         <Text style={[styles.selectedText, !selected && styles.placeholder]}>
           {selected
             ? documentOptions.find((opt) => opt.value === selected)?.label
-            : "Seleccione tipo de documento"}
+            : "Seleccione el tipo de documento"}
         </Text>
         <MaterialIcons name="keyboard-arrow-down" size={24} color={colors.preto} />
       </TouchableOpacity>
@@ -92,41 +93,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: colors.white,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    height: 70,
-    width: "100%",
-    marginBottom: 15,
+    borderRadius: scale(8),
+    paddingHorizontal: scale(15),
+    height: verticalScale(45),
+    width: scale(300),
+    marginBottom: verticalScale(10),
   },
   selectedText: {
-    fontSize: 18,
+    fontSize: moderateScale(15),
     color: colors.preto,
     fontFamily: fonts.body,
-    marginLeft: 10,
   },
   placeholder: {
-    color: colors.preto,
+    color: colors.lightGray,
   },
   overlay: {
     flex: 1,
-    backgroundColor:"rgba(245, 240, 240, 0.52)",
+    backgroundColor: "rgba(0,0,0,0.1)",
     justifyContent: "center",
     alignItems: "center",
   },
   modal: {
     backgroundColor: colors.white,
-    width: "85%",
-    borderRadius: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
+    width: scale(300),
+    borderRadius: scale(8),
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(15),
     elevation: 5,
   },
   option: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(15),
   },
   optionText: {
-    fontSize: 18,
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
     color: colors.preto,
   },

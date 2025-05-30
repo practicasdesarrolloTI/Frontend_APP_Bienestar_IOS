@@ -15,6 +15,7 @@ import {
   Image,
   Linking,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -134,7 +135,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Inicio_de_sesion.png")}
+        source={require("../../assets/backgrounds/Inicio_de_sesion2.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -154,12 +155,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         >
           <View style={styles.subheaderContainer}>
             <Image
-              source={require("../../assets/logo_zentria_sinfondo.png")}
-              style={{marginBottom: 10}}
+              source={require("../../assets/logos/LogoCuidarMe.png")}
+              resizeMode="contain"
+              style={styles.logo}
             />
             <Text style={styles.title}>Inicio de sesión</Text>
             <Text style={styles.subtitle}>
-              Ingrese sus datos para inicar sesión
+              Ingresa tus datos para inicar sesión
             </Text>
           </View>
 
@@ -177,7 +179,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Número de documento"
-                placeholderTextColor={colors.preto}
+                placeholderTextColor={colors.lightGray}
                 value={document}
                 onChangeText={setDocument}
                 keyboardType="numeric"
@@ -186,9 +188,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               {/* Contraseña */}
               <View style={styles.passwordContainer}>
                 <TextInput
-                  style={[styles.inputPasword, { flex: 1 }]}
+                  style={styles.inputPassword}
                   placeholder="Contraseña"
-                  placeholderTextColor={colors.preto}
+                  placeholderTextColor={colors.lightGray}
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
@@ -199,7 +201,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   <MaterialIcons
                     name={showPassword ? "visibility-off" : "visibility"}
                     style={{ marginRight: 15 }}
-                    size={25}
+                    size={moderateScale(22)}
                     color={"#bfbfbf"}
                   />
                 </TouchableOpacity>
@@ -208,9 +210,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 <TouchableOpacity
                   onPress={() => navigation.navigate("ForgotPassword")}
                 >
-                  <Text style={styles.forgotText}>
-                    ¿Olvidó su contraseña?
-                  </Text>
+                  <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
                 </TouchableOpacity>
               </View>
 
@@ -231,8 +231,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   </TouchableOpacity>
                   <Text style={styles.checkboxLabel}>Acepto los </Text>
                   <TouchableOpacity
-                    onPress={
-                      () => Linking.openURL("https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf") 
+                    onPress={() =>
+                      Linking.openURL(
+                        "https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf"
+                      )
                     }
                   >
                     <Text style={styles.termsText}>términos y condiciones</Text>
@@ -255,8 +257,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
               <TouchableOpacity onPress={() => navigation.navigate("Register")}>
                 <Text style={styles.registerText}>
-                  ¿No tiene cuenta?{" "}
-                  <Text style={styles.subtitle}>Regístrate</Text>
+                  ¿No tienes cuenta?{" "}
+                  <Text style={styles.register}>Regístrate</Text>
                 </Text>
               </TouchableOpacity>
 
@@ -278,111 +280,118 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop:
+      Platform.OS === "android" ? StatusBar.currentHeight : verticalScale(20),
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-  },
-  title: {
-    fontSize: 30,
-    fontFamily: fonts.title,
-    color: colors.preto,
-  },
-  termsText: {
-    fontSize: 16,
-    fontFamily: fonts.subtitle,
-    color: colors.primary, 
-    textDecorationLine: "underline",
-  },
-  subtitle: {
-    fontSize: 18,
-    fontFamily: fonts.subtitle,
-    color: colors.primary,
+    paddingHorizontal: scale(15),
   },
   subheaderContainer: {
     alignItems: "center",
-    justifyContent: "flex-start",
+    marginBottom: verticalScale(20),
+  },
+  logo: {
+    width: scale(90),
+    height: verticalScale(75),
+  },
+  title: {
+    fontSize: moderateScale(28),
+    fontFamily: fonts.title,
+    color: colors.preto,
+    marginBottom: verticalScale(5),
+  },
+  subtitle: {
+    fontSize: moderateScale(15),
+    fontFamily: fonts.subtitle,
+    color: colors.gray,
   },
   container: {
-    flex: 1,
-    justifyContent: "flex-start",
+    flexGrow: 1,
     alignItems: "center",
-    padding: 30,
-    marginTop: 60,
+    padding: moderateScale(20),
   },
   input: {
-    width: "100%",
-    height: 65,
+    width: scale(300),
+    height: verticalScale(45),
     backgroundColor: colors.white,
-    borderRadius: 10,
-    paddingLeft: 25,
-    marginBottom: 15,
+    borderRadius: scale(8),
+    paddingHorizontal: scale(15),
+    marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: 18,
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
   },
-  inputPasword: {
-    width: "100%",
-    height: 65,
-    backgroundColor: colors.white,
-    borderRadius: 10,
-    paddingLeft: 25,
-    color: colors.preto,
-    fontSize: 18,
-    fontFamily: fonts.body,
-  },
-  termsContainer: {
-    marginTop: 20,
-  },
-  loginButton: {
-    marginTop: 20,
-    backgroundColor: colors.primary,
-    width: "100%",
-    paddingVertical: 20,
-    borderRadius: 50,
+  passwordContainer: {
+    width: scale(300),
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: colors.white,
+    borderRadius: scale(8),
+    marginBottom: verticalScale(10),
   },
-  loginText: {
-    color: colors.white,
-    fontSize: 20,
-    fontFamily: fonts.title,
+  inputPassword: {
+    flex: 1,
+    height: verticalScale(45),
+    paddingHorizontal: scale(15),
+    color: colors.preto,
+    fontSize: moderateScale(15),
+    fontFamily: fonts.body,
+  },
+  forgotPasswordContainer: {
+    alignSelf: "flex-end",
+    marginBottom: verticalScale(20),
   },
   forgotText: {
-    marginTop: 15,
     color: colors.accent,
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
-    fontSize: 16,
   },
-  registerText: {
-    marginTop: 15,
-    color: colors.accent,
-    fontFamily: fonts.subtitle,
-    fontSize: 16
+  termsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: scale(300),
+    marginBottom: verticalScale(15),
   },
   checkboxContainer: {
-    marginTop: 20,
     flexDirection: "row",
     alignItems: "center",
   },
   checkboxLabel: {
-    marginLeft: 10,
-    fontSize: 16,
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.preto,
+    marginLeft: scale(8),
   },
-  passwordContainer: {
-    width: "100%",
-    flexDirection: "row",
+  termsText: {
+    fontSize: moderateScale(14),
+    fontFamily: fonts.subtitle,
+    color: colors.primary,
+    textDecorationLine: "underline",
+  },
+  loginButton: {
+    backgroundColor: colors.primary,
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
+    marginBottom: verticalScale(10),
     alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 10,
   },
-  forgotPasswordContainer: {
-    width: "100%",
-    alignItems: "flex-end",
-    marginBottom: 20,
+  loginText: {
+    color: colors.white,
+    fontSize: moderateScale(18),
+    fontFamily: fonts.title,
+  },
+  registerText: {
+    color: colors.accent,
+    fontSize: moderateScale(14),
+    fontFamily: fonts.subtitle,
+  },
+  register: {
+    color: colors.purple,
+    fontSize: moderateScale(14),
+    fontFamily: fonts.subtitle,
   },
 });
-
 export default LoginScreen;

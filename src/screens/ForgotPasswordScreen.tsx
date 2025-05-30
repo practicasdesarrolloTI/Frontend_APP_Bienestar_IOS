@@ -146,7 +146,7 @@ const ForgotPasswordScreen = ({
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Pregunta_cuestionario.png")}
+        source={require("../../assets/backgrounds/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >

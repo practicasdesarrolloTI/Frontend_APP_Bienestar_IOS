@@ -20,13 +20,6 @@ export const registerUser = async (
   password: string
 ) => {
   try {
-    console.log("Enviando solicitud de registro con:", {
-      documentType,
-      document,
-      mail,
-      password,
-    });
-
     const response = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,7 +32,6 @@ export const registerUser = async (
     }
 
     await AsyncStorage.setItem("token", data.token); // Guardar token JWT en el almacenamiento
-    console.log("Token guardado en AsyncStorage:", data.token);
     return {success: true, data};
   } catch (error: any) {
     Toast.show({
@@ -54,7 +46,6 @@ export const registerUser = async (
 // Iniciar sesión
 export const loginUser = async (documentType: DocumentType, document: number, password: string) => {
   try {
-    console.log("Intentando iniciar sesión con:", { documentType, document, password });
 
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
@@ -74,7 +65,6 @@ export const loginUser = async (documentType: DocumentType, document: number, pa
     }
 
     await AsyncStorage.setItem("token", data.token); // Guardar token JWT en el almacenamiento
-    console.log("Token guardado en AsyncStorage:", data.token);
 
     return { success: true, data };
   } catch (error: any) {
@@ -126,7 +116,6 @@ export const sendRecoveryCode = async (
   retryAfterMinutes?: number;
 }> => {
   try {
-    console.log("Enviando código de recuperación a:", { document, email });
     const res = await axios.post<SendCodeResponse>(
       `${API_URL}/send-recovery-code`,
       {

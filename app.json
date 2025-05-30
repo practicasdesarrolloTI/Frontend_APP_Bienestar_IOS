@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "MeCuido",
-    "slug": "bienestar-app",
+    "name": "CuidarMe",
+    "slug": "CuidarMe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logomecuido2.png",
+    "icon": "./assets/logos/LogoCuidarMe.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logomecuido2.png",
+      "image": "./assets/logos/LogoCuidarMe.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,8 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logomecuido2.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/logos/LogoAppIcono.png"
       },
       "package": "com.practicasdesarrolloti.bienestarapp",
       "usesCleartextTraffic": true

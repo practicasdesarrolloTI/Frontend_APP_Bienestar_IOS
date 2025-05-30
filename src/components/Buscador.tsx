@@ -1,5 +1,6 @@
 import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 
@@ -12,7 +13,7 @@ type Props = {
 const Buscador = ({ value, onChange, placeholder = "Buscar..." }: Props) => {
   return (
     <View style={styles.container}>
-      <MaterialIcons name="search" size={20} color="#999" />
+      <MaterialIcons name="search" size={moderateScale(20)} color="#999" />
       <TextInput
         style={styles.input}
         placeholder={placeholder}
@@ -29,15 +30,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: colors.white,
     borderRadius: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: moderateScale(10),
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: verticalScale(10),
   },
   input: {
     flex: 1,
-    height: 45,
-    fontSize: 16,
-    paddingLeft: 10,
+    height: verticalScale(35),
+    fontSize: moderateScale(16),
+    paddingLeft: moderateScale(10),
     color: colors.preto,
   },
 });

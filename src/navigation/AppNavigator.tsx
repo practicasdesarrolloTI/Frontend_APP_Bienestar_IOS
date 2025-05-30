@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { decode as atob } from "base-64";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -122,6 +125,23 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+// Interfaz para solo lo que necesitamos del payload
+type JwtPayloadMinimal = { exp: number };
+
+/** Decodifica a mano el JWT y extrae exp */
+function parseJwt(token: string): JwtPayloadMinimal | null {
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    // reponer padding y reemplazar url-safe
+    const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const json = atob(payload);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 const AppNavigator: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<"Home" | "Landing" | null>(
     null
@@ -130,7 +150,17 @@ const AppNavigator: React.FC = () => {
   useEffect(() => {
     (async () => {
       const token = await getToken(); // obtiene el JWT si existe :contentReference[oaicite:1]{index=1}
-      setInitialRoute(token ? "Home" : "Landing");
+
+      if (token) {
+        const payload = parseJwt(token);
+        if (payload && payload.exp > Date.now() / 1000) {
+          setInitialRoute("Home");
+          return;
+        }
+        // si expiró o parseJwt devolvió null, limpiamos
+        await AsyncStorage.removeItem("token");
+      }
+      setInitialRoute("Landing");
     })();
   }, []);
 

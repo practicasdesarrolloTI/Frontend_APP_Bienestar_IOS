@@ -108,7 +108,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
       />
 
       <ImageBackground
-        source={require("../../assets/fondo_preuba_app2.png")}
+        source={require("../../assets/backgrounds/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >

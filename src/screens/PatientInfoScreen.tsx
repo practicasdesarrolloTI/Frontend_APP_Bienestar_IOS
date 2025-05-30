@@ -10,6 +10,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import { moderateScale, verticalScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -137,7 +138,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/Fondos/Informacion.png")}
+        source={require("../../assets/backgrounds/Informacion.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -150,106 +151,107 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           onLogout={() => setModalVisible(true)}
         />
 
-        <View style={styles.container}>
-          <ScrollView>
-            {/* Información del Paciente */}
-            <View style={styles.infoContainer}>
-              <View>
-                <Text style={styles.label}>Nombre completo</Text>
-                <Text style={styles.labelinfo}>
-                  {formatName(
-                    paciente?.primer_nombre ?? "Información no disponible"
-                  )}{" "}
-                  {formatName(paciente?.segundo_nombre ?? " ")}{" "}
-                  {formatName(paciente?.primer_apellido ?? " ")}{" "}
-                  {formatName(paciente?.segundo_apellido ?? " ")}
-                </Text>
-                <Text style={styles.label}>Documento</Text>
-                <Text style={styles.labelinfo}>
-                  {paciente?.tipo_documento_abreviado ||
-                    "Información no disponible"}{" "}
-                  {paciente?.documento || ""}
-                </Text>
-                <Text style={styles.label}>Sexo</Text>
-                <Text style={styles.labelinfo}>
-                  {paciente?.sexo === "M"
-                    ? "Masculino"
-                    : paciente?.sexo === "F"
-                    ? "Femenino"
-                    : "Información no disponible"}
-                </Text>
-                <Text style={styles.label}>Fecha de Nacimiento</Text>
-                <Text style={styles.labelinfo}>
-                  {paciente?.fecha_nacimiento &&
-                  esFechaValida(paciente.fecha_nacimiento)
-                    ? paciente.fecha_nacimiento
-                    : "Información no disponible"}
-                </Text>
-                <Text style={styles.label}>Edad</Text>
-                <Text style={styles.labelinfo}>
-                  {paciente?.fecha_nacimiento &&
-                  esFechaValida(paciente.fecha_nacimiento)
-                    ? `${calcularEdad(paciente.fecha_nacimiento)} años`
-                    : "Información no disponible"}
-                </Text>
-                <Text style={styles.label}>Correo</Text>
-                <Text style={styles.labelinfo}>
-                  {pacienteRegistro?.mail || "No tiene correo registrado"}
-                </Text>
-                <Text style={styles.label}>Teléfono</Text>
-                <Text style={styles.labelinfo}>
-                  {paciente?.celular ||
-                    paciente?.telefono ||
-                    "No tiene número teléfonico registrado"}
-                </Text>
-                <Text style={styles.label}>EPS</Text>
-                <Text style={styles.labelinfo}>
-                  {formatName(paciente?.eps ?? "Información no disponible")}
-                </Text>
-              </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Información del Paciente */}
+          <View style={styles.infoContainer}>
+            <View>
+              <Text style={styles.label}>Nombre completo</Text>
+              <Text style={styles.value}>
+                {formatName(
+                  paciente?.primer_nombre ?? "Información no disponible"
+                )}{" "}
+                {formatName(paciente?.segundo_nombre ?? " ")}{" "}
+                {formatName(paciente?.primer_apellido ?? " ")}{" "}
+                {formatName(paciente?.segundo_apellido ?? " ")}
+              </Text>
+              <Text style={styles.label}>Documento</Text>
+              <Text style={styles.value}>
+                {paciente?.tipo_documento_abreviado ||
+                  "Información no disponible"}{" "}
+                {paciente?.documento || ""}
+              </Text>
+              <Text style={styles.label}>Sexo</Text>
+              <Text style={styles.value}>
+                {paciente?.sexo === "M"
+                  ? "Masculino"
+                  : paciente?.sexo === "F"
+                  ? "Femenino"
+                  : "Información no disponible"}
+              </Text>
+              <Text style={styles.label}>Fecha de Nacimiento</Text>
+              <Text style={styles.value}>
+                {paciente?.fecha_nacimiento &&
+                esFechaValida(paciente.fecha_nacimiento)
+                  ? paciente.fecha_nacimiento
+                  : "Información no disponible"}
+              </Text>
+              <Text style={styles.label}>Edad</Text>
+              <Text style={styles.value}>
+                {paciente?.fecha_nacimiento &&
+                esFechaValida(paciente.fecha_nacimiento)
+                  ? `${calcularEdad(paciente.fecha_nacimiento)} años`
+                  : "Información no disponible"}
+              </Text>
+              <Text style={styles.label}>Correo</Text>
+              <Text style={styles.value}>
+                {pacienteRegistro?.mail || "No tiene correo registrado"}
+              </Text>
+              <Text style={styles.label}>Teléfono</Text>
+              <Text style={styles.value}>
+                {paciente?.celular ||
+                  paciente?.telefono ||
+                  "No tiene número teléfonico registrado"}
+              </Text>
+              <Text style={styles.label}>EPS</Text>
+              <Text style={styles.value}>
+                {formatName(paciente?.eps ?? "Información no disponible")}
+              </Text>
             </View>
-          </ScrollView>
-          {/* Modal de Cerrar Sesión */}
-          <WarningModal
-            text="¿Estás seguro de que deseas cerrar sesión?"
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
-        </View>
+          </View>
+        </ScrollView>
+        {/* Modal de Cerrar Sesión */}
+        <WarningModal
+          text="¿Estás seguro de que deseas cerrar sesión?"
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={handleLogout}
+        />
       </ImageBackground>
     </SafeAreaView>
   );
 };
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: 15,
+  scrollContent: {
+    flexGrow: 1,
+    alignItems: "center",
+    paddingHorizontal: moderateScale(16),
+    paddingTop: verticalScale(24),
+    paddingBottom: verticalScale(32),
   },
   infoContainer: {
-    alignSelf: "center",
-    backgroundColor: colors.white,
-    marginTop: screenHeight * 0.15,
-    width: screenWidth * 0.75,
+    width: moderateScale(320),
+    borderRadius: moderateScale(10),
+    padding: moderateScale(20),
+    marginTop: verticalScale(55),
   },
   label: {
-    fontSize: 16,
-    marginBottom: 1,
+    fontSize: moderateScale(14),
     color: colors.lightGray,
     fontFamily: fonts.body,
+    marginBottom: verticalScale(2),
   },
-  labelinfo: {
-    fontSize: 17,
-    marginBottom: 18,
+  value: {
+    fontSize: moderateScale(16),
     color: colors.preto,
     fontFamily: fonts.body,
+    marginBottom: verticalScale(10),
   },
 });
 
