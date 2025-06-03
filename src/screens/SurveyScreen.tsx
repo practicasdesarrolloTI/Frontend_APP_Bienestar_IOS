@@ -30,9 +30,9 @@ type SurveyScreenProps = NativeStackScreenProps<
 type Respuesta =
   | string
   | {
-      texto: string;
-      valor: number;
-    };
+    texto: string;
+    valor: number;
+  };
 
 const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const { preguntas, surveyId, edad, sexo, survey, indicadores } = route.params;
@@ -290,26 +290,32 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
       const puntajeTotal =
         surveyId === "moriskyGreen"
           ? responses.every((r, i) => {
-              if (typeof r === "object") {
-                if (i === 0 && r.texto !== "No") return false;
-                if (i === 1 && r.texto !== "Sí") return false;
-                if (i === 2 && r.texto !== "No") return false;
-                if (i === 3 && r.texto !== "No") return false;
-              }
-              return true;
-            })
+            if (typeof r === "object") {
+              if (i === 0 && r.texto !== "No") return false;
+              if (i === 1 && r.texto !== "Sí") return false;
+              if (i === 2 && r.texto !== "No") return false;
+              if (i === 3 && r.texto !== "No") return false;
+            }
+            return true;
+          })
             ? 1
             : 0
-          : [...responses].reduce((acc, r) => {
-              if (typeof r === "object" && r.valor !== undefined) {
-                return acc + r.valor;
-              }
-              return acc;
-            }, 0);
+          : [...respuestasExtra, ...responses].reduce((acc, r) => {
+            if (typeof r === "object" && r.valor !== undefined) {
+              return acc + r.valor;
+            }
+            return acc;
+          }, 0);
+
+      // Combinar respuestas manuales y automáticas (omitidas)
+      const allResponses = [
+        ...respuestasExtra.filter((r): r is { texto: string; valor: number } => typeof r === "object" && r !== null && "texto" in r).map((r) => r.texto),
+        ...responses.map((r) => (typeof r === "string" ? r : r.texto)),
+      ];
 
       navigation.navigate("SurveySummary", {
         surveyId,
-        responses: responses.map((r) => (typeof r === "string" ? r : r.texto)),
+        responses: allResponses,
         puntaje: puntajeTotal,
         edad,
         sexo,
