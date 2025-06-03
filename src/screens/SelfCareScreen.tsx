@@ -9,6 +9,7 @@ import {
   Platform,
   ImageBackground,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -32,7 +33,6 @@ import { fetchAutocuidado } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
 import WarningModal from "../components/WarningModal";
 import SkeletonLoading from "../components/SkeletonLoading";
-import LoadingScreen from "../components/LoadingScreen";
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -164,7 +164,7 @@ const SelfCareScreen: React.FC = () => {
       const data = await getSurveyResultsByDocument(storedDoc);
       setResultados(data as ResultadoEncuesta[]);
     } catch (error) {
-      setResultados([]); 
+      setResultados([]);
     }
   };
 
@@ -237,8 +237,12 @@ const SelfCareScreen: React.FC = () => {
     if (!encuestasListas || !estado) {
       return (
         <SkeletonLoading
-          style={{ width: "100%", height: 238, marginBottom: 10 }}
-          borderRadius={25}
+          style={{
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
+            marginBottom: verticalScale(10),
+          }}
+          borderRadius={moderateScale(25)}
         />
       );
     }
@@ -285,6 +289,7 @@ const SelfCareScreen: React.FC = () => {
             data={encuestas}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => renderSurvey(item)}
+            contentContainerStyle={{ paddingBottom: verticalScale(20) }}
           />
         </View>
 
@@ -300,19 +305,18 @@ const SelfCareScreen: React.FC = () => {
   );
 };
 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const CARD_WIDTH = SCREEN_WIDTH * 0.85;
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.26;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
-  },
   container: {
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: scale(20),
+    paddingTop: verticalScale(10),
   },
 });
 

@@ -11,6 +11,7 @@ import {
   Linking,
   ImageBackground,
   Dimensions,
+  Image,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
@@ -160,58 +161,71 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
             ListEmptyComponent={
               <EmptyState message="No se encontraron resultados de momento" />
             }
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={styles.cardContent}>
-                  {/* Columna izquierda: Fecha */}
-                  <View style={styles.leftColumn}>
-                    {item.fechaRealizacion &&
-                    !isNaN(new Date(item.fechaRealizacion).getTime()) ? (
-                      <>
-                        <Text style={styles.dateDay}>
-                          {new Date(item.fechaRealizacion).getDate()}
-                        </Text>
-                        <Text style={styles.dateMonth}>
-                          {new Date(item.fechaRealizacion).toLocaleDateString(
-                            "es-CO",
-                            {
+            renderItem={({ item }) => {
+              const fechaValida =
+                item.fechaRealizacion &&
+                !isNaN(new Date(item.fechaRealizacion).getTime());
+              let dt: Date | null = null;
+              if (fechaValida) {
+                dt = new Date(item.fechaRealizacion);
+              }
+              return (
+                <View style={styles.card}>
+                  <View style={styles.cardContent}>
+                    {/* COLUMNA IZQUIERDA: FECHA */}
+                    <View style={styles.leftColumn}>
+                      {fechaValida && dt ? (
+                        <>
+                          <Text style={styles.dateDay}>{dt.getDate()}</Text>
+                          <Text style={styles.dateMonth}>
+                            {dt.toLocaleDateString("es-CO", {
                               month: "long",
-                            }
-                          )}
+                            })}
+                          </Text>
+                          <Text style={styles.dateYear}>
+                            {dt.getFullYear()}
+                          </Text>
+                        </>
+                      ) : (
+                        <Text
+                          style={{
+                            color: "white",
+                            textAlign: "center",
+                            fontFamily: fonts.body,
+                            fontSize: moderateScale(14),
+                          }}
+                        >
+                          No{"\n"}Disponible
                         </Text>
-                        <Text style={styles.dateYear}>
-                          {new Date(item.fechaRealizacion).getFullYear()}
-                        </Text>
-                      </>
-                    ) : (
-                      <Text
-                        style={{
-                          color: "white",
-                          textAlign: "center",
-                          fontFamily: fonts.body,
-                        }}
-                      >
-                        No{"\n"}Disponible
-                      </Text>
-                    )}
-                  </View>
+                      )}
+                    </View>
 
-                  {/* Columna derecha: Detalles */}
-                  <View style={styles.rightColumn}>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>
-                        {formatName(item.examen)}
+                    {/* COLUMNA DERECHA: DETALLES */}
+                    <View style={styles.rightColumn}>
+                      <Text style={styles.text}>
+                        <Text style={styles.label}>
+                          {formatName(item.examen)}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.text}>
-                      <Text style={styles.label}>Médico Remisor: </Text>
-                      {capitalizeName(item.medico_remisor)}
-                    </Text>
+                      {item.medico_remisor.trim().length > 0 && (
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Médico Remisor: </Text>
+                          {capitalizeName(item.medico_remisor)}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.iconWrapper}>
+                    <Image
+                      source={require("../../assets/icons/lab.png")}
+                      style={styles.icon}
+                    />
                   </View>
                 </View>
-              </View>
-            )}
+              );
+            }}
           />
+
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
             text="¿Estás seguro de que deseas cerrar sesión?"
@@ -241,97 +255,118 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+const LEFT_COLUMN_WIDTH = scale(94);
+const CARD_CONTENT_HEIGHT = verticalScale(130);
+const ICON_SIZE = scale(34);
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
-  },
   contentContainer: {
     flex: 1,
-    paddingHorizontal: 30,
-    paddingVertical: 10,
+    paddingHorizontal: scale(25),
+    paddingTop: verticalScale(8),
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: 20,
+    borderRadius: moderateScale(12),
+    overflow: "hidden",
+    marginBottom: verticalScale(14),
   },
   cardContent: {
-    height: 140,
-    width: "100%",
     flexDirection: "row",
-    alignItems: "stretch",
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: colors.preto,
-    fontFamily: fonts.body,
-  },
-  label: {
-    fontSize: 16,
-    color: colors.preto,
-    fontFamily: fonts.title,
+    width: "100%",
+    height: CARD_CONTENT_HEIGHT,
+    alignItems: "center",
   },
   leftColumn: {
-    width: "25%",
+    width: LEFT_COLUMN_WIDTH,
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 4,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(15),
   },
   dateDay: {
-    fontSize: 36,
+    fontSize: moderateScale(38),
     color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: 18,
+    fontSize: moderateScale(17),
     color: colors.white,
-    fontFamily: fonts.title,
+    fontFamily: fonts.subtitle,
     textTransform: "capitalize",
-    borderBottomWidth: 1,
+    borderBottomWidth: moderateScale(2),
     borderBottomColor: colors.secondary,
   },
   dateYear: {
-    fontSize: 18,
+    fontSize: moderateScale(20),
     color: colors.white,
     fontFamily: fonts.body,
-    marginTop: 2,
+    marginTop: verticalScale(4),
+  },
+  iconWrapper: {
+    position: "absolute",
+    left: LEFT_COLUMN_WIDTH - ICON_SIZE / 2,
+    top: CARD_CONTENT_HEIGHT / 2 - ICON_SIZE / 2,
+    width: moderateScale(34),
+    height: moderateScale(34),
+    borderRadius: moderateScale(50),
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: verticalScale(8),
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(3),
+    elevation: 5,
+  },
+  icon: {
+    width: scale(22),
+    height: scale(22),
   },
   rightColumn: {
     flex: 1,
-    paddingHorizontal: 15,
+    padding: moderateScale(12),
+    marginLeft: moderateScale(16),
+    marginRight: moderateScale(10),
     justifyContent: "center",
     alignItems: "flex-start",
   },
+  text: {
+    fontSize: moderateScale(14),
+    color: colors.preto,
+    marginBottom: verticalScale(4),
+    fontFamily: fonts.body,
+  },
+  label: {
+    fontSize: moderateScale(14),
+    color: colors.preto,
+    fontFamily: fonts.title,
+  },
   footerButtonContainer: {
-    marginTop: 10,
-    paddingHorizontal: 30,
+    marginTop: verticalScale(10),
+    paddingHorizontal: scale(25),
   },
   footerButton: {
     backgroundColor: colors.secondary,
-    paddingVertical: 20,
-    borderRadius: 50,
+    paddingVertical: verticalScale(15),
+    borderRadius: moderateScale(50),
     alignItems: "center",
-    marginBottom: 20,
-  },
-  footerButtonText: {
-    color: "white",
-    fontFamily: fonts.title,
-    fontSize: 18,
+    marginBottom: verticalScale(20),
   },
   footerButtonDisabled: {
     backgroundColor: "#ccc",
+  },
+  footerButtonText: {
+    color: colors.white,
+    fontFamily: fonts.title,
+    fontSize: moderateScale(18),
   },
 });
 

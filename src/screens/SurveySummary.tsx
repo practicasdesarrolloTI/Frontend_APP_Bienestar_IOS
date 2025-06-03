@@ -5,7 +5,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   StyleSheet,
   Platform,
   StatusBar,
@@ -14,6 +13,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import colors from "../themes/colors";
@@ -58,6 +58,8 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
   const { surveyId, puntaje, edad, sexo, survey, imc } = route.params;
   const { responses } = route.params as unknown as { responses: Respuesta[] };
   const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [isSending, setIsSending] = useState(false);
+
   const otrasRespuestas = responses;
 
   const obtenerRecomendacion = (): string => {
@@ -71,14 +73,10 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
   };
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleShowModal = () => {
-    setModalVisible(true);
-  };
-
-  
 
   const handleSubmit = async () => {
     try {
+      setIsSending(true);
       const loadPatient = async () => {
         const storedTipo = await AsyncStorage.getItem("tipoDocumento");
         const storedDoc = await AsyncStorage.getItem("documento");
@@ -88,6 +86,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
             text2: "No se encontró información del paciente.",
             position: "bottom",
           });
+          setIsSending(false);
           return null;
         }
 
@@ -139,6 +138,8 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         text2: "Error al guardar el resultado de la encuesta.",
         position: "bottom",
       });
+    }finally {
+      setIsSending(false);
     }
   };
 
@@ -163,11 +164,14 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
           onLogout={() => setModalVisible(true)}
         />
 
-        <View style={styles.container}>
-          <ScrollView>
-          <View style={styles.summaryContainer}>
-            <View style={styles.summaryInfo}>
-              <View>
+        <View style={styles.outerContainer}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.summaryCard}>
+              {/* Bloque de info general (edad, sexo, IMC) */}
+              <View style={styles.section}>
                 <View style={styles.item}>
                   <Text style={styles.label}>Edad</Text>
                   <Text style={styles.value}>{edad} años</Text>
@@ -184,10 +188,13 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
                     <Text style={styles.value}>{imc.toFixed(2)} kg/m²</Text>
                   </View>
                 )}
+              </View>
 
-                <View style={styles.separator} />
+              <View style={styles.separator} />
 
-                {otrasRespuestas.map((r, i) => (
+              {/* Bloque de cada respuesta de pregunta */}
+              <View style={styles.section}>
+                {responses.map((r, i) => (
                   <View key={i} style={styles.item}>
                     <Text style={styles.label}>Pregunta #{i + 1}</Text>
                     <Text style={styles.value}>
@@ -197,12 +204,19 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
                 ))}
               </View>
             </View>
-          </View>
           </ScrollView>
-          <TouchableOpacity style={styles.button} onPress={handleShowModal}>
+
+          {/* Botón fijo en la parte inferior */}
+          <TouchableOpacity
+            style={styles.button}
+            activeOpacity={0.8}
+            onPress={() => setModalVisible(true)}
+          >
             <Text style={styles.buttonText}>Enviar Encuesta</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Modal para confirmar y mostrar recomendación */}
         <RecommendationModal
           visible={modalVisible}
           recomendacion={obtenerRecomendacion()}
@@ -217,75 +231,77 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
   );
 };
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+// Definimos algunos tamaños relativos
+const HORIZONTAL_MARGIN = scale(30);
+const CONTAINER_WIDTH = SCREEN_WIDTH - HORIZONTAL_MARGIN * 2;
+const CARD_VERTICAL_MARGIN = verticalScale(10);
+const BUTTON_WIDTH = SCREEN_WIDTH - scale(80);
+const BUTTON_HEIGHT = verticalScale(50);
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: colors.white,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
-  },
-  container: {
+  outerContainer: {
     flex: 1,
+    paddingHorizontal: HORIZONTAL_MARGIN,
+    paddingTop: verticalScale(10),
+    paddingBottom: verticalScale(20),
+    justifyContent: "space-between",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingTop: verticalScale(10),
+    paddingBottom: BUTTON_HEIGHT + verticalScale(10),
     alignItems: "center",
   },
-  summaryContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    width: screenWidth - 30,
+  summaryCard: {
+    width: CONTAINER_WIDTH,
+    height: SCREEN_HEIGHT * 0.7,
+    padding: verticalScale(15),
+    marginVertical: CARD_VERTICAL_MARGIN,
   },
-  summaryInfo: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    width: screenWidth - 110,
+  section: {
+    width: "100%",
   },
   item: {
-    marginBottom: 18,
+    marginBottom: verticalScale(12),
   },
   label: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: colors.lightGray,
     fontFamily: fonts.subtitle,
   },
   value: {
-    fontSize: 16,
+    fontSize: moderateScale(15),
     color: colors.preto,
     fontFamily: fonts.body,
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   separator: {
     borderStyle: "dashed",
+    width: "100%",
     borderBottomColor: colors.lightGray,
-    borderBottomWidth: 2,
-    marginVertical: 15,
-  },
-  response: {
-    fontSize: 18,
-    marginBottom: 10,
-    fontFamily: fonts.body,
-  },
-  bold: {
-    fontFamily: fonts.title,
-    color: colors.primary,
+    borderBottomWidth: 1,
+    marginVertical: verticalScale(12),
   },
   button: {
     backgroundColor: colors.primary,
-    width: screenWidth - 100,
-    paddingVertical: 18,
-    borderRadius: 50,
-    marginBottom: 35,
+    width: BUTTON_WIDTH,
+    height: BUTTON_HEIGHT,
+    borderRadius: moderateScale(50),
     alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: verticalScale(10),
   },
   buttonText: {
     color: colors.white,
-    fontSize: 20,
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
   },
 });

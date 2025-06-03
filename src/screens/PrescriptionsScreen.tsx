@@ -8,7 +8,9 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  Image,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -18,7 +20,6 @@ import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
 import Toast from "react-native-toast-message";
-import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
 import LogOutModal from "../components/WarningModal";
 import Buscador from "../components/Buscador";
@@ -37,8 +38,6 @@ type Medicamento = {
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMedicamentos, setFilteredMedicamentos] = useState<
@@ -106,7 +105,6 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
         translucent
         backgroundColor="transparent"
       />
-
       <ImageBackground
         source={require("../../assets/backgrounds/Inicio.png")}
         style={StyleSheet.absoluteFillObject}
@@ -121,14 +119,15 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
           onLogout={() => setModalVisible(true)}
         />
 
-        <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          {/* Buscador */}
           <Buscador
             value={searchQuery}
             onChange={(text) => {
               setSearchQuery(text);
               const lowerText = text.toLowerCase();
-              const filtered = medicamentos.filter((resultado) =>
-                [resultado.nombre].join(" ").toLowerCase().includes(lowerText)
+              const filtered = medicamentos.filter((med) =>
+                med.nombre.toLowerCase().includes(lowerText)
               );
               setFilteredMedicamentos(filtered);
             }}
@@ -144,59 +143,80 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
               contentContainerStyle={{
                 flexGrow: 1,
                 justifyContent:
-                  medicamentos.length === 0 ? "center" : "flex-start",
-                paddingBottom: 100,
+                  filteredMedicamentos.length === 0 ? "center" : "flex-start",
+                paddingBottom: verticalScale(14),
               }}
-              renderItem={({ item }) => (
-                <View style={styles.card}>
-                  <View style={styles.cardContent}>
-                    {/* Columna izquierda: Fecha */}
-                    <View style={styles.leftColumn}>
-                      <Text style={styles.dateText}>
-                        Fecha de Vencimiento:{" "}
-                      </Text>
-                      <Text style={styles.dateDay}>
-                        {new Date(item.fechaVencimiento).getDate()}
-                      </Text>
-                      <Text style={styles.dateMonth}>
-                        {new Date(item.fechaVencimiento).toLocaleDateString(
-                          "es-CO",
-                          {
-                            month: "long",
-                          }
-                        )}
-                      </Text>
-                      <Text style={styles.dateYear}>
-                        {new Date(item.fechaVencimiento).getFullYear()}
-                      </Text>
-                    </View>
+              renderItem={({ item }) => {
+                const fechaValida =
+                  item.fechaVencimiento &&
+                  !isNaN(new Date(item.fechaVencimiento).getTime());
+                let dt: Date | null = null;
+                if (fechaValida) dt = new Date(item.fechaVencimiento);
 
-                    {/* Columna derecha: Detalles */}
-                    <View style={styles.rightColumn}>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>
-                          Nombre:{" "}
+                return (
+                  <View style={styles.card}>
+                    <View style={styles.cardContent}>
+                      {/* COLUMNA IZQUIERDA: FECHA DE VENCIMIENTO */}
+                      <View style={styles.leftColumn}>
+                        {fechaValida && dt ? (
+                          <>
+                            <Text style={styles.dateDay}>{dt.getDate()}</Text>
+                            <Text style={styles.dateMonth}>
+                              {dt.toLocaleDateString("es-CO", {
+                                month: "long",
+                              })}
+                            </Text>
+                            <Text style={styles.dateYear}>
+                              {dt.getFullYear()}
+                            </Text>
+                          </>
+                        ) : (
+                          <Text
+                            style={{
+                              color: "white",
+                              textAlign: "center",
+                              fontFamily: fonts.body,
+                              fontSize: moderateScale(14),
+                            }}
+                          >
+                            No{"\n"}Disponible
+                          </Text>
+                        )}
+                      </View>
+
+                      {/* COLUMNA DERECHA: DETALLES */}
+                      <View style={styles.rightColumn}>
+                        <Text style={styles.text}>
+                          <Text style={styles.label}>Nombre: </Text>
                           <Text style={styles.text}>
                             {formatName(item.nombre)}
                           </Text>
                         </Text>
-                      </Text>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>Cantidad: </Text>{" "}
-                        {item.cantidad}
-                      </Text>
-                      {item.presentacion && item.presentacion !== "NINGUNO" && (
                         <Text style={styles.text}>
-                          <Text style={styles.label}>Presentación: </Text>
-                          {capitalizeSentence(item.presentacion)}
+                          <Text style={styles.label}>Cantidad: </Text>
+                          {item.cantidad}
                         </Text>
-                      )}
+                        {item.presentacion &&
+                          item.presentacion.toUpperCase() !== "NINGUNO" && (
+                            <Text style={styles.text}>
+                              <Text style={styles.label}>Presentación: </Text>
+                              {capitalizeSentence(item.presentacion)}
+                            </Text>
+                          )}
+                      </View>
+                    </View>
+                    <View style={styles.iconWrapper}>
+                      <Image
+                        source={require("../../assets/icons/lab.png")}
+                        style={styles.icon}
+                      />
                     </View>
                   </View>
-                </View>
-              )}
+                );
+              }}
             />
           )}
+
           {/* Modal de Cerrar Sesión */}
           <LogOutModal
             text="¿Estás seguro de que deseas cerrar sesión?"
@@ -210,83 +230,98 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+const LEFT_COLUMN_WIDTH = scale(94);
+const CARD_CONTENT_HEIGHT = verticalScale(130);
+const ICON_SIZE = scale(34);
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
-  },
-  container: {
+  contentContainer: {
     flex: 1,
-    paddingHorizontal: 30,
-    paddingVertical: 10,
+    paddingHorizontal: scale(25),
+    paddingTop: verticalScale(8),
   },
   card: {
+    position: "relative",
     backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: 20,
+    borderRadius: moderateScale(12),
+    overflow: "hidden",
+    marginBottom: verticalScale(14),
   },
   cardContent: {
-    height: 145,
-    width: "100%",
     flexDirection: "row",
-    alignItems: "stretch",
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: colors.preto,
-    fontFamily: fonts.body,
-  },
-  label: {
-    fontSize: 16,
-    color: colors.preto,
-    fontFamily: fonts.title,
+    width: "100%",
+    height: CARD_CONTENT_HEIGHT,
+    alignItems: "center",
   },
   leftColumn: {
-    width: "26%",
+    width: LEFT_COLUMN_WIDTH,
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 4,
-  },
-  dateText: {
-    fontSize: 11,
-    color: "white",
-    fontFamily: fonts.body,
-    marginBottom: 2,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(15),
   },
   dateDay: {
-    fontSize: 36,
+    fontSize: moderateScale(38),
     color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: 18,
+    fontSize: moderateScale(17),
     color: colors.white,
-    fontFamily: fonts.title,
+    fontFamily: fonts.subtitle,
     textTransform: "capitalize",
-    borderBottomWidth: 1,
+    borderBottomWidth: moderateScale(2),
     borderBottomColor: colors.secondary,
   },
   dateYear: {
-    fontSize: 18,
+    fontSize: moderateScale(20),
     color: colors.white,
     fontFamily: fonts.body,
-    marginTop: 2,
+    marginTop: verticalScale(4),
   },
   rightColumn: {
     flex: 1,
-    paddingHorizontal: 15,
+    padding: moderateScale(12),
+    marginLeft: moderateScale(16),
+    marginRight: moderateScale(10),
+  },
+  text: {
+    fontSize: moderateScale(14),
+    color: colors.preto,
+    marginBottom: verticalScale(4),
+    fontFamily: fonts.body,
+  },
+  label: {
+    fontSize: moderateScale(14),
+    color: colors.preto,
+    fontFamily: fonts.title,
+  },
+  iconWrapper: {
+    position: "absolute",
+    left: LEFT_COLUMN_WIDTH - ICON_SIZE / 2,
+    top: CARD_CONTENT_HEIGHT / 2 - ICON_SIZE / 2,
+    width: moderateScale(34),
+    height: moderateScale(34),
+    borderRadius: moderateScale(50),
+    backgroundColor: colors.white,
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "flex-start",
+    marginBottom: verticalScale(8),
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(3),
+    elevation: 5,
+  },
+  icon: {
+    width: scale(22),
+    height: scale(22),
   },
 });
 

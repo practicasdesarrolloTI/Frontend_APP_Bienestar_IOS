@@ -9,7 +9,6 @@ import {
   Platform,
   ImageBackground,
   Image,
-  Dimensions,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";

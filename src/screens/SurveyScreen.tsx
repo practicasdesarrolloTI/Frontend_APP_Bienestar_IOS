@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { scale, moderateScale, verticalScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,6 +22,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { fonts } from "../themes/fonts";
 import WarningModal from "../components/WarningModal";
+import Toast from "react-native-toast-message";
 
 type SurveyScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -49,6 +51,18 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const peso = indicadores?.Peso;
 
   const imc = peso && estatura ? peso / (estatura * estatura) : NaN;
+
+ useEffect(() => {
+    const resp = responses[currentIndex];
+    if (resp && typeof resp === "object" && resp.valor !== undefined) {
+      setSelectedOption(resp.valor);
+    } else if (typeof resp === "string") {
+      setSelectedOption(resp);
+    } else {
+      setSelectedOption("");
+    }
+  }, [currentIndex, responses]);
+
 
   // Filtrar preguntas omitidas
   let finalPreguntas = preguntas.filter((q) => {
@@ -81,11 +95,11 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   if (survey.requiredIMC) {
     finalPreguntas = [...finalPreguntas];
   }
+  const totalQuestions = finalPreguntas.length;
 
   const handleNext = () => {
-    const currentQuestion = finalPreguntas[currentIndex];
     const response = responses[currentIndex];
-
+    
     // Validar campo numérico
     if (
       response === undefined ||
@@ -99,9 +113,11 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         parsed < 1 ||
         parsed > 999
       ) {
-        Alert.alert(
-          "Error",
-          "Por favor ingresa un número válido entre 1 y 999."
+       Toast.show({
+          type: "error",
+          text2: "Por favor ingresa un valor válido entre 1 y 999.",
+          position: "bottom",
+        }
         );
         return;
       }
@@ -114,9 +130,8 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
     }
 
     // Avanzar
-    if (currentIndex < finalPreguntas.length - 1) {
+    if (currentIndex < totalQuestions - 1) {
       setCurrentIndex(currentIndex + 1);
-      setSelectedOption(responses[currentIndex + 1] || "");
     } else {
       let respuestasExtra: Respuesta[] = [];
 
@@ -323,7 +338,6 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const handlePrevious = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setSelectedOption(responses[currentIndex - 1] || "");
     }
   };
 
@@ -334,10 +348,10 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
     updated[currentIndex] = respuesta;
     setResponses(updated);
 
-    if (typeof respuesta === "string") {
-      setSelectedOption(respuesta); // para texto libre (ej: peso)
+    if (typeof respuesta === "object") {
+      setSelectedOption(respuesta.valor); // para texto libre (ej: peso)
     } else {
-      setSelectedOption(respuesta.valor); // para opciones con puntaje
+      setSelectedOption(respuesta); // para opciones con puntaje
     }
   };
   const renderQuestion = () => {
@@ -401,6 +415,8 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
     );
   };
 
+  const progressPercentage = (currentIndex + 1) / totalQuestions;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
@@ -413,6 +429,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
+        {/* Header */}
         <View style={styles.header}>
           {currentIndex > 0 && (
             <TouchableOpacity
@@ -421,41 +438,61 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
             >
               <Image
                 source={require("../../assets/icons/atras.png")}
-                style={{ width: 26, height: 26 }}
+                style={{ width: moderateScale(24), height: moderateScale(24) }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
           )}
           <View style={styles.closeButton}>
             <TouchableOpacity onPress={() => setModalClosed(true)}>
-              <MaterialIcons name="close" size={32} color={colors.preto} />
+              <MaterialIcons
+                name="close"
+                size={moderateScale(28)}
+                color={colors.preto}
+              />
             </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.subheader}>
+          <Image
+            source={require("../../assets/logos/LogoCuidarMe.png")}
+            resizeMode="contain"
+            style={styles.logo}
+          />
+
+          <View style={styles.progressBarBackground}>
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: `${progressPercentage * 100}%` },
+              ]}
+            />
           </View>
         </View>
 
         <View style={styles.container}>
           <Text style={styles.pagination}>
-            Pregunta {currentIndex + 1} de {finalPreguntas.length}
+            Pregunta {currentIndex + 1} de {totalQuestions}
           </Text>
           {renderQuestion()}
+
           <View style={styles.buttonContainer}>
             {currentIndex > 0 && (
               <TouchableOpacity
                 style={styles.previousButton}
                 onPress={handlePrevious}
               >
-                <Text style={styles.nextButtonText}>Anterior</Text>
+                <Text style={styles.nextButtonText}>Volver</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
               <Text style={styles.nextButtonText}>
-                {currentIndex < finalPreguntas.length - 1
-                  ? "Siguiente"
-                  : "Finalizar"}
+                {currentIndex < totalQuestions - 1 ? "Siguiente" : "Finalizar"}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
+
         <WarningModal
           text="¿Estás seguro de que quieres abandonar esta encuesta?"
           visible={modalClosed}
@@ -467,8 +504,12 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   );
 };
 
-const screenHeight = Dimensions.get("window").height;
-const screenWidth = Dimensions.get("window").width;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const HEADER_HEIGHT = SCREEN_HEIGHT * 0.10;
+const SUBHEADER_HEIGHT = SCREEN_HEIGHT * 0.12;
+const HORIZONTAL_PADDING = scale(20);
+const VERTICAL_PADDING = verticalScale(10);
+const PROGRESS_BAR_HEIGHT = verticalScale(6);
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -477,112 +518,138 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    height: screenHeight * 0.18,
+    height: HEADER_HEIGHT,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "space-between",
-    paddingHorizontal: 25,
+    paddingHorizontal: HORIZONTAL_PADDING,
   },
   backButton: {
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
-    width: 45,
-    height: 45,
-    borderRadius: 50,
-    backgroundColor: colors.white,
   },
   closeButton: {
-    position: "relative",
-    justifyContent: "center",
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
     alignItems: "center",
+    justifyContent: "center",
+  },
+  subheader: {
+    width: "100%",
+    flexDirection: "column",
+    height: SUBHEADER_HEIGHT,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: HORIZONTAL_PADDING,
+  },
+  logo: {
+    width: SCREEN_WIDTH * 0.45,
+    height: SCREEN_HEIGHT * 0.075,
+    marginBottom: verticalScale(10),
+  },
+  progressBarBackground: {
+    width: "50%",
+    height: PROGRESS_BAR_HEIGHT,
+    backgroundColor: colors.white,
+    borderRadius: PROGRESS_BAR_HEIGHT / 2,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: colors.primary,
+    borderRadius: PROGRESS_BAR_HEIGHT / 2,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 34,
-    paddingVertical: 10,
+    paddingHorizontal: HORIZONTAL_PADDING,
+    paddingTop: VERTICAL_PADDING,
   },
   pagination: {
     fontFamily: fonts.body,
-    fontSize: 18,
-    marginTop: 20,
-    marginBottom: 10,
+    fontSize: moderateScale(17),
+    marginTop: verticalScale(12),
+    marginBottom: verticalScale(8),
   },
   questionContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
+    height: verticalScale(280),
   },
   question: {
-    fontSize: 26,
-    fontFamily: fonts.title,
-    marginBottom: 50,
+    fontSize: moderateScale(22),
+    color: colors.preto,
     textAlign: "left",
+    fontFamily: fonts.title,
+    marginBottom: verticalScale(15),
   },
   input: {
-    width: "30%",
-    height: 50,
+    width: scale(80),
+    height: verticalScale(45),
     borderWidth: 1,
     borderColor: colors.lightGray,
-    borderRadius: 5,
-    padding: 10,
-    fontSize: 18,
+    borderRadius: moderateScale(8),
+    padding: moderateScale(8),
+    fontSize: moderateScale(16),
     textAlign: "center",
-    textAlignVertical: "center",
     fontFamily: fonts.body,
+    marginTop: verticalScale(10),
   },
   optionContainer: {
     flexDirection: "column",
     width: "100%",
-    marginTop: 30,
+    marginVertical: verticalScale(15),
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+    rowGap: verticalScale(10),
   },
   optionButton: {
     width: "100%",
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingVertical: verticalScale(14),
     backgroundColor: colors.white,
-    borderRadius: 10,
+    borderRadius: moderateScale(10),
     alignItems: "center",
   },
   selectedOption: {
     backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
   },
   selectedOptionText: {
     color: colors.white,
   },
   optionText: {
     color: colors.preto,
-    fontSize: 18,
+    fontSize: moderateScale(16),
     fontFamily: fonts.subtitle,
   },
   buttonContainer: {
+    flexDirection: "column",
+    marginTop: verticalScale(20),
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
+    paddingBottom: verticalScale(10),
   },
   previousButton: {
     backgroundColor: colors.secondary,
-    width: "99%",
-    paddingVertical: 18,
-    borderRadius: 50,
-    marginBottom: 15,
+    width: "100%",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(50),
+    marginBottom: verticalScale(10),
     alignItems: "center",
   },
   nextButton: {
     backgroundColor: colors.primary,
-    width: "99%",
-    paddingVertical: 18,
-    borderRadius: 50,
-    marginBottom: 15,
+    width: "100%",
+    paddingVertical: verticalScale(14),
+    borderRadius: moderateScale(50),
     alignItems: "center",
   },
   nextButtonText: {
     color: colors.white,
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
   },
 });
-
 export default SurveyScreen;

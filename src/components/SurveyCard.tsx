@@ -8,13 +8,13 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import { getSurveyResultsByDocument } from "../services/surveyResultService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SkeletonLoading from "./SkeletonLoading";
 dayjs.extend(duration);
 
 type Props = {
@@ -44,7 +44,6 @@ type Recomendacion = {
 const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
   const [showModal, setShowModal] = useState(false);
   const [recomendacion, setRecomendacion] = useState<string | null>(null);
-
 
   const getTiempoDisponibleEn = () => {
     if (!tiempoRestante) return "";
@@ -91,12 +90,11 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
         style={[
           styles.card,
           survey.bloqueada && {
-            borderRadius: 30,
+            borderRadius: moderateScale(30),
             backgroundColor: colors.lightGray,
             opacity: 0.5,
           },
         ]}
-        
         activeOpacity={survey.bloqueada ? 1 : 0.7}
       >
         <Image source={survey.image} resizeMode="cover" style={styles.image} />
@@ -107,9 +105,7 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Encuesta completada</Text>
             <Text style={styles.recomendacionTitle}>Último resultado:</Text>
-            <Text style={styles.modalText}>
-              <Text style={styles.modalText}>{recomendacion}</Text>
-            </Text>
+            <Text style={styles.modalText}>{recomendacion}</Text>
             <Text style={styles.modalText}>
               Podrás volver a realizarla en {getTiempoDisponibleEn()}.
             </Text>
@@ -126,48 +122,25 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
   );
 };
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
-console.log("Screen dimensions:", screenWidth, screenHeight);
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const CARD_WIDTH = SCREEN_WIDTH * 0.85;
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.26;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
   },
   card: {
-    width: screenWidth * 0.85,
-    height: screenHeight * 0.26,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
     overflow: "hidden",
-    marginBottom: 10,
-    borderRadius: 25,
+    marginBottom: verticalScale(10),
+    borderRadius: moderateScale(25),
   },
   image: {
     width: "100%",
     height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  label: {
-    fontSize: 20,
-    marginBottom: 5,
-    color: colors.primary,
-    fontFamily: fonts.title,
-  },
-  startButton: {
-    backgroundColor: colors.secondary,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  disabledText: {
-    fontSize: 14,
-    color: colors.preto,
-    fontStyle: "italic",
   },
   modalOverlay: {
     flex: 1,
@@ -177,54 +150,48 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: colors.white,
-    padding: 30,
-    borderRadius: 10,
+    padding: moderateScale(20),
+    borderRadius: moderateScale(10),
     width: "80%",
     shadowColor: colors.preto,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.55,
-    shadowRadius: 4,
+    shadowRadius: moderateScale(4),
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontFamily: fonts.title,
     color: colors.preto,
-    marginVertical: 20,
-    paddingHorizontal: 10,
+    marginVertical: verticalScale(10),
     textAlign: "center",
   },
   recomendacionTitle: {
-    fontSize: 20,
+    fontSize: moderateScale(20),
     fontFamily: fonts.title,
     color: colors.primary,
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
     textAlign: "center",
   },
   modalText: {
-    fontSize: 18,
+    fontSize: moderateScale(16),
     fontFamily: fonts.body,
     color: colors.preto,
     textAlign: "center",
-    lineHeight: 22,
-    marginBottom: 10,
+    marginBottom: verticalScale(8),
   },
   modalButton: {
     width: "100%",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    alignItems: "center",
-    borderRadius: 50,
+    paddingVertical: verticalScale(12),
+    borderRadius: moderateScale(25),
     backgroundColor: colors.secondary,
-    marginTop: 20,
+    alignItems: "center",
+    marginTop: verticalScale(10),
   },
   modalButtonText: {
     color: colors.white,
     fontFamily: fonts.title,
-    fontSize: 18,
+    fontSize: moderateScale(18),
   },
 });
 
