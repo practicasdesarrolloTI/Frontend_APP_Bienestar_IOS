@@ -39,7 +39,6 @@ export const getPatientByDocument = async ( documento: string): Promise<Paciente
 
 export const checkPatient = async (documentType: string, document: number): Promise<PacienteRegistro | null> => {
     const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/${documentType}/${document}`);
-    console.log("Response from checkPatient:", response);
     return response.data;
 };
 

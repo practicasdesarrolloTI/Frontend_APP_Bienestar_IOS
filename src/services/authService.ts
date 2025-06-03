@@ -4,7 +4,19 @@ import axios from "axios";
 
 const API_URL = "https://backend.bienestarips.com/api/auth";
 
-type DocumentType = "RC" | "TI" | "CC" | "CE" | "PAS" | "NIT" | "CD" | "SC" | "MSI" | "ASI" | "PEP" | "PTP";
+type DocumentType =
+  | "RC"
+  | "TI"
+  | "CC"
+  | "CE"
+  | "PAS"
+  | "NIT"
+  | "CD"
+  | "SC"
+  | "MSI"
+  | "ASI"
+  | "PEP"
+  | "PTP";
 
 interface SendCodeResponse {
   message: string;
@@ -32,7 +44,7 @@ export const registerUser = async (
     }
 
     await AsyncStorage.setItem("token", data.token); // Guardar token JWT en el almacenamiento
-    return {success: true, data};
+    return { success: true, data };
   } catch (error: any) {
     Toast.show({
       type: "error",
@@ -44,9 +56,12 @@ export const registerUser = async (
 };
 
 // Iniciar sesión
-export const loginUser = async (documentType: DocumentType, document: number, password: string) => {
+export const loginUser = async (
+  documentType: DocumentType,
+  document: number,
+  password: string
+) => {
   try {
-
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -123,7 +138,7 @@ export const sendRecoveryCode = async (
         email,
       }
     );
-
+    console.log("Respuesta del servidor exitosa:", res.data);
     return {
       success: true,
       message: res.data.message,
@@ -132,7 +147,7 @@ export const sendRecoveryCode = async (
     };
   } catch (error: any) {
     const data = error.response?.data;
-
+    console.error("Error al enviar el código de recuperación mala:", data);
     return {
       success: false,
       message: data?.message || "Error al enviar el código.",

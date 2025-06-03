@@ -8,7 +8,10 @@ import {
   StatusBar,
   Platform,
   ImageBackground,
+  Image,
+  Dimensions,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -60,7 +63,6 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         const doc = await AsyncStorage.getItem("documento");
         if (!tipo || !doc) throw new Error("Datos incompletos");
         const data = await fetchProgramas(tipo, doc);
-        console.log("Programas obtenidos:", data);
         setProgramas(data);
         setFilteredProgramas(data);
       } catch (err) {
@@ -83,6 +85,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   if (loading) return <LoadingScreen />;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar
@@ -121,87 +124,67 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
             }}
             placeholder="Buscar programas"
           />
+
           {/* Lista de Programas */}
           {filteredProgramas.length === 0 ? (
-            <EmptyState message="No se encontraron programas de momento" />
+            <EmptyState message="No se encontraron programas por el momento" />
           ) : (
             <FlatList
               data={filteredProgramas}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
-                const sinCitas =
-                  item.fecha_cita === null || item.medico === null;
-                if (sinCitas) {
-                  return (
-                    <View style={styles.card}>
-                      <View style={styles.cardContent}>
-                        {/* Columna izquierda: Fecha */}
-                        <View style={styles.leftColumn}>
-                          <Text
-                            style={[styles.dateMonth, { textAlign: "center" }]}
-                          >
-                            Sin cita{"\n"}próxima
-                          </Text>
-                        </View>
-
-                        {/* Columna derecha: Detalles */}
-                        <View style={styles.rightColumn}>
-                          <Text style={styles.text}>
-                            <Text style={styles.label}>Programa: </Text>
-                            {item.programa}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  );
+                const tieneCita =
+                  item.fecha_cita &&
+                  !isNaN(new Date(item.fecha_cita).getTime());
+                let dt: Date | null = null;
+                if (tieneCita) {
+                  dt = new Date(item.fecha_cita);
                 }
                 return (
                   <View style={styles.card}>
                     <View style={styles.cardContent}>
-                      {/* Columna izquierda: Fecha */}
+                      {/* COLUMNA IZQUIERDA: Fecha o “Sin cita” */}
                       <View style={styles.leftColumn}>
-                        {item.fecha_cita &&
-                        !isNaN(new Date(item.fecha_cita).getTime()) ? (
+                        {tieneCita && dt ? (
                           <>
-                            <Text style={styles.dateDay}>
-                              {new Date(item.fecha_cita).getDate()}
-                            </Text>
+                            <Text style={styles.dateDay}>{dt.getDate()}</Text>
                             <Text style={styles.dateMonth}>
-                              {new Date(item.fecha_cita).toLocaleDateString(
-                                "es-CO",
-                                {
-                                  month: "long",
-                                }
-                              )}
+                              {dt.toLocaleDateString("es-CO", {
+                                month: "long",
+                              })}
                             </Text>
                             <Text style={styles.dateYear}>
-                              {new Date(item.fecha_cita).getFullYear()}
+                              {dt.getFullYear()}
                             </Text>
                           </>
                         ) : (
                           <Text
-                            style={[styles.dateMonth, { textAlign: "center" }]}
+                            style={[styles.noCitas, { textAlign: "center" }]}
                           >
                             Sin cita{"\n"}próxima
                           </Text>
                         )}
                       </View>
 
-                      {/* Columna derecha: Detalles */}
+                      {/* COLUMNA DERECHA: Detalles del programa */}
                       <View style={styles.rightColumn}>
                         <Text style={styles.text}>
                           <Text style={styles.label}>Programa: </Text>
                           {item.programa}
                         </Text>
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Médico: </Text>
-                          {capitalizeName(item.medico)}
-                        </Text>
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Especialidad: </Text>
-                          {capitalizeName(item.especialidad)}
-                        </Text>
-                        {item.hora && item.hora.trim() !== "" && (
+                        {item.medico !== null && (
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Médico: </Text>
+                            {capitalizeName(item.medico)}
+                          </Text>
+                        )}
+                        {item.especialidad && item.especialidad !== null && (
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Especialidad: </Text>
+                            {capitalizeName(item.especialidad)}
+                          </Text>
+                        )}
+                        {item.hora && item.hora !== " " && (
                           <Text style={styles.text}>
                             <Text style={styles.label}>Hora: </Text>
                             {item.hora}
@@ -209,12 +192,20 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
                         )}
                       </View>
                     </View>
+
+                    {/* Ícono superpuesto */}
+                    <View style={styles.iconWrapper}>
+                      <Image
+                        source={require("../../assets/icons/chart.png")}
+                        style={styles.calendarIcon}
+                      />
+                    </View>
                   </View>
                 );
               }}
             />
           )}
-          {/* Modal de Cerrar Sesión */}
+
           <LogOutModal
             text="¿Estás seguro de que deseas cerrar sesión?"
             visible={modalVisible}
@@ -227,78 +218,106 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+const CARD_CONTENT_HEIGHT = verticalScale(150);
+const LEFT_COLUMN_WIDTH = scale(94);
+const ICON_SIZE = scale(34);
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingVertical: 10,
-  },
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.title,
-    color: colors.white,
+  container: {
+    flex: 1,
+    paddingHorizontal: scale(25),
+    paddingTop: verticalScale(8),
   },
   card: {
+    position: "relative",
     backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: 20,
+    borderRadius: moderateScale(12),
+    overflow: "hidden",
+    marginBottom: verticalScale(14),
   },
   cardContent: {
-    height: 200,
-    width: "100%",
     flexDirection: "row",
-    alignItems: "stretch",
-  },
-  text: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: colors.preto,
-    fontFamily: fonts.body,
-  },
-  label: {
-    fontSize: 16,
-    color: colors.preto,
-    fontFamily: fonts.title,
+    width: "100%",
+    height: CARD_CONTENT_HEIGHT,
+    alignItems: "center",
   },
   leftColumn: {
-    width: "25%",
+    width: LEFT_COLUMN_WIDTH,
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 4,
+    borderColor: colors.secondary,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(12),
   },
   dateDay: {
-    fontSize: 36,
+    fontSize: moderateScale(38),
     color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: 18,
+    fontSize: moderateScale(17),
     color: colors.white,
-    fontFamily: fonts.title,
+    fontFamily: fonts.subtitle,
     textTransform: "capitalize",
-    borderBottomWidth: 1,
     borderBottomColor: colors.secondary,
+    borderBottomWidth: moderateScale(2),
   },
   dateYear: {
-    fontSize: 18,
+    fontSize: moderateScale(20),
     color: colors.white,
     fontFamily: fonts.body,
-    marginTop: 2,
+    marginTop: verticalScale(4),
+  },
+  noCitas: {
+    fontSize: moderateScale(16),
+    color: colors.white,
+    fontFamily: fonts.subtitle,
+    borderBottomColor: colors.secondary,
+    borderBottomWidth: moderateScale(2),
+
   },
   rightColumn: {
     flex: 1,
-    paddingHorizontal: 15,
+    padding: moderateScale(12),
+    marginLeft: moderateScale(16),
+    marginRight: moderateScale(10),
+  },
+  iconWrapper: {
+    position: "absolute",
+    left: LEFT_COLUMN_WIDTH - ICON_SIZE / 2,
+    top: CARD_CONTENT_HEIGHT / 2 - ICON_SIZE / 2,
+    width: moderateScale(34),
+    height: moderateScale(34),
+    borderRadius: moderateScale(50),
+    backgroundColor: colors.white,
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "flex-start",
+    marginBottom: verticalScale(8),
+    shadowColor: colors.preto,
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.2,
+    shadowRadius: verticalScale(3),
+    elevation: 5,
+  },
+  calendarIcon: {
+    width: scale(22),
+    height: scale(22),
+  },
+  text: {
+    fontSize: moderateScale(14),
+    color: colors.preto,
+    marginBottom: verticalScale(4),
+    fontFamily: fonts.body,
+  },
+  label: {
+    fontSize: moderateScale(14),
+    fontFamily: fonts.title,
+    color: colors.preto,
   },
 });
-
 export default ProgramsScreen;

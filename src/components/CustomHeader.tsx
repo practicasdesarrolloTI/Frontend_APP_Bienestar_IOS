@@ -91,7 +91,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
           >
             <Image
               source={require("../../assets/icons/perfil.png")}
-              style={{ width: scale(24), height: scale(24) }}
+              style={{ width: scale(22), height: scale(22) }}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -126,7 +126,8 @@ const CustomHeader: React.FC<HeaderProps> = ({
 const styles = StyleSheet.create({
   header: {
     height: verticalScale(75),
-    paddingTop: verticalScale(16),
+    paddingTop: verticalScale(18),
+    paddingBottom: verticalScale(5),
     paddingHorizontal: scale(22),
     flexDirection: "row",
     alignItems: "flex-end",
@@ -153,8 +154,8 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   profileIcon: {
-    width: scale(45),
-    height: scale(45),
+    width: scale(40),
+    height: scale(40),
     borderRadius: scale(50),
     backgroundColor: colors.white,
     alignItems: "center",
@@ -185,12 +186,12 @@ const styles = StyleSheet.create({
   },
   inlineMenu: {
     position: "absolute",
-    top: verticalScale(44),
+    top: verticalScale(45),
     right: 0,
-    width: scale(120),
+    width: scale(125),
     backgroundColor: colors.white,
     borderRadius: scale(8),
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(10),
     paddingHorizontal: scale(15),
     shadowColor: colors.preto,
     shadowOffset: { width: 0, height: verticalScale(2) },
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     paddingVertical: verticalScale(6),
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.preto,
   },

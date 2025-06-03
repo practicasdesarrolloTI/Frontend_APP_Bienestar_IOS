@@ -50,7 +50,7 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
           >
             <Image
               source={require("../../assets/icons/perfil.png")}
-              style={{ width: 28, height: 28 }}
+              style={{ width: scale(22), height: scale(22) }}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -84,11 +84,11 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
 
 const styles = StyleSheet.create({
   header: {
-    height: verticalScale(90),
+    height: verticalScale(92),
     paddingTop:
       Platform.OS === "android" ? verticalScale(50) : verticalScale(55),
-    paddingHorizontal: scale(24),
-    paddingBottom: verticalScale(10),
+    paddingHorizontal: scale(28),
+    paddingBottom: verticalScale(12),
     justifyContent: "center",
     backgroundColor: "transparent",
   },
@@ -101,21 +101,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   saludo: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
     color: colors.preto,
   },
   nombre: {
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(17),
     fontFamily: fonts.title,
+    marginRight: scale(15),
     color: colors.preto,
   },
   profileWrapper: {
     position: "relative",
   },
   profileIcon: {
-    width: scale(45),
-    height: scale(45),
+    width: scale(42),
+    height: scale(42),
     borderRadius: scale(50),
     backgroundColor: colors.white,
     justifyContent: "center",
@@ -132,12 +133,12 @@ const styles = StyleSheet.create({
   },
   inlineMenu: {
     position: "absolute",
-    top: verticalScale(44),
+    top: verticalScale(45),
     right: 0,
-    width: scale(120),
+    width: scale(125),
     backgroundColor: colors.white,
     borderRadius: scale(8),
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(10),
     paddingHorizontal: scale(15),
     shadowColor: colors.preto,
     shadowOffset: { width: 0, height: verticalScale(2) },
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     paddingVertical: verticalScale(6),
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.preto,
   },

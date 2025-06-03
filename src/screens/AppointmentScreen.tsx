@@ -9,6 +9,7 @@ import {
   Platform,
   ImageBackground,
   Image,
+  Dimensions,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
@@ -208,6 +209,10 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+const CARD_CONTENT_HEIGHT = verticalScale(130);
+const LEFT_COLUMN_WIDTH = scale(94);
+const ICON_SIZE = scale(34);
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -215,70 +220,71 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: moderateScale(24),
+    paddingHorizontal: moderateScale(25),
     paddingTop: verticalScale(8),
   },
   listContent: {
-    paddingBottom: verticalScale(16),
+    paddingBottom: verticalScale(14),
   },
   card: {
     position: "relative",
     backgroundColor: colors.white,
     borderRadius: moderateScale(12),
     overflow: "hidden",
-    marginBottom: verticalScale(16),
+    marginBottom: verticalScale(14),
   },
   cardContent: {
     flexDirection: "row",
     width: "100%",
-    height: verticalScale(120),
+    height: CARD_CONTENT_HEIGHT,
     alignItems: "center",
   },
   leftColumn: {
-    width: scale(80),
+    width: LEFT_COLUMN_WIDTH,
     height: "100%",
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: verticalScale(12),
-    borderColor: colors.secondary,
     borderRadius: moderateScale(12),
+    padding: moderateScale(15),
   },
   weekday: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(14),
     color: colors.white,
     textTransform: "capitalize",
-    marginBottom: verticalScale(4),
-    fontFamily: fonts.subtitle,
+    fontFamily: fonts.title,
   },
   dateDay: {
-    fontSize: moderateScale(28),
+    fontSize: moderateScale(38),
     color: colors.white,
     fontFamily: fonts.title,
-    lineHeight: moderateScale(34),
   },
   dateMonth: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(17),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",
+    borderBottomColor: colors.secondary,
+    borderBottomWidth: moderateScale(2),
   },
   dateYear: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(20),
     color: colors.white,
     fontFamily: fonts.body,
     marginTop: verticalScale(4),
   },
   rightColumn: {
     flex: 1,
-    padding: moderateScale(20),
+    padding: moderateScale(12),
+    marginLeft: moderateScale(16),
+    marginRight: moderateScale(10),
   },
   iconWrapper: {
     position: "absolute",
-    left: moderateScale(80) - moderateScale(10),  
-    top: "50%",
-    width: moderateScale(40),
-    height: moderateScale(40),
+    left:   LEFT_COLUMN_WIDTH - (ICON_SIZE / 2),
+    top: CARD_CONTENT_HEIGHT / 2 - ICON_SIZE / 2,
+    width: moderateScale(34),
+    height: moderateScale(34),
     borderRadius: moderateScale(50),
     backgroundColor: colors.white,
     alignItems: "center",
@@ -291,8 +297,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   calendarIcon: {
-    width: scale(25),
-    height: scale(25),
+    width: scale(22),
+    height: scale(22),
   },
   text: {
     fontSize: moderateScale(14),

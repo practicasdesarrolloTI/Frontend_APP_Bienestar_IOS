@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(10),
     alignItems: "center",
     marginBottom: verticalScale(10),
+    borderWidth: 1,
+    borderColor: colors.lightGray,
   },
   input: {
     flex: 1,

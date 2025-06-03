@@ -61,6 +61,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     const paciente = await getPatientByDocument(documentNumber);
     const docPaciente = paciente?.documento || null;
     const docType = paciente?.tipo_documento_abreviado || null;
+
     if (!documentType) {
       Toast.show({
         type: "error",
@@ -131,14 +132,16 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
 
     try {
       setIsLoading(true);
+      console.log("Entro al try", documentType, documentNumber, email);
+
       const patientExits = await checkPatient(
         documentType,
         Number(documentNumber)
       );
+
       await AsyncStorage.setItem("documento", documentNumber);
       await AsyncStorage.setItem("tipoDocumento", String(documentType));
       const patientByMail = await checkPatientByMail(email);
-
       if (patientByMail) {
         Toast.show({
           type: "error",
@@ -179,11 +182,17 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.log(
+        "Error en sendRecoveryCode:",
+        error.response?.status,
+        error.response?.data
+      );
+
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "No se pudo enviar el código. Intenta nuevamente.",
+        text2: error instanceof Error ? error.message : "Error desconocido",
       });
     } finally {
       setIsLoading(false);
@@ -357,7 +366,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: moderateScale(20),
   },
- input: {
+  input: {
     width: scale(300),
     height: verticalScale(45),
     backgroundColor: colors.white,
@@ -378,7 +387,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
- checkboxLabel: {
+  checkboxLabel: {
     fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.preto,

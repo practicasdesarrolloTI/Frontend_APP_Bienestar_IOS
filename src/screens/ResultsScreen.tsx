@@ -8,10 +8,11 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  Alert,
   Linking,
   ImageBackground,
+  Dimensions,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -20,7 +21,6 @@ import { fonts } from "../themes/fonts";
 import LoadingScreen from "../components/LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import EmptyState from "../components/EmptyState";
-import CustomDateRangeFilter from "../components/CustomDateRangeFilter";
 import CustomHeader from "../components/CustomHeader";
 import Toast from "react-native-toast-message";
 import LogOutModal from "../components/WarningModal";
@@ -240,6 +240,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   safeArea: {

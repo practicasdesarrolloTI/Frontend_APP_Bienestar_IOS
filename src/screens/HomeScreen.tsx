@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  Platform,
   BackHandler,
   ImageBackground,
   ScrollView,
@@ -32,7 +30,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const ITEM_WIDTH = SCREEN_WIDTH * 0.41;
-const ITEM_HEIGHT = SCREEN_HEIGHT * 0.18; 
+const ITEM_HEIGHT = SCREEN_HEIGHT * 0.18;
 
 const menuItems = [
   {
@@ -109,10 +107,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       try {
         const documento = await AsyncStorage.getItem("documento");
         if (!documento) throw new Error("No hay documento");
+
         const p = await getPatientByDocument(documento);
-        const nombre = `${p?.primer_nombre ?? ""} ${p?.segundo_nombre ?? ""} ${
-          p?.primer_apellido ?? ""
-        }`.trim();
+        const primer = p?.primer_nombre ?? "";
+        const segundo = p?.segundo_nombre ?? "";
+        const apellido = p?.primer_apellido ?? "";
+        const nombre =
+          segundo !== "" ? `${primer} ${segundo}` : `${primer} ${apellido}`;
+          
         setNombrePaciente(nombre);
         setSexo(p?.sexo ?? null);
       } catch {
@@ -177,14 +179,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </ScrollView>
+          <LogOutModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
         </View>
-
-        <LogOutModal
-          text="¿Estás seguro de que deseas cerrar sesión?"
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          onConfirm={handleLogout}
-        />
       </ImageBackground>
     </SafeAreaView>
   );
