@@ -96,7 +96,7 @@ export const findriscSurvey = {
       min: 7,
       max: 11,
       texto:
-        "Tienes un leve aumento en el riesgo de diabetes tipo 2. Comienza a mejorar tu alimentación y realiza actividad física regular. Consulta con un profesional si puedes.",
+        "Tienes un leve aumento en el riesgo de diabetes tipo 2. Comienza a mejorar tu alimentación y realiza actividad física regular. Consulta con un profesional de salud de tu sede.",
       sexo: null,
     },
     {

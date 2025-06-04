@@ -4,7 +4,7 @@
     "slug": "CuidarMe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logos/LogoAppIcono.jpg",
+    "icon": "./assets/logos/LogoAppIcono.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logos/LogoAppIcono.jpg"
+        "foregroundImage": "./assets/logos/LogoAppIcono.png"
       },
       "package": "com.practicasdesarrolloti.bienestarapp",
       "usesCleartextTraffic": true

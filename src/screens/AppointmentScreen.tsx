@@ -208,9 +208,9 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const CARD_CONTENT_HEIGHT = verticalScale(130);
+const CARD_CONTENT_HEIGHT = verticalScale(140);
 const LEFT_COLUMN_WIDTH = scale(94);
-const ICON_SIZE = scale(34);
+const ICON_SIZE = moderateScale(34);
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
     fontFamily: fonts.title,
   },
   dateDay: {
-    fontSize: moderateScale(38),
+    fontSize: moderateScale(36),
     color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: moderateScale(17),
+    fontSize: moderateScale(16),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: moderateScale(2),
   },
   dateYear: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(18),
     color: colors.white,
     fontFamily: fonts.body,
     marginTop: verticalScale(4),
@@ -275,8 +275,8 @@ const styles = StyleSheet.create({
   rightColumn: {
     flex: 1,
     padding: moderateScale(12),
-    marginLeft: moderateScale(16),
-    marginRight: moderateScale(10),
+    marginLeft: scale(16),
+    marginRight: scale(10),
   },
   iconWrapper: {
     position: "absolute",
@@ -296,8 +296,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   calendarIcon: {
-    width: scale(22),
-    height: scale(22),
+    width: moderateScale(24),
+    height: moderateScale(24),
   },
   text: {
     fontSize: moderateScale(14),
