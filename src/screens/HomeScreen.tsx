@@ -1,4 +1,3 @@
-// src/screens/HomeScreen.tsx
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -26,11 +25,6 @@ import Carousel from "../components/Carousel";
 import CustomHeader from "../components/CustomHeader";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const ITEM_WIDTH = SCREEN_WIDTH * 0.41;
-const ITEM_HEIGHT = SCREEN_HEIGHT * 0.18;
 
 const menuItems = [
   {
@@ -114,7 +108,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         const apellido = p?.primer_apellido ?? "";
         const nombre =
           segundo !== "" ? `${primer} ${segundo}` : `${primer} ${apellido}`;
-          
+
         setNombrePaciente(nombre);
         setSexo(p?.sexo ?? null);
       } catch {
@@ -157,9 +151,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             />
           )
         )}
-
         <Carousel />
-
         <View style={styles.container}>
           <ScrollView
             contentContainerStyle={styles.grid}
@@ -205,18 +197,19 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
     paddingHorizontal: scale(5),
-    paddingBottom: verticalScale(10),
+    paddingBottom: verticalScale(5),
   },
   menuItem: {
-    width: ITEM_WIDTH,
-    height: ITEM_HEIGHT,
-    borderRadius: scale(12),
+    width: scale(145),
+    height: verticalScale(120),
+    borderRadius: scale(15),
     overflow: "hidden",
     margin: scale(5),
   },
   menuImage: {
     width: "100%",
     height: "100%",
+    borderRadius: scale(15),
   },
 });
 

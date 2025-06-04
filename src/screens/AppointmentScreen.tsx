@@ -209,7 +209,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 const CARD_CONTENT_HEIGHT = verticalScale(140);
-const LEFT_COLUMN_WIDTH = scale(94);
+const LEFT_COLUMN_WIDTH = scale(96);
 const ICON_SIZE = moderateScale(34);
 
 const styles = StyleSheet.create({
@@ -300,13 +300,13 @@ const styles = StyleSheet.create({
     height: moderateScale(24),
   },
   text: {
-    fontSize: moderateScale(14),
+    fontSize: verticalScale(11),
     color: colors.preto,
     marginBottom: verticalScale(4),
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: moderateScale(14),
+    fontSize: verticalScale(11),
     fontFamily: fonts.title,
     color: colors.preto,
   },

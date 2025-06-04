@@ -218,8 +218,8 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const CARD_CONTENT_HEIGHT = verticalScale(150);
-const LEFT_COLUMN_WIDTH = scale(94);
+const CARD_CONTENT_HEIGHT = verticalScale(160);
+const LEFT_COLUMN_WIDTH = scale(96);
 const ICON_SIZE = scale(34);
 const styles = StyleSheet.create({
   safeArea: {
@@ -255,12 +255,12 @@ const styles = StyleSheet.create({
     padding: moderateScale(12),
   },
   dateDay: {
-    fontSize: moderateScale(38),
+    fontSize: verticalScale(36),
     color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: moderateScale(17),
+    fontSize: verticalScale(16),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: moderateScale(2),
   },
   dateYear: {
-    fontSize: moderateScale(20),
+    fontSize: verticalScale(18),
     color: colors.white,
     fontFamily: fonts.body,
     marginTop: verticalScale(4),
@@ -279,7 +279,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.subtitle,
     borderBottomColor: colors.secondary,
     borderBottomWidth: moderateScale(2),
-
   },
   rightColumn: {
     flex: 1,
@@ -309,13 +308,13 @@ const styles = StyleSheet.create({
     height: scale(22),
   },
   text: {
-    fontSize: moderateScale(14),
+    fontSize: verticalScale(11),
     color: colors.preto,
     marginBottom: verticalScale(4),
     fontFamily: fonts.body,
   },
   label: {
-    fontSize: moderateScale(14),
+    fontSize: verticalScale(11),
     fontFamily: fonts.title,
     color: colors.preto,
   },

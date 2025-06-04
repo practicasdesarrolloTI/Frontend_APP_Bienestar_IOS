@@ -61,7 +61,30 @@ const ImageUrlCarousel: React.FC = () => {
     );
   }
 
-  
+  if (banners.length === 1) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.slide}>
+
+          <Image
+            source={{ uri: banners[0].imageUrl }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </View>
+        {/* Pagination Dots */}
+      <View style={styles.pagination}>
+        {banners.map((_, index) => (
+          <View
+            key={index}
+            style={[styles.dot, activeIndex === index && styles.activeDot]}
+          />
+        ))}
+      </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Carousel
@@ -97,8 +120,8 @@ const ImageUrlCarousel: React.FC = () => {
   );
 };
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const SLIDE_WIDTH = SCREEN_WIDTH * 0.84;
+
+const SLIDE_WIDTH = scale(310);
 const SLIDE_HEIGHT = verticalScale(115);
 const DOT_SIZE = moderateScale(8);
 const DOT_SPACING = moderateScale(6);
@@ -106,8 +129,7 @@ const DOT_SPACING = moderateScale(6);
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingVertical: verticalScale(12),
-  },
+    paddingVertical: verticalScale(16),  },
   slide: {
     width: SLIDE_WIDTH,
     height: SLIDE_HEIGHT,
