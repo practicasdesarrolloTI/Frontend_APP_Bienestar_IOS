@@ -305,9 +305,8 @@ const SelfCareScreen: React.FC = () => {
   );
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const CARD_WIDTH = SCREEN_WIDTH * 0.85;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.26;
+const CARD_WIDTH = scale(160);
+const CARD_HEIGHT = verticalScale(200);
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,

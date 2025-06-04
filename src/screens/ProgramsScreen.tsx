@@ -283,8 +283,8 @@ const styles = StyleSheet.create({
   rightColumn: {
     flex: 1,
     padding: moderateScale(12),
-    marginLeft: moderateScale(16),
-    marginRight: moderateScale(10),
+    marginLeft: scale(16),
+    marginRight: scale(10),
   },
   iconWrapper: {
     position: "absolute",

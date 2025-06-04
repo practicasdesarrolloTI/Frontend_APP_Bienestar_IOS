@@ -201,14 +201,14 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     width: scale(145),
-    height: verticalScale(120),
+    height: verticalScale(125),
     borderRadius: scale(15),
     overflow: "hidden",
     margin: scale(5),
   },
   menuImage: {
-    width: "100%",
-    height: "100%",
+    width: "98%",
+    height: "95%",
     borderRadius: scale(15),
   },
 });

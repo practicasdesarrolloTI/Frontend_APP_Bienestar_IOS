@@ -248,18 +248,18 @@ const styles = StyleSheet.create({
     padding: moderateScale(15),
   },
   weekday: {
-    fontSize: moderateScale(14),
+    fontSize: verticalScale(12),
     color: colors.white,
     textTransform: "capitalize",
     fontFamily: fonts.title,
   },
-  dateDay: {
-    fontSize: moderateScale(36),
+ dateDay: {
+    fontSize: verticalScale(36),
     color: colors.white,
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: moderateScale(16),
+    fontSize: verticalScale(16),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: moderateScale(2),
   },
   dateYear: {
-    fontSize: moderateScale(18),
+    fontSize: verticalScale(18),
     color: colors.white,
     fontFamily: fonts.body,
     marginTop: verticalScale(4),

@@ -1,4 +1,3 @@
-
 export const findriscSurvey = {
   id: "findrisc",
   nombre: "Encuesta FINDRISC",
@@ -13,10 +12,10 @@ export const findriscSurvey = {
       pregunta: "Edad",
       omitida: false,
       opciones: [
-        {texto: "Menos de 45 años", valor: 0, sexo: null},
-        {texto: "Entre 45-54 años", valor: 2, sexo: null},
-        {texto: "Entre 55-64 años", valor: 3, sexo: null},
-        {texto: "Mas de 64 años", valor: 4, sexo: null},
+        { texto: "Menos de 45 años", valor: 0, sexo: null },
+        { texto: "Entre 45-54 años", valor: 2, sexo: null },
+        { texto: "Entre 55-64 años", valor: 3, sexo: null },
+        { texto: "Mas de 64 años", valor: 4, sexo: null },
       ],
     },
     {
@@ -24,9 +23,9 @@ export const findriscSurvey = {
       requiredIMC: true,
       omitida: false,
       opciones: [
-        {texto: "Menos de 25 kg/m2", valor: 0, sexo: null},
-        {texto: "Entre 25-30 kg/m2", valor: 1, sexo: null},
-        {texto: "Mas de 30 kg/m2", valor: 3, sexo: null},
+        { texto: "Menos de 25 kg/m2", valor: 0, sexo: null },
+        { texto: "Entre 25-30 kg/m2", valor: 1, sexo: null },
+        { texto: "Mas de 30 kg/m2", valor: 3, sexo: null },
       ],
     },
     {
@@ -81,7 +80,6 @@ export const findriscSurvey = {
         { texto: "No", valor: 0, sexo: null },
         { texto: "Sí", valor: 5, sexo: null },
       ],
-
     },
   ],
   recomendaciones: [
@@ -103,23 +101,22 @@ export const findriscSurvey = {
       min: 12,
       max: 14,
       texto:
-        "Existe una posibilidad media de desarrollar diabetes. Consulta a tu médico para una evaluación y análisis de sangre. Puedes prevenirla con pequeños cambios. Recuerda seguir una dieta balanceada y alta en vegetales, grasas saludables y fibra.",
+        "Existe una posibilidad media de desarrollar diabetes. Consulta a tu médico para una evaluación y análisis de sangre. Puedes prevenirla con pequeños cambios. Recuerda hacer ejercicio y seguir una dieta balanceada y alta en vegetales, grasas saludables y fibra.",
       sexo: null,
     },
     {
       min: 15,
       max: 20,
       texto:
-        "Tu riesgo de diabetes es alto. Es importante hacer una cita médica y realizar exámenes. Cambios en tu estilo de vida pueden marcar la diferencia. Recuerda seguir una dieta baja en carbohidratos refinados y azúcares.",
+        "Tu riesgo de diabetes es alto. Es importante hacer una cita médica y realizar exámenes. Cambios en tu estilo de vida pueden marcar la diferencia. Recuerda ejercitarte continuamente y seguir una dieta baja en carbohidratos refinados y azúcares.",
       sexo: null,
     },
     {
       min: 21,
       max: 30,
       texto:
-        "Tu riesgo de desarrollar diabetes tipo 2 es muy alto. Es urgente que consultes con un médico para una evaluación completa y orientación personalizada.",
+        "Tu riesgo de desarrollar diabetes tipo 2 es muy alto. Es prioritario que consultes con un médico para una evaluación completa y orientación personalizada.",
       sexo: null,
     },
   ],
 };
-
