@@ -7,6 +7,7 @@ import {
   Modal,
   Image,
 } from "react-native";
+import { scale, verticalScale, moderateScale, s } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
@@ -29,7 +30,7 @@ const WarningModal: React.FC<Props> = ({
         <View style={styles.modalContainer}>
           <Image
             source={require("../../assets/icons/warning.png")}
-            style={{ width: 50, height: 50 }}
+            style={styles.icon}
             resizeMode="contain"
           />
           <Text style={styles.modalTitle}> {text}</Text>
@@ -57,9 +58,9 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: colors.white,
-    padding: 30,
-    borderRadius: 10,
-    width: "70%",
+    padding: scale(20),
+    borderRadius: moderateScale(15),
+    width: "75%",
     alignItems: "center",
     shadowColor: colors.preto,
     shadowOffset: {
@@ -70,45 +71,50 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  icon: {
+    width: moderateScale(35),
+    height: moderateScale(35),
+    tintColor: colors.primary,
+  },
   modalTitle: {
-    fontSize: 24,
+    fontSize: moderateScale(20),
     fontFamily: fonts.title,
     color: colors.preto,
-    marginVertical: 20,
-    paddingHorizontal: 10,
+    marginVertical: verticalScale(10),
+    paddingHorizontal: scale(20),
     textAlign: "center",
   },
   modalButtons: {
+    marginTop: verticalScale(10),
+    paddingHorizontal: scale(10),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
   },
   cancelButton: {
-    paddingVertical: 15,
+    paddingVertical: scale(12),
     flex: 1,
     alignItems: "center",
     borderRadius: 50,
     backgroundColor: colors.secondary,
-    marginRight: 10,
+    marginRight: scale(10),
   },
   confirmButton: {
-    paddingVertical: 15,
+    paddingVertical: scale(12), 
     flex: 1,
     alignItems: "center",
     borderRadius: 50,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
   cancelText: {
-    fontSize: 18,
+    fontSize: scale(17),
     color: "white",
     fontFamily: fonts.title,
   },
   confirmText: {
-    fontSize: 18,
-    color: colors.primary,
+    fontSize: scale(17),  
+    color: colors.white,
     fontFamily: fonts.title,
   },
 });

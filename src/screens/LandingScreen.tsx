@@ -10,10 +10,6 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";

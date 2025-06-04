@@ -11,7 +11,9 @@ import {
   Pressable,
   ScrollView,
   ImageBackground,
+  Image,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { verifyRecoveryCode } from "../services/authService";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -27,10 +29,8 @@ import CustomHeader from "../components/CustomHeader";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 
-
 type Props = NativeStackScreenProps<RootStackParamList, "VerifyCode">;
 const CELL_COUNT = 6;
-
 
 const VerifyCodeScreen = ({ route, navigation }: Props) => {
   const { document, documentType, mail } = route.params;
@@ -67,7 +67,6 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
   }, [timer, resendAttempts]);
 
   const handleVerify = async () => {
-
     console.log("correo", mail);
     try {
       await verifyRecoveryCode(Number(document), value);
@@ -116,7 +115,7 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/backgrounds/Codigo.png")}
+        source={require("../../assets/backgrounds/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -127,17 +126,22 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
           showProfileIcon={false}
           onLogout={() => {}}
         />
-        
+
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
           <ScrollView
             contentContainerStyle={styles.container}
             keyboardShouldPersistTaps="handled"
           >
+            {/* Subheader */}
             <View style={styles.subheaderContainer}>
+              <Image
+                source={require("../../assets/logos/LogoCuidarMe.png")}
+                resizeMode="contain"
+                style={styles.logo}
+              />
               <Text style={styles.title}>Verificar código</Text>
               <Text style={styles.subtitle}>
-                Ingrese el código de verificación que hemos enviado a tu correo
-                electrónico.
+                Ingresa el código de verificación{" "}
               </Text>
             </View>
             <CodeField
@@ -194,106 +198,114 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
   );
 };
 
+const CELL_SIZE = moderateScale(48);
+const BUTTON_HEIGHT = verticalScale(48);
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-    title: {
-    fontSize: 30,
+  subheaderContainer: {
+    alignItems: "center",
+    marginBottom: verticalScale(20),
+  },
+  logo: {
+    width: scale(90),
+    height: verticalScale(75),
+  },
+  title: {
+     fontSize: moderateScale(28),
     fontFamily: fonts.title,
     color: colors.preto,
-    textAlign: "center",
-    marginBottom: 5,
+    marginBottom: verticalScale(5),
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: moderateScale(16),
     fontFamily: fonts.subtitle,
     color: colors.primary,
     textAlign: "center",
-    marginBottom: 50,
-    paddingHorizontal: 20,
-  },
-  subheaderContainer: {
-    marginBottom: 30,
-    alignItems: "center",
-    justifyContent: "center",
+    marginBottom: verticalScale(40),
+    lineHeight: verticalScale(22),
   },
   container: {
-    flex: 1,
-    padding: 30,
-    justifyContent: "center",
-  },
-  instructions: {
-    fontSize: 16,
-    fontFamily: fonts.subtitle,
-    marginBottom: 10,
-    marginTop: 15,
-    color: colors.primary,
-    textAlign: "center",
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    paddingHorizontal: scale(15),
   },
   codeFieldRoot: {
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     justifyContent: "center",
+    alignItems: "center",
   },
   cell: {
-    width: 60,
-    height: 60,
-    lineHeight: 50,
-    fontSize: 24,
-    borderRadius: 8,
-    textAlign: "center",
-    marginHorizontal: 4,
+    width: CELL_SIZE - moderateScale(2),
+    height: CELL_SIZE ,
+    borderRadius: moderateScale(8),
+    marginHorizontal: moderateScale(4),
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.white,
   },
   cellFocused: {
-    borderWidth: 2,
+    borderWidth: moderateScale(2),
     borderColor: colors.primary,
   },
   cellText: {
     fontFamily: fonts.title,
-    fontSize: 20,
+    fontSize: moderateScale(22),
     color: colors.preto,
+    textAlign: "center",
   },
   timerText: {
-    fontSize: 16,
+    fontSize: moderateScale(15),
     fontFamily: fonts.subtitle,
     color: colors.secondary,
     textAlign: "center",
-    marginTop: 10,
+    marginTop: verticalScale(10),
+  },
+  instructions: {
+    fontSize: moderateScale(15),
+    fontFamily: fonts.subtitle,
+    marginBottom: verticalScale(10),
+    marginTop: verticalScale(5),
+    color: colors.primary,
+    textAlign: "center",
   },
   button: {
-    marginTop: 40,
     backgroundColor: colors.primary,
-    width: "100%",
-    paddingVertical: 20,
-    borderRadius: 50,
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
+    marginTop: verticalScale(20),
     alignItems: "center",
+    height: BUTTON_HEIGHT,
+  },
+  buttonDisabled: {
+    backgroundColor: colors.lightGray,
   },
   buttonText: {
     color: colors.white,
-    fontSize: 18,
+    fontSize: moderateScale(17),
     fontFamily: fonts.title,
   },
-  buttonDisabled: {
-    backgroundColor: "#cccccc",
-    borderColor: "#cccccc",
-  },
   buttonReenviar: {
-    marginTop: 20,
-    backgroundColor: colors.white,
-    borderColor: colors.preto,
-    borderWidth: 2,
-    width: "100%",
-    paddingVertical: 20,
-    borderRadius: 50,
+    marginTop: verticalScale(20),
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
     alignItems: "center",
+    height: BUTTON_HEIGHT,
+    borderWidth: moderateScale(1),
+    borderColor: colors.preto,
+  },
+  buttonDisabledOutline: {
+    backgroundColor: colors.lightGray,
+    borderColor: colors.lightGray,
   },
   buttonReenviarText: {
     color: colors.preto,
-    fontSize: 18,
+    fontSize: moderateScale(17),
     fontFamily: fonts.title,
   },
 });

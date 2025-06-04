@@ -16,6 +16,7 @@ import {
   Image,
   ImageBackground,
 } from "react-native";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { resetPassword } from "../services/authService";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
@@ -71,7 +72,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           text2: "Usuario registrado correctamente.",
           position: "bottom",
         });
-       navigation.replace("Home");
+        navigation.replace("Home");
       }
     } else {
       if (!patient) {
@@ -107,7 +108,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         backgroundColor="transparent"
       />
       <ImageBackground
-        source={require("../../assets/backgrounds/Codigo.png")}
+        source={require("../../assets/backgrounds/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
@@ -124,10 +125,19 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
             contentContainerStyle={styles.container}
             keyboardShouldPersistTaps="handled"
           >
+            {/* Subheader */}
             <View style={styles.subheaderContainer}>
-              <Text style={styles.title}>Nueva Contraseña</Text>
-              <Text style={styles.subtitle}>Ingrese tu nueva contraseña</Text>
+              <Image
+                source={require("../../assets/logos/LogoCuidarMe.png")}
+                resizeMode="contain"
+                style={styles.logo}
+              />
+              <Text style={styles.title}>Nueva contraseña</Text>
+              <Text style={styles.subtitle}>
+                Ingresa tu nueva contraseña{" "}
+              </Text>
             </View>
+
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.inputPasword, { flex: 1 }]}
@@ -146,9 +156,9 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <MaterialIcons
                   name={showPassword ? "visibility-off" : "visibility"}
-                  size={25}
                   color={"#bfbfbf"}
                   style={{ marginRight: 15 }}
+                  size={moderateScale(22)}
                 />
               </TouchableOpacity>
             </View>
@@ -209,73 +219,78 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop:
+      Platform.OS === "android" ? StatusBar.currentHeight : verticalScale(20),
+  },
+  subheaderContainer: {
+    marginBottom: verticalScale(50),
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: scale(20),
   },
   title: {
-    fontSize: 30,
+    fontSize: moderateScale(26),
     fontFamily: fonts.title,
     color: colors.preto,
     textAlign: "center",
-    marginBottom: 5,
+    marginBottom: verticalScale(8),
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: moderateScale(16),
     fontFamily: fonts.subtitle,
     color: colors.primary,
     textAlign: "center",
-    paddingHorizontal: 20,
+    lineHeight: verticalScale(22),
+    paddingHorizontal: scale(20),
   },
-  subheaderContainer: {
-    marginBottom: 60,
-    alignItems: "center",
-    justifyContent: "center",
+  logo: {
+    width: scale(90),
+    height: verticalScale(75),
   },
   container: {
-    flex: 1,
-    padding: 30,
-    justifyContent: "center",
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    paddingHorizontal: scale(20),
+  },
+  passwordContainer: {
+    width: scale(300),
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.white,
+    borderRadius: scale(8),
+    marginBottom: verticalScale(15),
   },
   inputPasword: {
-    width: "100%",
-    height: 65,
-    backgroundColor: colors.white,
-    borderRadius: 10,
-    paddingLeft: 25,
+    flex: 1,
+    height: verticalScale(45),
+    paddingHorizontal: scale(15),
     color: colors.preto,
-    fontSize: 18,
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
   },
   warning: {
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
     alignItems: "center",
   },
   warningText: {
     color: colors.secondary,
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontFamily: fonts.body,
   },
   button: {
-    marginTop: 5,
     backgroundColor: colors.primary,
-    width: "100%",
-    paddingVertical: 20,
-    borderRadius: 50,
+    width: scale(310),
+    paddingVertical: verticalScale(15),
+    borderRadius: scale(50),
+    marginBottom: verticalScale(10),
     alignItems: "center",
   },
   buttonText: {
     color: colors.white,
-    fontSize: 20,
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
   },
-  passwordContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 10,
-    marginBottom: 5,
-    marginTop: 5,
-  },
+  
 });
 
 export default ResetPasswordScreen;

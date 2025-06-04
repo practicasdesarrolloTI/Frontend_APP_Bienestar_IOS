@@ -1,17 +1,12 @@
 import React from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
 type Props = {
   visible: boolean;
   recomendacion: string;
+  loading: boolean;
   onClose: () => void;
   onConfirm: () => void;
 };
@@ -19,6 +14,8 @@ type Props = {
 const RecommendationModal: React.FC<Props> = ({
   visible,
   recomendacion,
+  loading,
+
   onConfirm,
 }) => {
   return (
@@ -27,12 +24,22 @@ const RecommendationModal: React.FC<Props> = ({
         <View style={styles.modalContainer}>
           <Text style={styles.title}>¡Recomendación!</Text>
           <Text style={styles.text}>{recomendacion}</Text>
-
-            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+          <TouchableOpacity
+            style={[
+              styles.confirmButton,
+              loading && styles.confirmButtonDisabled,
+            ]}
+            onPress={onConfirm}
+            disabled={loading} 
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
               <Text style={styles.buttonText}>Aceptar</Text>
-            </TouchableOpacity>
-          </View>
+            )}
+          </TouchableOpacity>
         </View>
+      </View>
     </Modal>
   );
 };
@@ -81,6 +88,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 50,
     backgroundColor: colors.primary,
+  },
+  confirmButtonDisabled: {
+    backgroundColor: colors.lightGray,
   },
   buttonText: {
     color: colors.white,

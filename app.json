@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logos/LogoAppIcono.png"
+        "foregroundImage": "./assets/logos/LogoAppIcono.jpg"
       },
       "package": "com.practicasdesarrolloti.bienestarapp",
       "usesCleartextTraffic": true

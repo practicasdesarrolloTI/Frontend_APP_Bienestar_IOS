@@ -530,6 +530,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: HORIZONTAL_PADDING,
   },
+  
   backButton: {
     width: moderateScale(40),
     height: moderateScale(40),

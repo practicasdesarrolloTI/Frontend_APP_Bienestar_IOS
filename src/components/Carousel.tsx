@@ -6,11 +6,7 @@ import colors from "../themes/colors";
 import { fetchBanners } from "../services/bannerService";
 import SkeletonLoading from "./SkeletonLoading";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const SLIDE_WIDTH = SCREEN_WIDTH * 0.84;
-const SLIDE_HEIGHT = verticalScale(115);
-const DOT_SIZE = moderateScale(8);
-const DOT_SPACING = moderateScale(6);
+
 
 const ImageUrlCarousel: React.FC = () => {
   const [banners, setBanners] = useState<
@@ -37,8 +33,13 @@ const ImageUrlCarousel: React.FC = () => {
     return (
       <View style={styles.container}>
         <SkeletonLoading
-          style={{ width: "85%", height: 168, marginBottom: 10 }}
-          borderRadius={8}
+          style={{
+            width: SLIDE_WIDTH,
+            height: SLIDE_HEIGHT,
+            borderRadius: moderateScale(15),
+            marginBottom: verticalScale(10),
+          }}
+          borderRadius={moderateScale(15)}
         />
       </View>
     );
@@ -48,18 +49,24 @@ const ImageUrlCarousel: React.FC = () => {
     return (
       <View style={styles.container}>
         <SkeletonLoading
-          style={{ width: scale(85), height: 168, marginBottom: 10 }}
-          borderRadius={8}
+          style={{
+            width: SLIDE_WIDTH,
+            height: SLIDE_HEIGHT,
+            borderRadius: moderateScale(15),
+            marginBottom: verticalScale(10),
+          }}
+          borderRadius={moderateScale(15)}
         />
       </View>
     );
   }
 
+  
   return (
     <View style={styles.container}>
       <Carousel
         width={SLIDE_WIDTH}
-        height= {SLIDE_HEIGHT}
+        height={SLIDE_HEIGHT}
         data={banners}
         autoPlay
         loop
@@ -69,9 +76,7 @@ const ImageUrlCarousel: React.FC = () => {
         renderItem={({ item }) => (
           <View style={styles.slide}>
             <Image
-              source={{
-                uri: item.imageUrl,
-              }}
+              source={{ uri: item.imageUrl }}
               style={styles.image}
               resizeMode="cover"
             />
@@ -91,6 +96,12 @@ const ImageUrlCarousel: React.FC = () => {
     </View>
   );
 };
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const SLIDE_WIDTH = SCREEN_WIDTH * 0.84;
+const SLIDE_HEIGHT = verticalScale(115);
+const DOT_SIZE = moderateScale(8);
+const DOT_SPACING = moderateScale(6);
 
 const styles = StyleSheet.create({
   container: {

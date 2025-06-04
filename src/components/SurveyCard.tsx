@@ -150,9 +150,9 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: colors.white,
-    padding: moderateScale(20),
-    borderRadius: moderateScale(10),
-    width: "80%",
+    padding: scale(20),
+    borderRadius: moderateScale(15),
+    width: "75%",
     shadowColor: colors.preto,
     shadowOffset: { width: 0, height: verticalScale(2) },
     shadowOpacity: 0.55,
@@ -160,21 +160,21 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
-    fontSize: moderateScale(24),
+    fontSize: moderateScale(20),
     fontFamily: fonts.title,
     color: colors.preto,
     marginVertical: verticalScale(10),
     textAlign: "center",
   },
   recomendacionTitle: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(18),
     fontFamily: fonts.title,
     color: colors.primary,
     marginBottom: verticalScale(10),
     textAlign: "center",
   },
   modalText: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
     color: colors.preto,
     textAlign: "center",
@@ -183,7 +183,8 @@ const styles = StyleSheet.create({
   modalButton: {
     width: "100%",
     paddingVertical: verticalScale(12),
-    borderRadius: moderateScale(25),
+    paddingHorizontal: scale(20),
+    borderRadius: moderateScale(50),
     backgroundColor: colors.secondary,
     alignItems: "center",
     marginTop: verticalScale(10),
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: colors.white,
     fontFamily: fonts.title,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(17),
   },
 });
 

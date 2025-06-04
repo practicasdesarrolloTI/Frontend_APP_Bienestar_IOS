@@ -12,6 +12,7 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -72,7 +73,6 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
     return recomendacion?.texto || "No se encontró recomendación.";
   };
   const [modalVisible, setModalVisible] = useState(false);
-
 
   const handleSubmit = async () => {
     try {
@@ -138,7 +138,7 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         text2: "Error al guardar el resultado de la encuesta.",
         position: "bottom",
       });
-    }finally {
+    } finally {
       setIsSending(false);
     }
   };
@@ -211,15 +211,21 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
             style={styles.button}
             activeOpacity={0.8}
             onPress={() => setModalVisible(true)}
+            disabled={isSending} // deshabilita si ya está enviando
           >
-            <Text style={styles.buttonText}>Enviar Encuesta</Text>
+            {isSending ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Enviar Encuesta</Text>
+            )}
           </TouchableOpacity>
         </View>
 
-        {/* Modal para confirmar y mostrar recomendación */}
+        {/* RecommendationModal recibe loading={isSending} */}
         <RecommendationModal
           visible={modalVisible}
           recomendacion={obtenerRecomendacion()}
+          loading={isSending} // <--- pasamos el estado
           onClose={() => setModalVisible(false)}
           onConfirm={() => {
             setModalVisible(false);
