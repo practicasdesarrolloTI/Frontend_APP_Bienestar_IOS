@@ -318,7 +318,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 )}
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                 <Text style={styles.loginText}>
                   ¿Ya tienes cuenta?
                   <Text style={styles.loginLinkText}> Inicia sesión</Text>
