@@ -256,7 +256,7 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 const LEFT_COLUMN_WIDTH = scale(96);
-const CARD_CONTENT_HEIGHT = verticalScale(130);
+const CARD_CONTENT_HEIGHT = verticalScale(140);
 const ICON_SIZE = scale(34);
 
 const styles = StyleSheet.create({

@@ -122,9 +122,10 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
   );
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_WIDTH = SCREEN_WIDTH * 0.85;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.26;
+const ASPECT_RATIO = 331 / 226;
+const CARD_HEIGHT = CARD_WIDTH / ASPECT_RATIO;
 
 const styles = StyleSheet.create({
   container: {
@@ -137,10 +138,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: verticalScale(10),
     borderRadius: moderateScale(25),
+    justifyContent: "center",
+    alignItems: "center",
+
   },
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: moderateScale(25),
   },
   modalOverlay: {
     flex: 1,

@@ -145,6 +145,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
         {/* Header transparente */}
         <CustomHeader
           title="Mi Perfil"
+          color={colors.white}
           showBack
           transparent
           showProfileIcon

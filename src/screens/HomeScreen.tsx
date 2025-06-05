@@ -182,6 +182,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const ASPECT_RATIO = 150 / 142;
+
+// SUPONGAMOS que quieres que cada ítem ocupe el 45 % del ancho de pantalla:
+const CARD_WIDTH = SCREEN_WIDTH * 0.42;
+const CARD_HEIGHT = CARD_WIDTH / ASPECT_RATIO;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -189,8 +195,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: scale(10),
-    paddingBottom: verticalScale(10),
+    paddingHorizontal: SCREEN_WIDTH * 0.025,
+    paddingBottom: SCREEN_WIDTH * 0.025,
   },
   grid: {
     flexDirection: "row",
@@ -200,15 +206,18 @@ const styles = StyleSheet.create({
     paddingBottom: verticalScale(5),
   },
   menuItem: {
-    width: scale(145),
-    height: verticalScale(125),
-    borderRadius: scale(15),
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+    borderRadius: CARD_WIDTH * 0.1, 
     overflow: "hidden",
-    margin: scale(5),
+    margin: SCREEN_WIDTH * 0.0125, 
+
+    justifyContent: "center",
+    alignItems: "center",
   },
   menuImage: {
     width: "98%",
-    height: "95%",
+    height: "98%",
     borderRadius: scale(15),
   },
 });

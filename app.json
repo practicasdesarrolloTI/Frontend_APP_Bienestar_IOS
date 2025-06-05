@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logos/LogoCuidarMe.png",
+      "image": "./assets/logos/LogoAppIcono.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

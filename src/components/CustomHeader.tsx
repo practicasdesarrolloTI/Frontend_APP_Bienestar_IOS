@@ -15,6 +15,7 @@ import { fonts } from "../themes/fonts";
 type HeaderProps = {
   title?: string;
   showBack?: boolean;
+  color?: string;
   backgroundColor?: string;
   transparent?: boolean;
   showProfileIcon?: boolean;
@@ -30,6 +31,7 @@ type RootStackParamList = {
 
 const CustomHeader: React.FC<HeaderProps> = ({
   title = "",
+  color,
   showBack = true,
   backgroundColor,
   transparent = false,
@@ -75,7 +77,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={[styles.headerTitle, transparent && { color: colors.preto }]}
+            style={[styles.headerTitle, transparent && { color: color || colors.preto }]}
           >
             {title}
           </Text>
