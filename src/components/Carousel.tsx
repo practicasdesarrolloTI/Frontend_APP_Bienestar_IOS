@@ -35,7 +35,7 @@ const ImageUrlCarousel: React.FC = () => {
         <SkeletonLoading
           style={{
             width: SLIDE_WIDTH,
-            height: SLIDE_HEIGHT,
+            height: SLIDE_HEIGHT + moderateScale(8),
             borderRadius: moderateScale(15),
             marginBottom: verticalScale(10),
           }}
@@ -51,8 +51,7 @@ const ImageUrlCarousel: React.FC = () => {
         <SkeletonLoading
           style={{
             width: SLIDE_WIDTH,
-            height: SLIDE_HEIGHT,
-            borderRadius: moderateScale(15),
+            height: SLIDE_HEIGHT + moderateScale(8),
             marginBottom: verticalScale(10),
           }}
           borderRadius={moderateScale(15)}

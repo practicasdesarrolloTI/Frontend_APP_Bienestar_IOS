@@ -13,7 +13,7 @@ const SkeletonLoader: React.FC<Props> = ({ style, borderRadius = 10 }) => {
     Animated.loop(
       Animated.timing(shimmerAnimated, {
         toValue: 1,
-        duration: 1200,
+        duration: 1500,
         useNativeDriver: true,
       })
     ).start();
