@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -32,6 +32,10 @@ import Toast from "react-native-toast-message";
 import { sendRecoveryCode } from "../services/authService";
 import CustomHeader from "../components/CustomHeader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchEps } from "../services/epsService";
+import EpsPicker from "../components/EpsPicker";
+import DatePickerField from "../components/DatePickerField";
+import SexPicker from "../components/SexPicker";
 
 type DocumentType =
   | "RC"
@@ -49,6 +53,14 @@ type DocumentType =
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
+const formatDateToString = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // enero = 0
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [documentType, setDocumentType] = useState<DocumentType | null>(null);
   const [documentNumber, setDocumentNumber] = useState("");
@@ -56,11 +68,30 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState("");
+  const [birthDate, setBirthDate] = useState<string | null>(null); // formato "DD/MM/AAAA"
+  const [epsList, setEpsList] = useState<{ label: string; value: string }[]>([]);
+  const [selectedEps, setSelectedEps] = useState<string | null>(null);
+  const [selectedSex, setSelectedSex] = useState<"M" | "F" | null>(null);
+
+  useEffect(() => {
+    const loadEps = async () => {
+      const data = await fetchEps();
+      const options = data.map((eps: any) => ({
+        label: eps.nombre,
+        value: eps.nombre,
+      }));
+      setEpsList(options);
+    };
+    loadEps();
+  }, []);
 
   const handleRegister = async () => {
     const paciente = await getPatientByDocument(documentNumber);
     const docPaciente = paciente?.documento || null;
     const docType = paciente?.tipo_documento_abreviado || null;
+    const fechaNaci = paciente?.fecha_nacimiento || null;
+    const EPS = paciente?.eps || null;
+    const sexoPaciente = paciente?.sexo || null;
 
     if (!documentType) {
       Toast.show({
@@ -130,10 +161,73 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
+    if (!birthDate) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ingrese su fecha de nacimiento.",
+      });
+      return;
+    }
+
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(birthDate)) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Formato de fecha inválido. Debe ser DD/MM/AAAA.",
+      });
+      return;
+    }
+
+    if (birthDate !== fechaNaci) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          "No se encontró el paciente con la información dada. Verifica los datos.",
+      });
+      return;
+    }
+
+    if (!selectedEps) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ingrese el nombre de su EPS.",
+      });
+      return;
+    }
+
+    if (selectedEps !== EPS) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          "No se encontró el paciente con la información dada. Verifica los datos.",
+      });
+      return;
+    }
+
+    if (!selectedSex) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Seleccione su sexo.",
+      });
+      return;
+    }
+
+    if (selectedSex !== sexoPaciente) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "El sexo seleccionado no coincide con la información del paciente.",
+      });
+      return;
+    }
+
     try {
       setIsLoading(true);
-      console.log("Entro al try", documentType, documentNumber, email);
-
       const patientExits = await checkPatient(
         documentType,
         Number(documentNumber)
@@ -160,11 +254,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       } else {
         const result = await sendRecoveryCode(Number(docPaciente), email);
 
+
         if (result.success) {
           navigation.navigate("VerifyCode", {
             document: documentNumber,
             documentType: documentType as DocumentType,
             mail: email,
+            eps: selectedEps,
+            fechaNacimiento: birthDate,
           });
         } else {
           if (result.retryAfterMinutes) {
@@ -216,7 +313,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           showBack={true}
           transparent={true}
           showProfileIcon={false}
-          onLogout={() => {}}
+          onLogout={() => { }}
           goBackTo="Landing"
         />
         <ScrollView
@@ -242,6 +339,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               contentContainerStyle={styles.container}
               keyboardShouldPersistTaps="handled"
             >
+
               {/* Documento */}
               <DocumentPicker
                 selected={documentType}
@@ -276,6 +374,29 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                 value={confirmEmail}
                 onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
               />
+
+              <View style={styles.rowContainer}>
+                {/* EPS */}
+                <EpsPicker
+                  selected={selectedEps}
+                  options={epsList}
+                  onSelect={setSelectedEps}
+                />
+
+                {/* Fecha de nacimiento */}
+                <DatePickerField
+                  date={birthDate}
+                  onSelect={setBirthDate}
+                />
+              </View>
+
+              {/* Sexo */}
+              <SexPicker
+                selected={selectedSex}
+                onSelect={setSelectedSex}
+              />
+
+
 
               {/* Terminos y condiciones */}
               <View style={styles.termsContainer}>
@@ -365,6 +486,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     padding: moderateScale(20),
+    justifyContent: "flex-start",
   },
   input: {
     width: scale(300),
@@ -421,6 +543,10 @@ const styles = StyleSheet.create({
     color: colors.purple,
     fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
+  },
+  rowContainer: {
+    flexDirection: "row",
+    gap: scale(10),
   },
 });
 export default RegisterScreen;

@@ -31,7 +31,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 type Props = StackScreenProps<RootStackParamList, "ResetPassword">;
 
 const ResetPasswordScreen = ({ route, navigation }: Props) => {
-  const { document, documentType, mail, value } = route.params;
+  const { document, documentType, mail, value, eps, fechaNacimiento } = route.params;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +65,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         return;
       }
       if (documentType) {
-        await registerUser(documentType, Number(document), mail, password);
+        await registerUser(documentType, Number(document), mail, password, eps, fechaNacimiento);
         Toast.show({
           type: "success",
           text1: "Éxito",
@@ -117,7 +117,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           showBack={true}
           transparent={true}
           showProfileIcon={false}
-          onLogout={() => {}}
+          onLogout={() => { }}
         />
 
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(18),
     fontFamily: fonts.title,
   },
-  
+
 });
 
 export default ResetPasswordScreen;

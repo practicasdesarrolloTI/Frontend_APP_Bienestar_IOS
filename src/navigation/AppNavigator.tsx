@@ -53,12 +53,14 @@ export type RootStackParamList = {
   Resultados: undefined;
   Medicamentos: undefined;
   ForgotPassword: undefined;
-  VerifyCode: { document: string; documentType: DocumentType; mail: string };
+  VerifyCode: { document: string; documentType: DocumentType; mail: string, eps: string, fechaNacimiento: string };
   ResetPassword: {
     document: string;
     documentType: DocumentType;
     mail: string;
     value: string;
+    eps: string;
+    fechaNacimiento: string;
   };
   Autocuidado: {
     navigation: any;

@@ -33,7 +33,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "VerifyCode">;
 const CELL_COUNT = 6;
 
 const VerifyCodeScreen = ({ route, navigation }: Props) => {
-  const { document, documentType, mail } = route.params;
+  const { document, documentType, mail, eps, fechaNacimiento } = route.params;
   const [value, setValue] = useState("");
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -75,6 +75,8 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
         documentType,
         mail,
         value,
+        eps,
+        fechaNacimiento,
       });
     } catch {
       Toast.show({
