@@ -25,6 +25,8 @@ export type PacienteRegistro = {
   document: number;
   mail?: string;
   password: string;
+  eps: string;
+  fechaNacimiento: string;
   createdAt: string;
   updatedAt: string;
 };

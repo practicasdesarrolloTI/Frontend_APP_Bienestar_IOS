@@ -314,13 +314,13 @@ const styles = StyleSheet.create({
   },
   input: {
     width: scale(300),
-    height: verticalScale(45),
+    height: verticalScale(35),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
     marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(11),
     fontFamily: fonts.body,
   },
   passwordContainer: {
@@ -333,10 +333,10 @@ const styles = StyleSheet.create({
   },
   inputPassword: {
     flex: 1,
-    height: verticalScale(45),
+    height: verticalScale(35),
     paddingHorizontal: scale(15),
     color: colors.preto,
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(11),
     fontFamily: fonts.body,
   },
   forgotPasswordContainer: {
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     color: colors.accent,
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(11),
     fontFamily: fonts.subtitle,
   },
   termsContainer: {

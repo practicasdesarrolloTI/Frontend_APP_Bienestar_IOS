@@ -262,10 +262,10 @@ const styles = StyleSheet.create({
   },
   inputPasword: {
     flex: 1,
-    height: verticalScale(45),
+    height: verticalScale(35),
     paddingHorizontal: scale(15),
     color: colors.preto,
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(11),
     fontFamily: fonts.body,
   },
   warning: {

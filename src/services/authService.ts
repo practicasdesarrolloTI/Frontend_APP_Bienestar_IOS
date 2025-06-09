@@ -29,9 +29,9 @@ export const registerUser = async (
   documentType: DocumentType,
   document: number,
   mail: string,
-  password: string,
-  fechaNacimiento: string,
-  eps: string
+  password: string, 
+  eps: string,
+  fechaNacimiento: string
 ) => {
   try {
     const response = await fetch(`${API_URL}/register`, {
@@ -39,8 +39,8 @@ export const registerUser = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         documentType, document, mail, password,
-        fechaNacimiento,
         eps,
+        fechaNacimiento,
       }),
     });
     const data = await response.json();

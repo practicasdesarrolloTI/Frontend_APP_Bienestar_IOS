@@ -111,6 +111,8 @@ const ForgotPasswordScreen = ({
           document: document,
           documentType: documentType as DocumentType,
           mail: correoPaciente || "",
+          eps: paciente?.eps || "",
+          fechaNacimiento: paciente?.fechaNacimiento || "",
         });
       } else {
         if (result.retryAfterMinutes) {
@@ -245,13 +247,13 @@ const styles = StyleSheet.create({
   },
   input: {
     width: scale(300),
-    height: verticalScale(45),
+    height: verticalScale(35),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
     marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(11),
     fontFamily: fonts.body,
   },
   button: {
