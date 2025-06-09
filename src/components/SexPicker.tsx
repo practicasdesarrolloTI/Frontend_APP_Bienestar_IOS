@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(8.5),
   },
   selectedText: {
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(13),
     color: colors.preto,
     fontFamily: fonts.body,
   },

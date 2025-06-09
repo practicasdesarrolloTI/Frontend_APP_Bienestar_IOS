@@ -114,7 +114,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       } catch {
         setHasError(true);
       } finally {
-        setLoading(false);
+        // const timeout = setTimeout(() => {
+          setLoading(false);
+        // }, 2000);
+        // return () => clearTimeout(timeout);
       }
     })();
   }, []);

@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(15),
     marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(13),
     fontFamily: fonts.body,
   },
   termsContainer: {

@@ -34,9 +34,9 @@ const LoadingScreen = () => {
             autoPlay
             loop
             progress={21 / 210}
+            speed={2}
             style={styles.lottie}
           />
-          <Text style={styles.loadingText}>Cargando...</Text>
         </View>
       </ImageBackground>
     </SafeAreaView>
@@ -56,15 +56,14 @@ const styles = StyleSheet.create({
   },
 
   lottie: {
-    width: scale(200),
-    height: verticalScale(200),
+    width: scale(400),
+    height: verticalScale(400),
   },
 
   loadingText: {
     fontFamily: fonts.body,
     fontSize: scale(16),
     color: colors.primary,
-    marginTop: verticalScale(2),
   },
 });
 
