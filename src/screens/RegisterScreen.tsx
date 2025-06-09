@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: scale(300),
-    height: verticalScale(45),
+    height: verticalScale(37),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),

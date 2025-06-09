@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    height: verticalScale(45),
+    height: verticalScale(35),
     width: scale(150),
     marginBottom: verticalScale(10),
   },

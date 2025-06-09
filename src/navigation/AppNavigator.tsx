@@ -21,6 +21,7 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import VerifyCodeScreen from "../screens/VerifyCodeScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import { getToken } from "../services/authService";
+import LoadingScreen from "../components/LoadingScreen";
 
 type DocumentType =
   | "RC"
@@ -169,9 +170,7 @@ const AppNavigator: React.FC = () => {
   // Mientras determinamos la ruta inicial, mostramos un loader
   if (!initialRoute) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-      </View>
+      <LoadingScreen />
     );
   }
 

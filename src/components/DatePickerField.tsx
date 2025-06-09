@@ -50,7 +50,7 @@ const DatePickerField: React.FC<Props> = ({ label = "Fecha de nacimiento", date,
         <Text style={[styles.selectedText, !date && styles.placeholder]}>
           {date ? date : label}
         </Text>
-        <MaterialIcons name="keyboard-arrow-down" size={24} color={colors.preto} />
+        <MaterialIcons name="calendar-today" size={24} color={colors.preto} />
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    height: verticalScale(45),
+    height: verticalScale(35),
     width: scale(140),
     marginBottom: verticalScale(10),
   },
