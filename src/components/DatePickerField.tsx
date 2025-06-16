@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    height: verticalScale(38),
+    height: verticalScale(40),
     width: scale(147),
   },
   selectedText: {

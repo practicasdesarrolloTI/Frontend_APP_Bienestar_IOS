@@ -124,7 +124,7 @@ const SurveyCard: React.FC<Props> = ({ survey, tiempoRestante, onPress }) => {
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_WIDTH = SCREEN_WIDTH * 0.85;
-const ASPECT_RATIO = 331 / 226;
+const ASPECT_RATIO = 340 / 280;
 const CARD_HEIGHT = CARD_WIDTH / ASPECT_RATIO;
 
 const styles = StyleSheet.create({

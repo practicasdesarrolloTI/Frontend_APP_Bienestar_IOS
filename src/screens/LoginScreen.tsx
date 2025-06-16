@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: scale(300),
-    height: verticalScale(38),
+    height: verticalScale(40),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
@@ -327,7 +327,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
   },
   formContainer: {
-    width: scale(300),
     gap: verticalScale(10),
   },
   passwordContainer: {
@@ -340,7 +339,7 @@ const styles = StyleSheet.create({
   },
   inputPassword: {
     flex: 1,
-    height: verticalScale(38),
+    height: verticalScale(40),
     paddingHorizontal: scale(15),
     color: colors.preto,
     fontSize: moderateScale(14),

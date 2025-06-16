@@ -93,28 +93,28 @@ const SelfCareScreen: React.FC = () => {
       requiereEdad: true,
       requiereSexo: true,
       requiredIMC: true,
-      image: require("../../assets/icons/findrisc_b.png"),
+      image: require("../../assets/icons/FINDRISC.png"),
     },
     {
       ...lawtonBrodySurvey,
       requiereEdad: false,
       requiereSexo: false,
       requiredIMC: false,
-      image: require("../../assets/icons/lawton_b.png"),
+      image: require("../../assets/icons/Lawton-Brody.png"),
     },
     {
       ...framinghamSurvey,
       requiereEdad: true,
       requiereSexo: true,
       requiredIMC: false,
-      image: require("../../assets/icons/framingham_b.png"),
+      image: require("../../assets/icons/Framingham.png"),
     },
     {
       ...moriskyGreenSurvey,
       requiereEdad: false,
       requiereSexo: false,
       requiredIMC: false,
-      image: require("../../assets/icons/morisky_b.png"),
+      image: require("../../assets/icons/Morisky-Green.png"),
     },
   ]);
 
@@ -306,7 +306,7 @@ const SelfCareScreen: React.FC = () => {
 };
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_WIDTH = SCREEN_WIDTH * 0.85;
-const ASPECT_RATIO = 331 / 226;
+const ASPECT_RATIO = 340 / 280;
 const CARD_HEIGHT = CARD_WIDTH / ASPECT_RATIO;
 const styles = StyleSheet.create({
   safeArea: {
