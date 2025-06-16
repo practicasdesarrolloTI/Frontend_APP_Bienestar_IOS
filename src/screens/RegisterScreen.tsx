@@ -69,7 +69,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [confirmEmail, setConfirmEmail] = useState("");
   const [birthDate, setBirthDate] = useState<string | null>(null); // formato "DD/MM/AAAA"
-  const [epsList, setEpsList] = useState<{ label: string; value: string }[]>([]);
+  const [epsList, setEpsList] = useState<{ label: string; value: string }[]>(
+    []
+  );
   const [selectedEps, setSelectedEps] = useState<string | null>(null);
   const [selectedSex, setSelectedSex] = useState<"M" | "F" | null>(null);
 
@@ -221,7 +223,8 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "El sexo seleccionado no coincide con la información del paciente.",
+        text2:
+          "El sexo seleccionado no coincide con la información del paciente.",
       });
       return;
     }
@@ -253,7 +256,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         return;
       } else {
         const result = await sendRecoveryCode(Number(docPaciente), email);
-
 
         if (result.success) {
           navigation.navigate("VerifyCode", {
@@ -313,7 +315,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           showBack={true}
           transparent={true}
           showProfileIcon={false}
-          onLogout={() => { }}
+          onLogout={() => {}}
           goBackTo="Landing"
         />
         <ScrollView
@@ -339,112 +341,110 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
               contentContainerStyle={styles.container}
               keyboardShouldPersistTaps="handled"
             >
-
               {/* Documento */}
-              <DocumentPicker
-                selected={documentType}
-                onSelect={setDocumentType}
-              />
-
-              {/*  Número de Documento */}
-              <TextInput
-                style={styles.input}
-                placeholder="Número de documento"
-                placeholderTextColor={colors.lightGray}
-                keyboardType="numeric"
-                value={documentNumber}
-                onChangeText={setDocumentNumber}
-              />
-
-              {/*  Correo */}
-              <TextInput
-                style={styles.input}
-                placeholder="Correo electrónico"
-                placeholderTextColor={colors.lightGray}
-                keyboardType="email-address"
-                value={email}
-                onChangeText={(text) => setEmail(text.toLowerCase())}
-              />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Confirmar correo electrónico"
-                placeholderTextColor={colors.lightGray}
-                keyboardType="email-address"
-                value={confirmEmail}
-                onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
-              />
-
-              <View style={styles.rowContainer}>
-                {/* EPS */}
-                <EpsPicker
-                  selected={selectedEps}
-                  options={epsList}
-                  onSelect={setSelectedEps}
+              <View style={styles.formContainer}>
+                <DocumentPicker
+                  selected={documentType}
+                  onSelect={setDocumentType}
                 />
 
-                {/* Fecha de nacimiento */}
-                <DatePickerField
-                  date={birthDate}
-                  onSelect={setBirthDate}
+                {/*  Número de Documento */}
+                <TextInput
+                  style={styles.input}
+                  placeholder="Número de documento"
+                  placeholderTextColor={colors.lightGray}
+                  keyboardType="numeric"
+                  value={documentNumber}
+                  onChangeText={setDocumentNumber}
                 />
+
+                {/*  Correo */}
+                <TextInput
+                  style={styles.input}
+                  placeholder="Correo electrónico"
+                  placeholderTextColor={colors.lightGray}
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={(text) => setEmail(text.toLowerCase())}
+                />
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirmar correo electrónico"
+                  placeholderTextColor={colors.lightGray}
+                  keyboardType="email-address"
+                  value={confirmEmail}
+                  onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
+                />
+
+                <View style={styles.rowContainer}>
+                  {/* EPS */}
+                  <EpsPicker
+                    selected={selectedEps}
+                    options={epsList}
+                    onSelect={setSelectedEps}
+                  />
+
+                  {/* Fecha de nacimiento */}
+                  <DatePickerField date={birthDate} onSelect={setBirthDate} />
+                </View>
+
+                {/* Sexo */}
+                <SexPicker selected={selectedSex} onSelect={setSelectedSex} />
               </View>
-
-              {/* Sexo */}
-              <SexPicker
-                selected={selectedSex}
-                onSelect={setSelectedSex}
-              />
-
-
 
               {/* Terminos y condiciones */}
-              <View style={styles.termsContainer}>
-                <View style={styles.checkboxContainer}>
-                  <TouchableOpacity
-                    onPress={() => setAcceptedTerms(!acceptedTerms)}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialIcons
-                      name={
-                        acceptedTerms ? "check-box" : "check-box-outline-blank"
+      
+                <View style={styles.termsContainer}>
+                  <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                      onPress={() => setAcceptedTerms(!acceptedTerms)}
+                      activeOpacity={0.7}
+                    >
+                      <MaterialIcons
+                        name={
+                          acceptedTerms
+                            ? "check-box"
+                            : "check-box-outline-blank"
+                        }
+                        size={28}
+                        color={colors.preto}
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.checkboxLabel}>Acepto los </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        Linking.openURL(
+                          "https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf"
+                        )
                       }
-                      size={28}
-                      color={colors.preto}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.checkboxLabel}>Acepto los </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(
-                        "https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf"
-                      )
-                    }
-                  >
-                    <Text style={styles.termsText}>términos y condiciones</Text>
-                  </TouchableOpacity>
+                    >
+                      <Text style={styles.termsText}>
+                        términos y condiciones
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
 
-              {/*  Botón de Registro */}
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleRegister}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.buttonText}>Continuar</Text>
-                )}
-              </TouchableOpacity>
+                {/*  Botón de Registro */}
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleRegister}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Continuar</Text>
+                  )}
+                </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.loginText}>
-                  ¿Ya tienes cuenta?
-                  <Text style={styles.loginLinkText}> Inicia sesión</Text>
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text style={styles.loginText}>
+                    ¿Ya tienes cuenta?
+                    <Text style={styles.loginLinkText}> Inicia sesión</Text>
+                  </Text>
+                </TouchableOpacity>
             </ScrollView>
           </Pressable>
         </ScrollView>
@@ -465,20 +465,20 @@ const styles = StyleSheet.create({
   },
   subheaderContainer: {
     alignItems: "center",
-    marginBottom: verticalScale(20),
+    marginBottom: verticalScale(5),
   },
   logo: {
-    width: scale(90),
-    height: verticalScale(75),
+    width: scale(85),
+    height: verticalScale(70),
   },
   title: {
-    fontSize: moderateScale(28),
+    fontSize: moderateScale(25),
     fontFamily: fonts.title,
     color: colors.preto,
     marginBottom: verticalScale(5),
   },
   subtitle: {
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.gray,
   },
@@ -488,15 +488,17 @@ const styles = StyleSheet.create({
     padding: moderateScale(20),
     justifyContent: "flex-start",
   },
+  formContainer: {
+    gap: verticalScale(8),
+  },
   input: {
     width: scale(300),
-    height: verticalScale(35),
+    height: verticalScale(38),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(13),
     fontFamily: fonts.body,
   },
   termsContainer: {
@@ -510,28 +512,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   checkboxLabel: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(13),
     fontFamily: fonts.subtitle,
     color: colors.preto,
     marginLeft: scale(8),
   },
   termsText: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(13),
     fontFamily: fonts.subtitle,
     color: colors.primary,
     textDecorationLine: "underline",
   },
   button: {
     backgroundColor: colors.primary,
-    width: scale(310),
-    paddingVertical: verticalScale(15),
+    width: scale(300),
+    paddingVertical: verticalScale(12),
     borderRadius: scale(50),
     marginBottom: verticalScale(10),
     alignItems: "center",
   },
   buttonText: {
     color: colors.white,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(17),
     fontFamily: fonts.title,
   },
   loginText: {
@@ -546,7 +548,8 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: "row",
-    gap: scale(10),
+    gap: scale(6),
   },
+
 });
 export default RegisterScreen;

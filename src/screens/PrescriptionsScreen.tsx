@@ -207,7 +207,7 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                     </View>
                     <View style={styles.iconWrapper}>
                       <Image
-                        source={require("../../assets/icons/lab.png")}
+                        source={require("../../assets/icons/medicine.png")}
                         style={styles.icon}
                       />
                     </View>

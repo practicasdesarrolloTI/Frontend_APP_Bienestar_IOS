@@ -170,47 +170,51 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               contentContainerStyle={styles.container}
               keyboardShouldPersistTaps="handled"
             >
-              <DocumentPicker
-                selected={documentType}
-                onSelect={setDocumentType}
-              />
-
-              {/* Documento */}
-              <TextInput
-                style={styles.input}
-                placeholder="Número de documento"
-                placeholderTextColor={colors.lightGray}
-                value={document}
-                onChangeText={setDocument}
-                keyboardType="numeric"
-              />
-
-              {/* Contraseña */}
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.inputPassword}
-                  placeholder="Contraseña"
-                  placeholderTextColor={colors.lightGray}
-                  secureTextEntry={!showPassword}
-                  value={password}
-                  onChangeText={setPassword}
+              <View style={styles.formContainer}>
+                <DocumentPicker
+                  selected={documentType}
+                  onSelect={setDocumentType}
                 />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  <MaterialIcons
-                    name={showPassword ? "visibility-off" : "visibility"}
-                    style={{ marginRight: 15 }}
-                    size={moderateScale(22)}
-                    color={"#bfbfbf"}
+
+                {/* Documento */}
+                <TextInput
+                  style={styles.input}
+                  placeholder="Número de documento"
+                  placeholderTextColor={colors.lightGray}
+                  value={document}
+                  onChangeText={setDocument}
+                  keyboardType="numeric"
+                />
+
+                {/* Contraseña */}
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.inputPassword}
+                    placeholder="Contraseña"
+                    placeholderTextColor={colors.lightGray}
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
                   />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                  >
+                    <MaterialIcons
+                      name={showPassword ? "visibility-off" : "visibility"}
+                      style={{ marginRight: 15 }}
+                      size={moderateScale(22)}
+                      color={"#bfbfbf"}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
               <View style={styles.forgotPasswordContainer}>
                 <TouchableOpacity
                   onPress={() => navigation.navigate("ForgotPassword")}
                 >
-                  <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+                  <Text style={styles.forgotText}>
+                    ¿Olvidaste tu contraseña?
+                  </Text>
                 </TouchableOpacity>
               </View>
 
@@ -290,20 +294,20 @@ const styles = StyleSheet.create({
   },
   subheaderContainer: {
     alignItems: "center",
-    marginBottom: verticalScale(20),
+    marginBottom: verticalScale(15),
   },
   logo: {
-    width: scale(90),
-    height: verticalScale(75),
+    width: scale(85),
+    height: verticalScale(70),
   },
   title: {
-    fontSize: moderateScale(28),
+    fontSize: moderateScale(25),
     fontFamily: fonts.title,
     color: colors.preto,
     marginBottom: verticalScale(5),
   },
   subtitle: {
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(14),
     fontFamily: fonts.subtitle,
     color: colors.gray,
   },
@@ -314,14 +318,17 @@ const styles = StyleSheet.create({
   },
   input: {
     width: scale(300),
-    height: verticalScale(35),
+    height: verticalScale(38),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(14),
     fontFamily: fonts.body,
+  },
+  formContainer: {
+    width: scale(300),
+    gap: verticalScale(10),
   },
   passwordContainer: {
     width: scale(300),
@@ -333,10 +340,10 @@ const styles = StyleSheet.create({
   },
   inputPassword: {
     flex: 1,
-    height: verticalScale(35),
+    height: verticalScale(38),
     paddingHorizontal: scale(15),
     color: colors.preto,
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(14),
     fontFamily: fonts.body,
   },
   forgotPasswordContainer: {
@@ -345,7 +352,7 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     color: colors.accent,
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(12),
     fontFamily: fonts.subtitle,
   },
   termsContainer: {
@@ -353,6 +360,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: scale(300),
     marginBottom: verticalScale(15),
+    marginTop: verticalScale(10),
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -372,15 +380,15 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: colors.primary,
-    width: scale(310),
-    paddingVertical: verticalScale(15),
+    width: scale(300),
+    paddingVertical: verticalScale(12),
     borderRadius: scale(50),
     marginBottom: verticalScale(10),
     alignItems: "center",
   },
   loginText: {
     color: colors.white,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(17),
     fontFamily: fonts.title,
   },
   registerText: {

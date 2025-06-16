@@ -239,7 +239,6 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-// Definimos algunos tamaños relativos
 const HORIZONTAL_MARGIN = scale(30);
 const CONTAINER_WIDTH = SCREEN_WIDTH - HORIZONTAL_MARGIN * 2;
 const CARD_VERTICAL_MARGIN = verticalScale(10);
@@ -267,7 +266,7 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     width: CONTAINER_WIDTH,
-    height: SCREEN_HEIGHT * 0.7,
+    height: SCREEN_HEIGHT * 0.65,
     padding: verticalScale(15),
     marginVertical: CARD_VERTICAL_MARGIN,
   },

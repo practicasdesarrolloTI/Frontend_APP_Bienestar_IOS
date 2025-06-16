@@ -42,10 +42,15 @@ const EpsPicker: React.FC<Props> = ({ selected, options, onSelect }) => {
       >
         <Text style={[styles.selectedText, !selected && styles.placeholder]}>
           {selected
-            ? options.find((opt) => normalizarTexto(opt.label) === selected)?.label
+            ? options.find((opt) => normalizarTexto(opt.label) === selected)
+                ?.label
             : "Seleccione su EPS"}
         </Text>
-        <MaterialIcons name="keyboard-arrow-down" size={24} color={colors.preto} />
+        <MaterialIcons
+          name="keyboard-arrow-down"
+          size={22}
+          color={colors.preto}
+        />
       </TouchableOpacity>
 
       <Modal
@@ -87,9 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    height: verticalScale(35),
-    width: scale(150),
-    marginBottom: verticalScale(10),
+    height: verticalScale(38),
+    width: scale(147),
   },
   selectedText: {
     fontSize: moderateScale(11),

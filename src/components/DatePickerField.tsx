@@ -24,7 +24,7 @@ const formatDateToString = (date: Date): string => {
   return `${day}/${month}/${year}`;
 };
 
-const DatePickerField: React.FC<Props> = ({ label = "Fecha de nacimiento", date, onSelect }) => {
+const DatePickerField: React.FC<Props> = ({ label = "F. de nacimiento", date, onSelect }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {
@@ -50,7 +50,7 @@ const DatePickerField: React.FC<Props> = ({ label = "Fecha de nacimiento", date,
         <Text style={[styles.selectedText, !date && styles.placeholder]}>
           {date ? date : label}
         </Text>
-        <MaterialIcons name="calendar-today" size={moderateScale(15)} color={colors.preto} style={styles.icon} />
+        <MaterialIcons name="calendar-today" size={moderateScale(12)} color={colors.preto} style={styles.icon} />
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -71,9 +71,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    height: verticalScale(35),
-    width: scale(140),
-    marginBottom: verticalScale(10),
+    height: verticalScale(38),
+    width: scale(147),
   },
   selectedText: {
     fontSize: moderateScale(11),
