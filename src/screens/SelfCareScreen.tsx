@@ -17,7 +17,7 @@ import { findriscSurvey } from "../data/findriscSurvey";
 import { lawtonBrodySurvey } from "../data/lawtonBrodySurvey";
 import { framinghamSurvey } from "../data/fragmiganSurvey";
 import { moriskyGreenSurvey } from "../data/moriskyGreenSurvey";
-import { getPatientByDocument } from "../services/patientService";
+import { getPatientAPP, getPatientByDocument } from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calcularEdad } from "../utils/dateUtils";
 import { getSurveyResultsByDocument } from "../services/surveyResultService";
@@ -45,17 +45,17 @@ type Survey = {
   descripcion: string;
   preguntas: (
     | {
-        omitida: any;
-        pregunta: string;
-        opciones: { texto: string; valor: number; sexo: any }[];
-        recomendaciones?: string;
-      }
+      omitida: any;
+      pregunta: string;
+      opciones: { texto: string; valor: number; sexo: any }[];
+      recomendaciones?: string;
+    }
     | {
-        omitida: any;
-        pregunta: string;
-        opciones: { texto: string; valor: number; sexo: any }[];
-        recomendaciones?: string;
-      }
+      omitida: any;
+      pregunta: string;
+      opciones: { texto: string; valor: number; sexo: any }[];
+      recomendaciones?: string;
+    }
   )[];
   requiereEdad: boolean;
   requiereSexo: boolean;
@@ -72,12 +72,30 @@ type Paciente = {
   sexo: string;
 };
 
+type PacienteRegistro = {
+  _id: string;
+  fechaNacimiento: string;
+  eps: string;
+  documentType: string;
+  document: number;
+  mail: string;
+  password: string;
+  firstName: string;
+  middleName: string;
+  firstSurname: string;
+  middleLastName: string;
+  createdAt: string;
+  updatedAt: string;
+  sexo: string;
+};
+
 const SelfCareScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [resultados, setResultados] = useState<ResultadoEncuesta[] | null>(
     null
   );
   const [Paciente, setPatient] = useState<Paciente | null>(null);
+  const [PacienteRegistro, setPacienteRegistro] = useState<PacienteRegistro | null>(null);
   const [indicadores, setIndicadores] = useState<any>(null);
   const [encuestasListas, setEncuestasListas] = useState(false);
   const [estadoEncuestas, setEstadoEncuestas] = useState<
@@ -141,13 +159,18 @@ const SelfCareScreen: React.FC = () => {
         return;
       }
 
+      const pacienteRegistroData = await getPatientAPP(storedTipo, Number(storedDoc));
+      setPacienteRegistro(pacienteRegistroData as unknown as PacienteRegistro);
+
       const data = await getPatientByDocument(storedDoc);
       setPatient(data as unknown as Paciente);
+
       const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
-    } catch (error) {}
+    } catch (error) {
+    }
   };
-      
+
   const loadResultados = async () => {
     const storedDoc = await AsyncStorage.getItem("documento");
     const initialState: Record<string, any> = {};
@@ -192,11 +215,11 @@ const SelfCareScreen: React.FC = () => {
   }, [encuestas, resultados]);
 
   const handleOpenSurvey = (survey: Survey) => {
-    if (!Paciente) return Toast.show({
+    if (!Paciente && !PacienteRegistro) return Toast.show({
       type: "error",
       text2: "En el momento no se pueden realizar encuestas. Intentalo más tarde.",
       position: "bottom",
-    })  ;
+    });
 
     const estado = estadoEncuestas[survey.id];
 
@@ -218,8 +241,8 @@ const SelfCareScreen: React.FC = () => {
       return;
     }
 
-    const edad = calcularEdad(Paciente.fecha_nacimiento);
-    const sexo = Paciente.sexo === "M" ? "Masculino" : "Femenino";
+    const edad = calcularEdad(Paciente?.fecha_nacimiento || PacienteRegistro?.fechaNacimiento || " ");
+    const sexo = Paciente?.sexo || PacienteRegistro?.sexo || "Masculino";
 
     navigation.navigate("SurveyScreen", {
       surveyId: survey.id,

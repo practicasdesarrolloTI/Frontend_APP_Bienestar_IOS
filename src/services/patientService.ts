@@ -29,13 +29,17 @@ export type PacienteRegistroBack = {
   fechaNacimiento: string;
   createdAt: string;
   updatedAt: string;
+  firstName: string;
+  middleName: string;
+  firstSurname: string;
+  middleLastName: string;
+  sexo: string;
 };
 
 
 export const getPatientByDocument = async ( documento: string): Promise<PacienteBackend | null> => {
     const response = await axios.get<PacienteBackend>(`${API_URL}/paciente/${documento}`);
     return response.data;
-  
   };
 
 

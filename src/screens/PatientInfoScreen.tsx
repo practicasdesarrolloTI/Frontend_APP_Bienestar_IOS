@@ -50,8 +50,13 @@ type PacienteRegistro = {
   document: number;
   mail: string;
   password: string;
+  firstName: string;
+  middleName: string;
+  firstSurname: string;
+  middleLastName: string;
   createdAt: string;
   updatedAt: string;
+  sexo: string;
 };
 
 const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
@@ -163,11 +168,11 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.label}>Nombre completo</Text>
               <Text style={styles.value}>
                 {formatName(
-                  paciente?.primer_nombre ?? "Información no disponible"
+                  paciente?.primer_nombre ?? pacienteRegistro?.firstName ?? "Información no disponible"
                 )}{" "}
-                {formatName(paciente?.segundo_nombre ?? " ")}{" "}
-                {formatName(paciente?.primer_apellido ?? " ")}{" "}
-                {formatName(paciente?.segundo_apellido ?? " ")}
+                {formatName(paciente?.segundo_nombre ?? pacienteRegistro?.middleName ?? " ")}{" "}
+                {formatName(paciente?.primer_apellido ?? pacienteRegistro?.firstSurname ?? " ")}{" "}
+                {formatName(paciente?.segundo_apellido ?? pacienteRegistro?.middleLastName ?? " ")}
               </Text>
               <Text style={styles.label}>Documento</Text>
               <Text style={styles.value}>
@@ -178,23 +183,23 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
               <Text style={styles.label}>Sexo</Text>
               <Text style={styles.value}>
-                {paciente?.sexo || "Información no disponible"}
+                {paciente?.sexo || pacienteRegistro?.sexo || "Información no disponible"}
               </Text>
               <Text style={styles.label}>Fecha de Nacimiento</Text>
               <Text style={styles.value}>
                 {paciente?.fecha_nacimiento &&
-                esFechaValida(paciente.fecha_nacimiento)
+                  esFechaValida(paciente.fecha_nacimiento)
                   ? paciente.fecha_nacimiento
                   : pacienteRegistro?.fechaNacimiento}
               </Text>
               <Text style={styles.label}>Edad</Text>
               <Text style={styles.value}>
                 {paciente?.fecha_nacimiento &&
-                esFechaValida(paciente.fecha_nacimiento)
+                  esFechaValida(paciente.fecha_nacimiento)
                   ? `${calcularEdad(paciente.fecha_nacimiento)} años`
                   : pacienteRegistro?.fechaNacimiento
-                  ? `${calcularEdad(pacienteRegistro.fechaNacimiento)} años`
-                  : "Información no disponible"}
+                    ? `${calcularEdad(pacienteRegistro.fechaNacimiento)} años`
+                    : "Información no disponible"}
               </Text>
               <Text style={styles.label}>Correo</Text>
               <Text style={styles.value}>
@@ -208,7 +213,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
               <Text style={styles.label}>EPS</Text>
               <Text style={styles.value}>
-                {paciente?.eps ? formatName(paciente.eps): formatName(pacienteRegistro?.eps || "Información no disponible")}
+                {paciente?.eps ? formatName(paciente.eps) : formatName(pacienteRegistro?.eps || "Información no disponible")}
               </Text>
             </View>
           </View>
