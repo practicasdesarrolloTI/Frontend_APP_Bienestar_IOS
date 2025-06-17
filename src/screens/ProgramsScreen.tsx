@@ -151,7 +151,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
                             <Text style={styles.dateMonth}>
                               {dt.toLocaleDateString("es-CO", {
                                 month: "long",
-                              })}
+                              })} 
                             </Text>
                             <Text style={styles.dateYear}>
                               {dt.getFullYear()}
@@ -218,8 +218,8 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const CARD_CONTENT_HEIGHT = verticalScale(160);
-const LEFT_COLUMN_WIDTH = scale(96);
+const CARD_CONTENT_HEIGHT = verticalScale(170);
+const LEFT_COLUMN_WIDTH = scale(98);
 const ICON_SIZE = scale(34);
 const styles = StyleSheet.create({
   safeArea: {
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: verticalScale(16),
+    fontSize: verticalScale(14),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",

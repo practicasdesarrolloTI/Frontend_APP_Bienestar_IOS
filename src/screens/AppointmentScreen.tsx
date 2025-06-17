@@ -208,7 +208,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const CARD_CONTENT_HEIGHT = verticalScale(140);
+const CARD_CONTENT_HEIGHT = verticalScale(150);
 const LEFT_COLUMN_WIDTH = scale(96);
 const ICON_SIZE = moderateScale(34);
 
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: verticalScale(16),
+    fontSize: verticalScale(14),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",

@@ -21,7 +21,8 @@ export async function fetchMedicamentos(tipo: string, documento: string) {
         dosificacion: item.dosificacion || "No especificada",
         presentacion: item.prescripcion_medicamento,
         fechaVencimiento: item.fecha_vencimiento?.split('T')[0] || "No disponible",
-
+        dias_tratamiento: item.dias_tratamiento || "No especificado",
+        indicaciones: item.nota || "",
       }));
     }
 

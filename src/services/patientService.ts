@@ -19,11 +19,11 @@ export type PacienteBackend = {
   tipo_documento_abreviado: string;
 };
 
-export type PacienteRegistro = {
+export type PacienteRegistroBack = {
   _id: string;
   documentType: string;
   document: number;
-  mail?: string;
+  mail: string;
   password: string;
   eps: string;
   fechaNacimiento: string;
@@ -39,8 +39,8 @@ export const getPatientByDocument = async ( documento: string): Promise<Paciente
   };
 
 
-export const checkPatient = async (documentType: string, document: number): Promise<PacienteRegistro | null> => {
-    const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/${documentType}/${document}`);
+export const checkPatient = async (documentType: string, document: number): Promise<PacienteRegistroBack | null> => {
+    const response = await axios.get<PacienteRegistroBack>(`${API_URL}/patient/${documentType}/${document}`);
     return response.data;
 };
 
@@ -55,10 +55,9 @@ export const checkPatientByMail = async (mail: string): Promise<any> => {
   }
 };
 
-export const getPatientAPP = async (documentType: string, document: number): Promise<PacienteRegistro | null> => {
+export const getPatientAPP = async (documentType: string, document: number): Promise<PacienteRegistroBack | null> => {
   try {
-    const response = await axios.get<PacienteRegistro>(`${API_URL}/patient/data/${documentType}/${document}`);
- 
+    const response = await axios.get<PacienteRegistroBack>(`${API_URL}/patient/data/${documentType}/${document}`);
     return response.data;
   } catch (error) {
     return null;

@@ -5,9 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
-  Platform,
   ImageBackground,
-  Dimensions,
   ScrollView,
 } from "react-native";
 import { moderateScale, verticalScale } from "react-native-size-matters";
@@ -46,9 +44,11 @@ type Paciente = {
 };
 type PacienteRegistro = {
   _id: string;
+  fechaNacimiento: string;
+  eps: string;
   documentType: string;
   document: number;
-  mail?: string;
+  mail: string;
   password: string;
   createdAt: string;
   updatedAt: string;
@@ -108,10 +108,11 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           storedDocType,
           Number(storedDoc)
         );
+        setPacienteRegistro(dataregistro);
+
         const data = await getPatientByDocument(storedDoc);
 
         setPaciente(data as unknown as Paciente);
-        setPacienteRegistro(dataregistro as unknown as PacienteRegistro);
       } catch (error) {
         Toast.show({
           type: "error",
@@ -170,9 +171,10 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
               <Text style={styles.label}>Documento</Text>
               <Text style={styles.value}>
-                {paciente?.tipo_documento_abreviado ||
+                {pacienteRegistro?.documentType ||
+                  paciente?.tipo_documento ||
                   "Información no disponible"}{" "}
-                {paciente?.documento || ""}
+                {pacienteRegistro?.document || paciente?.documento || ""}
               </Text>
               <Text style={styles.label}>Sexo</Text>
               <Text style={styles.value}>
@@ -187,18 +189,20 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
                 {paciente?.fecha_nacimiento &&
                 esFechaValida(paciente.fecha_nacimiento)
                   ? paciente.fecha_nacimiento
-                  : "Información no disponible"}
+                  : pacienteRegistro?.fechaNacimiento}
               </Text>
               <Text style={styles.label}>Edad</Text>
               <Text style={styles.value}>
                 {paciente?.fecha_nacimiento &&
                 esFechaValida(paciente.fecha_nacimiento)
                   ? `${calcularEdad(paciente.fecha_nacimiento)} años`
+                  : pacienteRegistro?.fechaNacimiento
+                  ? `${calcularEdad(pacienteRegistro.fechaNacimiento)} años`
                   : "Información no disponible"}
               </Text>
               <Text style={styles.label}>Correo</Text>
               <Text style={styles.value}>
-                {pacienteRegistro?.mail || "No tiene correo registrado"}
+                {pacienteRegistro?.mail || paciente?.correo || "Información no disponible"}
               </Text>
               <Text style={styles.label}>Teléfono</Text>
               <Text style={styles.value}>
@@ -208,7 +212,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
               <Text style={styles.label}>EPS</Text>
               <Text style={styles.value}>
-                {formatName(paciente?.eps ?? "Información no disponible")}
+                {paciente?.eps ? formatName(paciente.eps): formatName(pacienteRegistro?.eps || "Información no disponible")}
               </Text>
             </View>
           </View>

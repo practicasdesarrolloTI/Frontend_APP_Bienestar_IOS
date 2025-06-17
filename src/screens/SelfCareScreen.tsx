@@ -10,7 +10,6 @@ import {
   ImageBackground,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
-import colors from "../themes/colors";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,7 +20,6 @@ import { moriskyGreenSurvey } from "../data/moriskyGreenSurvey";
 import { getPatientByDocument } from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calcularEdad } from "../utils/dateUtils";
-import { fonts } from "../themes/fonts";
 import { getSurveyResultsByDocument } from "../services/surveyResultService";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -82,7 +80,6 @@ const SelfCareScreen: React.FC = () => {
   const [Paciente, setPatient] = useState<Paciente | null>(null);
   const [indicadores, setIndicadores] = useState<any>(null);
   const [encuestasListas, setEncuestasListas] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [estadoEncuestas, setEstadoEncuestas] = useState<
     Record<string, { bloqueada?: boolean; disponibleEn?: any }>
   >({});
@@ -146,12 +143,11 @@ const SelfCareScreen: React.FC = () => {
 
       const data = await getPatientByDocument(storedDoc);
       setPatient(data as unknown as Paciente);
-
       const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
     } catch (error) {}
   };
-
+      
   const loadResultados = async () => {
     const storedDoc = await AsyncStorage.getItem("documento");
     const initialState: Record<string, any> = {};
@@ -196,7 +192,11 @@ const SelfCareScreen: React.FC = () => {
   }, [encuestas, resultados]);
 
   const handleOpenSurvey = (survey: Survey) => {
-    if (!Paciente) return;
+    if (!Paciente) return Toast.show({
+      type: "error",
+      text2: "En el momento no se pueden realizar encuestas. Intentalo más tarde.",
+      position: "bottom",
+    })  ;
 
     const estado = estadoEncuestas[survey.id];
 

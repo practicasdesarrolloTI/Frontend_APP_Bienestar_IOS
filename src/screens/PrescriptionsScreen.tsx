@@ -33,6 +33,8 @@ type Medicamento = {
   dosificacion: number;
   presentacion: string;
   fechaVencimiento: string;
+  dias_tratamiento: number;
+  indicaciones: string;
 };
 
 const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
@@ -203,6 +205,19 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
                               {capitalizeSentence(item.presentacion)}
                             </Text>
                           )}
+                        {item.dias_tratamiento &&
+                          item.dias_tratamiento !== 0 && (
+                            <Text style={styles.text}>
+                              <Text style={styles.label}>Días de tratamiento: </Text>
+                              {item.dias_tratamiento} 
+                            </Text>
+                          )}
+                          {item.indicaciones && item.indicaciones !== "" && (
+                            <Text style={styles.text}>
+                              <Text style={styles.label}>Indicaciones: </Text>
+                              {capitalizeSentence(item.indicaciones)}
+                            </Text>
+                          )}
                       </View>
                     </View>
                     <View style={styles.iconWrapper}>
@@ -230,8 +245,8 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const LEFT_COLUMN_WIDTH = scale(96);
-const CARD_CONTENT_HEIGHT = verticalScale(140);
+const LEFT_COLUMN_WIDTH = scale(94);
+const CARD_CONTENT_HEIGHT = verticalScale(180);
 const ICON_SIZE = scale(34);
 
 const styles = StyleSheet.create({
@@ -272,7 +287,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.title,
   },
   dateMonth: {
-    fontSize: verticalScale(16),
+    fontSize: verticalScale(14),
     color: colors.white,
     fontFamily: fonts.subtitle,
     textTransform: "capitalize",
@@ -280,7 +295,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: moderateScale(2),
   },
   dateYear: {
-    fontSize: verticalScale(18),
+    fontSize: verticalScale(17),
     color: colors.white,
     fontFamily: fonts.body,
     marginTop: verticalScale(4),
@@ -288,12 +303,12 @@ const styles = StyleSheet.create({
   rightColumn: {
     flex: 1,
     padding: moderateScale(12),
-    marginLeft: scale(16),
+    marginLeft: scale(12),
     marginRight: scale(10),
     justifyContent: "center",
     alignItems: "flex-start",
   },
- text: {
+  text: {
     fontSize: verticalScale(11),
     color: colors.preto,
     marginBottom: verticalScale(4),
