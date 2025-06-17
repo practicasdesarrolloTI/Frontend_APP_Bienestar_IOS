@@ -73,7 +73,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     []
   );
   const [selectedEps, setSelectedEps] = useState<string | null>(null);
-  const [selectedSex, setSelectedSex] = useState<"M" | "F" | null>(null);
+  const [selectedSex, setSelectedSex] = useState<"Masculino" | "Femenino" | null>(null);
 
   useEffect(() => {
     const loadEps = async () => {

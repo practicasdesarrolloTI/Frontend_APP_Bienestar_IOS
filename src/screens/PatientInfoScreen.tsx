@@ -178,11 +178,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
               </Text>
               <Text style={styles.label}>Sexo</Text>
               <Text style={styles.value}>
-                {paciente?.sexo === "M"
-                  ? "Masculino"
-                  : paciente?.sexo === "F"
-                  ? "Femenino"
-                  : "Información no disponible"}
+                {paciente?.sexo || "Información no disponible"}
               </Text>
               <Text style={styles.label}>Fecha de Nacimiento</Text>
               <Text style={styles.value}>

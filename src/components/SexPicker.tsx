@@ -12,7 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
 
-type SexType = "M" | "F";
+type SexType = "Masculino" | "Femenino";
 
 type Props = {
   selected: SexType | null;
@@ -20,8 +20,8 @@ type Props = {
 };
 
 const sexOptions = [
-  { label: "Masculino", value: "M" },
-  { label: "Femenino", value: "F" },
+  { label: "Masculino", value: "Masculino" },
+  { label: "Femenino", value: "Femenino" },
 ];
 
 const SexPicker: React.FC<Props> = ({ selected, onSelect }) => {
