@@ -23,7 +23,7 @@ type RootStackParamList = {
 };
 
 const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
-  const saludo = sexo === "F" ? "¡Bienvenida!" : "¡Bienvenido!";
+  const saludo = sexo === "Femenino" ? "¡Bienvenida!" : "¡Bienvenido!";
   const [menuVisible, setMenuVisible] = useState(false);
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
