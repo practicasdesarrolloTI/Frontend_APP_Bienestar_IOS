@@ -32,9 +32,9 @@ type SurveyScreenProps = NativeStackScreenProps<
 type Respuesta =
   | string
   | {
-    texto: string;
-    valor: number;
-  };
+      texto: string;
+      valor: number;
+    };
 
 const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const { preguntas, surveyId, edad, sexo, survey, indicadores } = route.params;
@@ -52,7 +52,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
   const imc = peso && estatura ? peso / (estatura * estatura) : NaN;
 
- useEffect(() => {
+  useEffect(() => {
     const resp = responses[currentIndex];
     if (resp && typeof resp === "object" && resp.valor !== undefined) {
       setSelectedOption(resp.valor);
@@ -62,7 +62,6 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
       setSelectedOption("");
     }
   }, [currentIndex, responses]);
-
 
   // Filtrar preguntas omitidas
   let finalPreguntas = preguntas.filter((q) => {
@@ -99,7 +98,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 
   const handleNext = () => {
     const response = responses[currentIndex];
-    
+
     // Validar campo numérico
     if (
       response === undefined ||
@@ -113,12 +112,11 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         parsed < 1 ||
         parsed > 999
       ) {
-       Toast.show({
+        Toast.show({
           type: "error",
           text2: "Por favor ingresa un valor válido entre 1 y 999.",
           position: "bottom",
-        }
-        );
+        });
         return;
       }
     } else {
@@ -305,26 +303,31 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
       const puntajeTotal =
         surveyId === "moriskyGreen"
           ? responses.every((r, i) => {
-            if (typeof r === "object") {
-              if (i === 0 && r.texto !== "No") return false;
-              if (i === 1 && r.texto !== "Sí") return false;
-              if (i === 2 && r.texto !== "No") return false;
-              if (i === 3 && r.texto !== "No") return false;
-            }
-            return true;
-          })
+              if (typeof r === "object") {
+                if (i === 0 && r.texto !== "No") return false;
+                if (i === 1 && r.texto !== "Sí") return false;
+                if (i === 2 && r.texto !== "No") return false;
+                if (i === 3 && r.texto !== "No") return false;
+              }
+              return true;
+            })
             ? 1
             : 0
           : [...respuestasExtra, ...responses].reduce((acc, r) => {
-            if (typeof r === "object" && r.valor !== undefined) {
-              return acc + r.valor;
-            }
-            return acc;
-          }, 0);
+              if (typeof r === "object" && r.valor !== undefined) {
+                return acc + r.valor;
+              }
+              return acc;
+            }, 0);
 
       // Combinar respuestas manuales y automáticas (omitidas)
       const allResponses = [
-        ...respuestasExtra.filter((r): r is { texto: string; valor: number } => typeof r === "object" && r !== null && "texto" in r).map((r) => r.texto),
+        ...respuestasExtra
+          .filter(
+            (r): r is { texto: string; valor: number } =>
+              typeof r === "object" && r !== null && "texto" in r
+          )
+          .map((r) => r.texto),
         ...responses.map((r) => (typeof r === "string" ? r : r.texto)),
       ];
 
@@ -511,7 +514,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
 };
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const HEADER_HEIGHT = SCREEN_HEIGHT * 0.10;
+const HEADER_HEIGHT = SCREEN_HEIGHT * 0.1;
 const SUBHEADER_HEIGHT = SCREEN_HEIGHT * 0.12;
 const HORIZONTAL_PADDING = scale(20);
 const VERTICAL_PADDING = verticalScale(10);
@@ -530,7 +533,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: HORIZONTAL_PADDING,
   },
-  
+
   backButton: {
     width: moderateScale(40),
     height: moderateScale(40),
@@ -555,8 +558,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: HORIZONTAL_PADDING,
   },
   logo: {
-    width: SCREEN_WIDTH * 0.45,
-    height: SCREEN_HEIGHT * 0.075,
+    width: SCREEN_WIDTH * 0.25,
+    height: verticalScale(40),
     marginBottom: verticalScale(10),
   },
   progressBarBackground: {
@@ -578,15 +581,15 @@ const styles = StyleSheet.create({
   },
   pagination: {
     fontFamily: fonts.body,
-    fontSize: moderateScale(17),
-    marginTop: verticalScale(12),
-    marginBottom: verticalScale(8),
+    fontSize: moderateScale(15),
+    marginBottom: verticalScale(2),
   },
   questionContainer: {
-    height: verticalScale(280),
+    height: verticalScale(300),
+   
   },
   question: {
-    fontSize: moderateScale(22),
+    fontSize: moderateScale(20),
     color: colors.preto,
     textAlign: "left",
     fontFamily: fonts.title,
@@ -595,7 +598,6 @@ const styles = StyleSheet.create({
   input: {
     width: scale(80),
     height: verticalScale(45),
-    borderWidth: 1,
     borderColor: colors.lightGray,
     borderRadius: moderateScale(8),
     padding: moderateScale(8),
@@ -614,7 +616,7 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     width: "100%",
-    paddingVertical: verticalScale(14),
+    paddingVertical: verticalScale(10),
     backgroundColor: colors.white,
     borderRadius: moderateScale(10),
     alignItems: "center",
@@ -628,7 +630,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     color: colors.preto,
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(15),
     fontFamily: fonts.subtitle,
   },
   buttonContainer: {
@@ -636,26 +638,26 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: verticalScale(10),
   },
   previousButton: {
     backgroundColor: colors.secondary,
-    width: "100%",
-    paddingVertical: verticalScale(14),
-    borderRadius: moderateScale(50),
+    width: scale(250),
+    paddingVertical: verticalScale(11),
+    borderRadius: scale(50),
     marginBottom: verticalScale(10),
     alignItems: "center",
   },
   nextButton: {
     backgroundColor: colors.primary,
-    width: "100%",
-    paddingVertical: verticalScale(14),
-    borderRadius: moderateScale(50),
+    width: scale(250),
+    paddingVertical: verticalScale(11),
+    borderRadius: scale(50),
+    marginBottom: verticalScale(10),
     alignItems: "center",
   },
   nextButtonText: {
     color: colors.white,
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(16),
     fontFamily: fonts.title,
   },
 });

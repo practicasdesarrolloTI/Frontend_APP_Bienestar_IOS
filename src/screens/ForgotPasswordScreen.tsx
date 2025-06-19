@@ -177,6 +177,7 @@ const ForgotPasswordScreen = ({
               cuenta{" "}
             </Text>
           </View>
+           <View style={styles.formContainer}>
           <DocumentPicker selected={documentType} onSelect={setDocumentType} />
 
           <TextInput
@@ -199,6 +200,7 @@ const ForgotPasswordScreen = ({
               <Text style={styles.buttonText}>Enviar Código</Text>
             )}
           </TouchableOpacity>
+          </View>
         </ScrollView>
       </ImageBackground>
     </SafeAreaView>
@@ -247,14 +249,16 @@ const styles = StyleSheet.create({
   },
   input: {
     width: scale(300),
-    height: verticalScale(35),
+    height: verticalScale(40),
     backgroundColor: colors.white,
     borderRadius: scale(8),
     paddingHorizontal: scale(15),
-    marginBottom: verticalScale(10),
     color: colors.preto,
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(14),
     fontFamily: fonts.body,
+  },
+   formContainer: {
+    gap: verticalScale(10),
   },
   button: {
     backgroundColor: colors.primary,

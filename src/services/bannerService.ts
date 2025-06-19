@@ -12,7 +12,6 @@ export async function fetchBanners() {
       imageUrl: item.image,
     }));    
   } catch (error) {
-    console.error("Error al obtener banners:", error);
     return [];
   }
 }

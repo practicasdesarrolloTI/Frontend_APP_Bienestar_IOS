@@ -140,7 +140,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
 
             <View style={styles.passwordContainer}>
               <TextInput
-                style={[styles.inputPasword, { flex: 1 }]}
+                style={[styles.inputPassword, { flex: 1 }]}
                 placeholder="Nueva contraseña"
                 placeholderTextColor={colors.preto}
                 secureTextEntry={!showPassword}
@@ -165,7 +165,7 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
 
             <View style={styles.passwordContainer}>
               <TextInput
-                style={[styles.inputPasword, { flex: 1 }]}
+                style={[styles.inputPassword, { flex: 1 }]}
                 placeholder="Confirmar contraseña"
                 placeholderTextColor={colors.preto}
                 secureTextEntry={!showConfirmPassword}
@@ -252,20 +252,23 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingHorizontal: scale(20),
   },
+  formContainer: {
+    gap: verticalScale(10),
+  },
   passwordContainer: {
     width: scale(300),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.white,
     borderRadius: scale(8),
-    marginBottom: verticalScale(15),
+    marginBottom: verticalScale(10),
   },
-  inputPasword: {
+  inputPassword: {
     flex: 1,
-    height: verticalScale(35),
+    height: verticalScale(40),
     paddingHorizontal: scale(15),
     color: colors.preto,
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(14),
     fontFamily: fonts.body,
   },
   warning: {
