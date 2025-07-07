@@ -34,6 +34,8 @@ type Cita = {
   programa: string;
   medico: string;
   estado: string;
+  grupo: string;
+  procedimiento_especifico: string;
 };
 
 const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
@@ -67,11 +69,14 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
           fecha: item.fecha_cita?.split(" ")[0] || "",
           hora: item.turno || "",
           especialidad: item.especialidad || "",
-          programa: item.programa || "—",
+          programa: item.programa || "",
           medico: item.nombre_medico || "",
           estado: item.estado || "",
+          grupo: item.grupo || "",
+          procedimiento_especifico: item.procedimiento_especifico || "",
         }));
         setCitas(citasFormateadas);
+
       } catch (error) {
       } finally {
         setLoading(false);
@@ -174,14 +179,26 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
                           <Text style={styles.label}>Hora: </Text>
                           {item.hora}
                         </Text>
-                        <Text style={styles.text}>
+                        {item.especialidad && item.medico && (<><Text style={styles.text}>
                           <Text style={styles.label}>Especialidad: </Text>
                           {capitalizeSentence(item.especialidad)}
-                        </Text>
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Médico: </Text>
-                          {capitalizeName(item.medico)}
-                        </Text>
+                        </Text><Text style={styles.text}>
+                            <Text style={styles.label}>Médico: </Text>
+                            {capitalizeName(item.medico)}
+                          </Text></>)}
+                        {item.grupo && (
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Tipo de procedimiento: </Text>
+                            {capitalizeSentence(item.grupo)}
+                          </Text>
+                        )}
+                        {item.procedimiento_especifico && (
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Procedimiento: </Text>
+                            {capitalizeSentence(item.procedimiento_especifico)}
+                          </Text>
+                        )}
+                       
                       </View>
                     </View>
                     <View style={styles.iconWrapper}>
@@ -253,7 +270,7 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     fontFamily: fonts.title,
   },
- dateDay: {
+  dateDay: {
     fontSize: verticalScale(36),
     color: colors.white,
     fontFamily: fonts.title,
@@ -280,7 +297,7 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     position: "absolute",
-    left:   LEFT_COLUMN_WIDTH - (ICON_SIZE / 2),
+    left: LEFT_COLUMN_WIDTH - (ICON_SIZE / 2),
     top: CARD_CONTENT_HEIGHT / 2 - ICON_SIZE / 2,
     width: moderateScale(34),
     height: moderateScale(34),
