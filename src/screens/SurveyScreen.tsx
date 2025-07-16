@@ -506,7 +506,10 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
           text="¿Estás seguro de que quieres abandonar esta encuesta?"
           visible={modalClosed}
           onCancel={() => setModalClosed(false)}
-          onConfirm={() => navigation.navigate("SelfCareScreen")}
+          onConfirm={() =>{
+            setModalClosed(false);
+            navigation.navigate("SelfCareScreen");
+          }}
         />
       </ImageBackground>
     </SafeAreaView>

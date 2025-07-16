@@ -11,6 +11,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -41,8 +42,15 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   const [programas, setProgramas] = useState<Programa[]>([]);
   const [filteredProgramas, setFilteredProgramas] = useState<Programa[]>([]);
   const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!isFocused) {
+      setModalVisible(false);
+    }
+  }, [isFocused]);
 
   /** Función para cerrar sesión */
   const handleLogout = async () => {
@@ -151,7 +159,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
                             <Text style={styles.dateMonth}>
                               {dt.toLocaleDateString("es-CO", {
                                 month: "long",
-                              })} 
+                              })}
                             </Text>
                             <Text style={styles.dateYear}>
                               {dt.getFullYear()}
