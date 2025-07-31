@@ -71,8 +71,10 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
         const doc = await AsyncStorage.getItem("documento");
         if (!tipo || !doc) throw new Error("Datos incompletos");
         const data = await fetchProgramas(tipo, doc);
+
         setProgramas(data);
         setFilteredProgramas(data);
+        console.log("Programas cargados:", data);
       } catch (err) {
       } finally {
         setLoading(false);
@@ -141,13 +143,10 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
               data={filteredProgramas}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
-                const tieneCita =
-                  item.fecha_cita &&
-                  !isNaN(new Date(item.fecha_cita).getTime());
-                let dt: Date | null = null;
-                if (tieneCita) {
-                  dt = new Date(item.fecha_cita);
-                }
+                const tieneCita = item.fecha_cita && item.fecha_cita !== "";
+                const dt = new Date(item.fecha_cita.slice(0,10));
+                console.log("Fecha de cita programa:", dt);
+
                 return (
                   <View style={styles.card}>
                     <View style={styles.cardContent}>

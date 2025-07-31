@@ -84,7 +84,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
           procedimiento_especifico: item.procedimiento_especifico || "",
         }));
         setCitas(citasFormateadas);
-
+        console.log("Citas cargadas:", citasFormateadas);
       } catch (error) {
       } finally {
         setLoading(false);
@@ -161,6 +161,7 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
                 const dt = new Date(item.fecha);
+                console.log("Fecha de citaaaas:", dt);
                 const weekday = dt.toLocaleDateString("es-CO", {
                   weekday: "long",
                 });
