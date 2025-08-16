@@ -88,12 +88,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const handleRegister = async () => {
-    const paciente = await getPatientByDocument(documentNumber);
-    const docPaciente = paciente?.documento || null;
-    const docType = paciente?.tipo_documento_abreviado || null;
-    const fechaNaci = paciente?.fecha_nacimiento || null;
-    const EPS = paciente?.eps || null;
-    const sexoPaciente = paciente?.sexo || null;
 
     if (!documentType) {
       Toast.show({
@@ -136,6 +130,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
+
     if (email !== confirmEmail) {
       Toast.show({
         type: "error",
@@ -144,6 +139,34 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
+
+    if (!selectedEps) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ingrese el nombre de su EPS.",
+      });
+      return;
+    }
+
+    if (!birthDate) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Ingrese su fecha de nacimiento.",
+      });
+      return;
+    }
+
+    if (!selectedSex) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Seleccione su sexo.",
+      });
+      return;
+    }
+
     if (!acceptedTerms) {
       Toast.show({
         type: "error",
@@ -152,6 +175,25 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
+
+
+    const paciente = await getPatientByDocument(documentNumber);
+
+    if (!paciente) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No se encontró el paciente con la información dada. Verifica los datos.",
+      });
+      return;
+    }
+
+    const docPaciente = paciente?.documento || null;
+    const docType = paciente?.tipo_documento_abreviado || null;
+    const fechaNaci = paciente?.fecha_nacimiento || null;
+    const EPS = paciente?.eps || null;
+    const sexoPaciente = paciente?.sexo || null;
+
 
     if (documentType !== docType) {
       Toast.show({
@@ -163,11 +205,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    if (!birthDate) {
+     if (selectedEps !== EPS) {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Ingrese su fecha de nacimiento.",
+        text2:
+          "No se encontró el paciente con la información dada. Verifica los datos.",
       });
       return;
     }
@@ -187,34 +230,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         text1: "Error",
         text2:
           "No se encontró el paciente con la información dada. Verifica los datos.",
-      });
-      return;
-    }
-
-    if (!selectedEps) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Ingrese el nombre de su EPS.",
-      });
-      return;
-    }
-
-    if (selectedEps !== EPS) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          "No se encontró el paciente con la información dada. Verifica los datos.",
-      });
-      return;
-    }
-
-    if (!selectedSex) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Seleccione su sexo.",
       });
       return;
     }

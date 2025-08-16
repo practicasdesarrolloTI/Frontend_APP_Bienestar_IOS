@@ -66,6 +66,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       });
       return;
     }
+
+    if (!/^\d+$/.test(document)) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "El número de documento debe ser numérico.",
+      });
+      return;
+    }
+
     if (!acceptedTerms) {
       Toast.show({
         type: "error",
@@ -76,13 +86,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    const passwordRegex = /^[a-zA-Z0-9]{2,20}$/;
+    const passwordRegex = /^[a-zA-Z0-9]{8,20}$/;
     if (!passwordRegex.test(password)) {
       Toast.show({
         type: "error",
         text1: "Error",
         text2:
-          "La contraseña debe ser alfanumérica y tener entre 4 y 12 caracteres.",
+          "La contraseña debe ser alfanumérica y tener entre 8 y 12 caracteres.",
         position: "bottom",
       });
       setVisible(true);
@@ -144,7 +154,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           showBack={true}
           transparent={true}
           showProfileIcon={false}
-          onLogout={() => {}}
+          onLogout={() => { }}
           goBackTo="Landing"
         />
 

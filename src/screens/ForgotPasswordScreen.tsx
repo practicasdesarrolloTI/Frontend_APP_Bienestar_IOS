@@ -53,16 +53,7 @@ const ForgotPasswordScreen = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendCode = async () => {
-    const paciente = await checkPatient(
-      documentType as DocumentType,
-      Number(document)
-    );
-    const docPaciente = paciente?.document || null;
-    const docType = paciente?.documentType || null;
-    const correoPaciente = paciente?.mail;
-
-    console.log("paciente", paciente);
-
+    
     if (documentType === null) {
       Toast.show({
         type: "error",
@@ -80,7 +71,8 @@ const ForgotPasswordScreen = ({
       });
       return;
     }
-    if (!/^\d+$/.test(String(docPaciente ?? ""))) {
+
+    if (!/^\d+$/.test(document)) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -88,6 +80,15 @@ const ForgotPasswordScreen = ({
       });
       return;
     }
+
+    const paciente = await checkPatient(
+      documentType as DocumentType,
+      Number(document)
+    );
+    const docPaciente = paciente?.document || null;
+    const docType = paciente?.documentType || null;
+    const correoPaciente = paciente?.mail;
+
     if (documentType !== docType) {
       Toast.show({
         type: "error",
@@ -106,7 +107,6 @@ const ForgotPasswordScreen = ({
         correoPaciente || ""
       );
       if (result.success) {
-        console.log("Código enviado a:", correoPaciente);
         navigation.navigate("VerifyCode", {
           document: document,
           documentType: documentType as DocumentType,

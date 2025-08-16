@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://backend.bienestarips.com/api'; 
+const API_URL = 'https://backend.bienestarips.com/api';
 
 export type PacienteBackend = {
   tipo_documento: string | number;
@@ -37,15 +37,29 @@ export type PacienteRegistroBack = {
 };
 
 
-export const getPatientByDocument = async ( documento: string): Promise<PacienteBackend | null> => {
+// export const getPatientByDocument = async (documento: string): Promise<PacienteBackend | null> => {
+//   console.log("getPatientByDocument called with:", documento);
+//   const response = await axios.get<PacienteBackend>(`${API_URL}/paciente/${documento}`);
+//   console.log("getPatientByDocument response:", response);
+//   return response.data;
+// };
+export const getPatientByDocument = async (documento: string): Promise<PacienteBackend | null> => {
+  try {
     const response = await axios.get<PacienteBackend>(`${API_URL}/paciente/${documento}`);
     return response.data;
-  };
+  } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      return null;
+    }
+    return null;
+  }
+};
+
 
 
 export const checkPatient = async (documentType: string, document: number): Promise<PacienteRegistroBack | null> => {
-    const response = await axios.get<PacienteRegistroBack>(`${API_URL}/patient/${documentType}/${document}`);
-    return response.data;
+  const response = await axios.get<PacienteRegistroBack>(`${API_URL}/patient/${documentType}/${document}`);
+  return response.data;
 };
 
 export const checkPatientByMail = async (mail: string): Promise<any> => {
@@ -73,6 +87,6 @@ interface PatientResponse {
 }
 
 export const checkPatientExists = async (documento: string): Promise<boolean> => {
-    const response = await axios.get<PatientResponse>(`${API_URL}/paciente/${documento}`);
-    return !!response.data && response.data.documento === documento;
+  const response = await axios.get<PatientResponse>(`${API_URL}/paciente/${documento}`);
+  return !!response.data && response.data.documento === documento;
 };

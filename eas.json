@@ -21,10 +21,28 @@
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    },
+    "dev-sim": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "credentialsSource": "local",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m-medium"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "santiago.zamora@zentria.com.co",
+        "ascAppId": "6751143616",
+        "appleTeamId": "N967N8WXJZ"
+      }
+    }
   }
 }
