@@ -145,7 +145,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: verticalScale(3),
     elevation: 5,
-    zIndex: 999,
+    zIndex: 9999,
+    borderWidth: 3,
+    borderColor: colors.preto,
   },
   menuItem: {
     paddingVertical: verticalScale(6),
