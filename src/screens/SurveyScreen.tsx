@@ -114,7 +114,8 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
       ) {
         Toast.show({
           type: "error",
-          text2: "Por favor ingresa un valor válido entre 1 y 999.",
+          // text2: "Por favor ingresa un valor válido entre 1 y 999.",
+          text2: "Por favor Selecciona una opción.",
           position: "bottom",
         });
         return;
@@ -331,7 +332,7 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
         ...responses.map((r) => (typeof r === "string" ? r : r.texto)),
       ];
 
-      navigation.navigate("SurveySummary", {
+      navigation.replace("SurveySummary", {
         surveyId,
         responses: allResponses,
         puntaje: puntajeTotal,
@@ -508,7 +509,12 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
           onCancel={() => setModalClosed(false)}
           onConfirm={() =>{
             setModalClosed(false);
-            navigation.navigate("SelfCareScreen");
+            // navigation.navigate("SelfCareScreen" as never);
+            // navigation.reset({
+            //   index: 0,
+            //   routes: [{ name: "SelfCareScreen" as never }],
+            // });
+            navigation.replace("SelfCareScreen");
           }}
         />
       </ImageBackground>

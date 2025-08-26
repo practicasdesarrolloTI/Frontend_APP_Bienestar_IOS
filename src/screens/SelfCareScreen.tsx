@@ -253,7 +253,7 @@ const SelfCareScreen: React.FC = () => {
     const edad = calcularEdad(Paciente?.fecha_nacimiento || PacienteRegistro?.fechaNacimiento || " ");
     const sexo = Paciente?.sexo || PacienteRegistro?.sexo || "Masculino";
 
-    navigation.navigate("SurveyScreen", {
+    navigation.replace("SurveyScreen", {
       surveyId: survey.id,
       preguntas: survey.preguntas,
       edad,

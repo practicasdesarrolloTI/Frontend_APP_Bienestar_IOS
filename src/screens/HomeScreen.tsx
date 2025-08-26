@@ -121,7 +121,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       } catch {
         setHasError(true);
       } finally {
-          setLoading(false);
+        setLoading(false);
       }
     })();
   }, []);
@@ -158,7 +158,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             />
           )
         )}
-        <Carousel />
+        <View style={{ zIndex: 1 }}>
+          <Carousel />
+        </View>
         <View style={styles.container}>
           <ScrollView
             contentContainerStyle={styles.grid}
@@ -215,9 +217,9 @@ const styles = StyleSheet.create({
   menuItem: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    borderRadius: CARD_WIDTH * 0.1, 
+    borderRadius: CARD_WIDTH * 0.1,
     overflow: "hidden",
-    margin: SCREEN_WIDTH * 0.0125, 
+    margin: SCREEN_WIDTH * 0.0125,
 
     justifyContent: "center",
     alignItems: "center",

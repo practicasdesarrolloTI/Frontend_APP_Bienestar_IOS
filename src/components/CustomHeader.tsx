@@ -57,7 +57,11 @@ const CustomHeader: React.FC<HeaderProps> = ({
           style={styles.backButton}
           onPress={() => {
             if (goBackTo) {
-              navigation.navigate(goBackTo);
+              // navigation.navigate(goBackTo);
+              navigation.reset({
+                index: 1,
+                routes: [{ name: goBackTo }],
+              });
             } else {
               navigation.goBack();
             }

@@ -130,7 +130,11 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
           position: "bottom",
           visibilityTime: 5000,
         });
-        navigation.navigate("Home");
+        // navigation.navigate("Home");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" as never }],
+        });
       }
     } catch (e) {
       Toast.show({

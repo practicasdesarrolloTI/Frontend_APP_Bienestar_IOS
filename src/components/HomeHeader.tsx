@@ -91,6 +91,8 @@ const styles = StyleSheet.create({
     paddingBottom: verticalScale(12),
     justifyContent: "center",
     backgroundColor: "transparent",
+    position: "relative",
+    zIndex: 100,
   },
   content: {
     flexDirection: "row",
@@ -113,6 +115,7 @@ const styles = StyleSheet.create({
   },
   profileWrapper: {
     position: "relative",
+    zIndex: 101,
   },
   profileIcon: {
     width: scale(42),
@@ -145,9 +148,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: verticalScale(3),
     elevation: 5,
-    zIndex: 9999,
-    borderWidth: 3,
-    borderColor: colors.preto,
+    zIndex: 9999, 
   },
   menuItem: {
     paddingVertical: verticalScale(6),

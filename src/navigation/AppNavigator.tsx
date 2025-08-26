@@ -178,7 +178,15 @@ const AppNavigator: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={initialRoute}
-        screenOptions={{ headerShown: false }}
+        screenOptions={{ 
+          headerShown: false,
+          //gestos IOS controlados
+          gestureEnabled: true,
+          gestureResponseDistance: 20,
+          // evita "pantallas zombies" detras
+          detachPreviousScreen: true,
+          freezeOnBlur: true,
+         }}
       >
         {initialRoute === "Landing" ? (
           // Stack de autenticación
