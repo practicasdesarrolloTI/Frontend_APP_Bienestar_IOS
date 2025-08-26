@@ -72,7 +72,11 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
           text2: "Usuario registrado correctamente.",
           position: "bottom",
         });
-        navigation.replace("Home");
+        // navigation.replace("Home");
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" as never }],
+        });
       }
     } else {
       if (!patient) {

@@ -42,6 +42,12 @@ const SurveyScreen: React.FC<SurveyScreenProps> = ({ route }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  useEffect(() => {
+    navigation.setOptions({
+      gestureEnabled: false,
+    });
+  }, [navigation]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<Respuesta[]>([]);
   const [selectedOption, setSelectedOption] = useState<any>("");

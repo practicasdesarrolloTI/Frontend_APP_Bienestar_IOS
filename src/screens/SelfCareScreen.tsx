@@ -152,7 +152,11 @@ const SelfCareScreen: React.FC = () => {
       text2: "Has cerrado sesión correctamente.",
       position: "bottom",
     });
-    navigation.navigate("Login");
+    // navigation.replace("Login");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
   };
 
   const loadPatient = async () => {

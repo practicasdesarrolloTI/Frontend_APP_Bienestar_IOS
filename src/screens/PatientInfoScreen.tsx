@@ -69,11 +69,11 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-      if (!isFocused) {
-        setModalVisible(false);
-      }
-    }, [isFocused]);
-    
+    if (!isFocused) {
+      setModalVisible(false);
+    }
+  }, [isFocused]);
+
   /** Función para cerrar sesión */
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
@@ -83,7 +83,11 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
       text1: "Sesión cerrada",
       text2: "Has cerrado sesión correctamente.",
     });
-    navigation.navigate("Login");
+    // navigation.replace("Login");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
   };
 
   /** Función para formatear el nombre */
@@ -233,8 +237,8 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           onCancel={() => setModalVisible(false)}
           onConfirm={handleLogout}
         />
-        <View style={{ paddingHorizontal:moderateScale(40) , paddingVertical: moderateScale(25) }}>
-          <Text>V1.0.1</Text>
+        <View style={{ paddingHorizontal: moderateScale(40), paddingVertical: moderateScale(25) }}>
+          <Text>V1.0.0</Text>
         </View>
       </ImageBackground>
     </SafeAreaView>

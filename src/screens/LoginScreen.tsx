@@ -122,7 +122,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           return newCount;
         });
       } else {
-        setTimeout(() => navigation.replace("Home"));
+        setTimeout(() => 
+          // navigation.replace("Home")
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" as never }],
+        })
+      );
       }
     } catch (error) {
       Toast.show({

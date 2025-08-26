@@ -61,7 +61,11 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
       text1: "Sesión cerrada",
       text2: "Has cerrado sesión correctamente.",
     });
-    navigation.navigate("Login");
+    // navigation.replace("Login");
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    });
   };
 
   useEffect(() => {

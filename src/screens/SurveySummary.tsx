@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import RecommendationModal from "../components/RecommendationModal";
 import {
   View,
@@ -34,9 +34,9 @@ type Respuesta =
   | string
   | number
   | {
-      texto: string;
-      valor: number;
-    };
+    texto: string;
+    valor: number;
+  };
 
 type Paciente = {
   primer_nombre: string;
@@ -56,6 +56,13 @@ type Paciente = {
 };
 
 const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
+
+  useEffect(() => {
+    navigation.setOptions({
+      gestureEnabled: false,
+    });
+  }, [navigation]);
+
   const { surveyId, puntaje, edad, sexo, survey, imc } = route.params;
   const { responses } = route.params as unknown as { responses: Respuesta[] };
   const [paciente, setPaciente] = useState<Paciente | null>(null);
@@ -105,9 +112,8 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         surveyId,
         patientTypeId: storedTipo ?? "",
         patientId: storedDoc.documento,
-        patientName: `${storedDoc.primer_nombre} ${
-          storedDoc.segundo_nombre || ""
-        } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
+        patientName: `${storedDoc.primer_nombre} ${storedDoc.segundo_nombre || ""
+          } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
         surveyName: survey.nombre,
         responses: responses.map((r) =>
           typeof r === "object" && "texto" in r ? r.texto : String(r)
