@@ -2,7 +2,7 @@
   "expo": {
     "name": "CuidarMe",
     "slug": "CuidarMe",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/logos/LogoAppIcono.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.bienestarips.cuidarme",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "icon": "./assets/logos/LogoAppIcono.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false

@@ -238,7 +238,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
           onConfirm={handleLogout}
         />
         <View style={{ paddingHorizontal: moderateScale(40), paddingVertical: moderateScale(25) }}>
-          <Text>V1.0.0</Text>
+          <Text>V1.0.1</Text>
         </View>
       </ImageBackground>
     </SafeAreaView>
