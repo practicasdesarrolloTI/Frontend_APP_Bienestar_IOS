@@ -6,44 +6,35 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
-  ImageBackground,
   SafeAreaView,
-  Image,
+  useWindowDimensions,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
-import CustomHeader from "../components/CustomHeader";
+import BackgroundLanding from "../components/Backgrounds/BackgroundLanding";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Landing">;
 
 const LandingScreen: React.FC<Props> = ({ navigation }) => {
+    const { width, height } = useWindowDimensions();
+    const HBotones = Math.max(466, Math.min(965, height * 0.70));
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Landing.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          showBack={false}
-          transparent={true}
-          showProfileIcon={false}
-          onLogout={() => {}}
+    <BackgroundLanding>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
         />
 
         {/* Contenido */}
         <View style={styles.container}>
           {/* Botones de inicio de sesión */}
-          <View style={styles.buttonContainer}>
+          <View style={[styles.buttonContainer, { top: HBotones }]}>
             <TouchableOpacity
               style={styles.loginButton}
               onPress={() => navigation.navigate("Login")}
@@ -59,17 +50,9 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.registerText}>Crear cuenta</Text>
             </TouchableOpacity>
           </View>
-          {/* Logo de la aplicación */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../../assets/logos/LogoZentriablanco.png")}
-              style={styles.image}
-              resizeMode="contain"
-            />
-          </View>
         </View>
-      </ImageBackground>
-    </SafeAreaView>
+      </SafeAreaView>
+    </BackgroundLanding>
   );
 };
 
@@ -79,20 +62,17 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   container: {
-    flex: 1,
+    display: "flex",
     paddingHorizontal: scale(15),
   },
- 
   buttonContainer: {
-    flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    marginBottom: verticalScale(5),
   },
   loginButton: {
     backgroundColor: colors.primary,
     width: scale(310),
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(12),
     borderRadius: scale(50),
     marginBottom: verticalScale(10),
     alignItems: "center",
@@ -105,7 +85,7 @@ const styles = StyleSheet.create({
   registerButton: {
     backgroundColor: colors.secondary,
     width: scale(310),
-    paddingVertical: verticalScale(15),
+    paddingVertical: verticalScale(12),
     borderRadius: scale(50),
     marginBottom: verticalScale(10),
     alignItems: "center",
@@ -114,14 +94,6 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: moderateScale(18),
     fontFamily: fonts.title,
-  },
-  imageContainer: {
-    alignItems: "center",
-    marginBottom: verticalScale(12),
-  },  
-  image: {
-    width: scale(200),
-    aspectRatio: 0.8,
   },
 });
 

@@ -1,13 +1,11 @@
 import React from "react";
 import {
   View,
-  ActivityIndicator,
   StyleSheet,
   Platform,
   StatusBar,
   SafeAreaView,
   ImageBackground,
-  Text,
 } from "react-native";
 import LottieView from "lottie-react-native";
 import colors from "../themes/colors";

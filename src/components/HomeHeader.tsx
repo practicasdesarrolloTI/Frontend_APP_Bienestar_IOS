@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Image,
+  useWindowDimensions,
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import colors from "../themes/colors";
@@ -23,6 +24,18 @@ type RootStackParamList = {
 };
 
 const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
+  const { width, height } = useWindowDimensions();
+  const HH = Math.max(80, Math.min(130, height * 0.10));
+  const isTablet =
+    Platform.OS === "ios" ? (Platform as any).isPad === true : width >= 768;
+  const PROFILE_SIZE = isTablet ? 70 : 46;
+  const ICON_SIZE = Math.round(PROFILE_SIZE * 0.55);
+  const MENU_WIDTH = Math.min(
+    isTablet ? 260 : 180,
+    Math.max(170, width * (isTablet ? 0.3 : 0.5))
+  );
+  const MENU_TOP = PROFILE_SIZE + 8;
+
   const saludo = sexo === "Femenino" ? "¡Bienvenida!" : "¡Bienvenido!";
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -36,7 +49,7 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
       .join(" ");
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header , { height: HH}]}>
       <View style={styles.content}>
         <View style={styles.left}>
           <Text style={styles.saludo}>{saludo}</Text>
@@ -45,18 +58,18 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
 
         <View style={{ position: "relative" }}>
           <TouchableOpacity
-            style={styles.profileIcon}
+            style={[styles.profileIcon ,{ width: PROFILE_SIZE, height: PROFILE_SIZE }]}
             onPress={() => setMenuVisible(!menuVisible)}
           >
             <Image
               source={require("../../assets/icons/perfil.png")}
-              style={{ width: scale(22), height: scale(22) }}
+              style={{ width: ICON_SIZE, height: ICON_SIZE }}
               resizeMode="contain"
             />
           </TouchableOpacity>
 
           {menuVisible && (
-            <View style={styles.inlineMenu}>
+            <View style={[styles.inlineMenu, { width: MENU_WIDTH, top: MENU_TOP }]}>
               <TouchableOpacity
                 onPress={() => {
                   setMenuVisible(false);
@@ -84,11 +97,7 @@ const HomeHeader: React.FC<Props> = ({ nombre, sexo, onLogout }) => {
 
 const styles = StyleSheet.create({
   header: {
-    height: verticalScale(92),
-    paddingTop:
-      Platform.OS === "android" ? verticalScale(50) : verticalScale(55),
     paddingHorizontal: scale(28),
-    paddingBottom: verticalScale(12),
     justifyContent: "center",
     backgroundColor: "transparent",
     position: "relative",
@@ -148,7 +157,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: verticalScale(3),
     elevation: 5,
-    zIndex: 9999, 
+    zIndex: 9999,
   },
   menuItem: {
     paddingVertical: verticalScale(6),

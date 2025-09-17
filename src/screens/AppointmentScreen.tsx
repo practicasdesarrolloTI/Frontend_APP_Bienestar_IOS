@@ -61,7 +61,6 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
       text2: "Has cerrado sesión correctamente.",
       position: "bottom",
     });
-    // navigation.replace("Login");
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
@@ -128,113 +127,120 @@ const AppointmentScreen: React.FC<Props> = ({ navigation }) => {
     return <LoadingScreen />;
   }
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          title="Citas"
-          showBack
-          transparent
-          showProfileIcon
-          onLogout={() => setModalVisible(true)}
-          goBackTo="Home"
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
         />
 
-        <View style={styles.container}>
-          <Buscador
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Buscar cita"
+          {/* Header transparente */}
+          <CustomHeader
+            title="Citas"
+            showBack
+            transparent
+            showProfileIcon
+            onLogout={() => setModalVisible(true)}
+            goBackTo="Home"
           />
 
-          {/* Lista de Citas */}
-          {filteredCitas.length === 0 ? (
-            <EmptyState message="No se encontraron citas agendadas por el momento." />
-          ) : (
-            <FlatList
-              data={filteredCitas}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                const dt = new Date(item.fecha);
-                console.log("Fecha de citaaaas:", dt);
-                const weekday = dt.toLocaleDateString("es-CO", {
-                  weekday: "long",
-                });
-                return (
-                  <View style={styles.card}>
-                    <View style={styles.cardContent}>
-                      {/* PANEL IZQUIERDO: FECHA */}
-                      <View style={styles.leftColumn}>
-                        <Text style={styles.weekday}>
-                          {weekday.charAt(0).toUpperCase() + weekday.slice(1)}
-                        </Text>
-                        <Text style={styles.dateDay}>{dt.getDate()}</Text>
-                        <Text style={styles.dateMonth}>
-                          {dt.toLocaleDateString("es-CO", {
-                            month: "long",
-                          })}
-                        </Text>
-                        <Text style={styles.dateYear}>{dt.getFullYear()}</Text>
-                      </View>
-
-                      {/* PANEL DERECHO: ICONO + DETALLES */}
-                      <View style={styles.rightColumn}>
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Hora: </Text>
-                          {item.hora}
-                        </Text>
-                        {item.especialidad && item.medico && (<><Text style={styles.text}>
-                          <Text style={styles.label}>Especialidad: </Text>
-                          {capitalizeSentence(item.especialidad)}
-                        </Text><Text style={styles.text}>
-                            <Text style={styles.label}>Médico: </Text>
-                            {capitalizeName(item.medico)}
-                          </Text></>)}
-                        {item.grupo && (
-                          <Text style={styles.text}>
-                            <Text style={styles.label}>Tipo de procedimiento: </Text>
-                            {capitalizeSentence(item.grupo)}
-                          </Text>
-                        )}
-                        {item.procedimiento_especifico && (
-                          <Text style={styles.text}>
-                            <Text style={styles.label}>Procedimiento: </Text>
-                            {capitalizeSentence(item.procedimiento_especifico)}
-                          </Text>
-                        )}
-
-                      </View>
-                    </View>
-                    <View style={styles.iconWrapper}>
-                      <Image
-                        source={require("../../assets/icons/calendar.png")}
-                        style={styles.calendarIcon}
-                      />
-                    </View>
-                  </View>
-                );
-              }}
+          <View style={styles.container}>
+            <Buscador
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Buscar cita"
             />
-          )}
-        </View>
 
-        <WarningModal
-          text="¿Estás seguro de que deseas cerrar sesión?"
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          onConfirm={handleLogout}
-        />
-      </ImageBackground>
-    </SafeAreaView>
+            {/* Lista de Citas */}
+            {filteredCitas.length === 0 ? (
+              <EmptyState message="No se encontraron citas agendadas por el momento." />
+            ) : (
+              <FlatList
+                data={filteredCitas}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => {
+                  const dt = new Date(item.fecha);
+                  console.log("Fecha de citaaaas:", dt);
+                  const weekday = dt.toLocaleDateString("es-CO", {
+                    weekday: "long",
+                  });
+                  return (
+                    <View style={styles.card}>
+                      <View style={styles.cardContent}>
+                        {/* PANEL IZQUIERDO: FECHA */}
+                        <View style={styles.leftColumn}>
+                          <Text style={styles.weekday}>
+                            {weekday.charAt(0).toUpperCase() + weekday.slice(1)}
+                          </Text>
+                          <Text style={styles.dateDay}>{dt.getDate()}</Text>
+                          <Text style={styles.dateMonth}>
+                            {dt.toLocaleDateString("es-CO", {
+                              month: "long",
+                            })}
+                          </Text>
+                          <Text style={styles.dateYear}>
+                            {dt.getFullYear()}
+                          </Text>
+                        </View>
+
+                        {/* PANEL DERECHO: ICONO + DETALLES */}
+                        <View style={styles.rightColumn}>
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Hora: </Text>
+                            {item.hora}
+                          </Text>
+                          {item.especialidad && item.medico && (
+                            <>
+                              <Text style={styles.text}>
+                                <Text style={styles.label}>Especialidad: </Text>
+                                {capitalizeSentence(item.especialidad)}
+                              </Text>
+                              <Text style={styles.text}>
+                                <Text style={styles.label}>Médico: </Text>
+                                {capitalizeName(item.medico)}
+                              </Text>
+                            </>
+                          )}
+                          {item.grupo && (
+                            <Text style={styles.text}>
+                              <Text style={styles.label}>
+                                Tipo de procedimiento:{" "}
+                              </Text>
+                              {capitalizeSentence(item.grupo)}
+                            </Text>
+                          )}
+                          {item.procedimiento_especifico && (
+                            <Text style={styles.text}>
+                              <Text style={styles.label}>Procedimiento: </Text>
+                              {capitalizeSentence(
+                                item.procedimiento_especifico
+                              )}
+                            </Text>
+                          )}
+                        </View>
+                      </View>
+                      <View style={styles.iconWrapper}>
+                        <Image
+                          source={require("../../assets/icons/calendar.png")}
+                          style={styles.calendarIcon}
+                        />
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            )}
+          </View>
+
+          <WarningModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
+      </SafeAreaView>
+    </View>
   );
 };
 
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     position: "absolute",
-    left: LEFT_COLUMN_WIDTH - (ICON_SIZE / 2),
+    left: LEFT_COLUMN_WIDTH - ICON_SIZE / 2,
     top: CARD_CONTENT_HEIGHT / 2 - ICON_SIZE / 2,
     width: moderateScale(34),
     height: moderateScale(34),

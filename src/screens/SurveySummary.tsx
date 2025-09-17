@@ -6,11 +6,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Platform,
   StatusBar,
   SafeAreaView,
-  ImageBackground,
-  Dimensions,
+  useWindowDimensions,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
@@ -24,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { submitSurveyResult } from "../services/surveyResultService";
 import CustomHeader from "../components/CustomHeader";
 import { getPatientByDocument } from "../services/patientService";
+import BackgroundSummary from "../components/Backgrounds/BackgroundSummary";
 
 type SurveySummaryProps = NativeStackScreenProps<
   RootStackParamList,
@@ -34,9 +33,9 @@ type Respuesta =
   | string
   | number
   | {
-    texto: string;
-    valor: number;
-  };
+      texto: string;
+      valor: number;
+    };
 
 type Paciente = {
   primer_nombre: string;
@@ -56,7 +55,6 @@ type Paciente = {
 };
 
 const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
-
   useEffect(() => {
     navigation.setOptions({
       gestureEnabled: false,
@@ -112,8 +110,9 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
         surveyId,
         patientTypeId: storedTipo ?? "",
         patientId: storedDoc.documento,
-        patientName: `${storedDoc.primer_nombre} ${storedDoc.segundo_nombre || ""
-          } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
+        patientName: `${storedDoc.primer_nombre} ${
+          storedDoc.segundo_nombre || ""
+        } ${storedDoc.primer_apellido} ${storedDoc.segundo_apellido || ""}`,
         surveyName: survey.nombre,
         responses: responses.map((r) =>
           typeof r === "object" && "texto" in r ? r.texto : String(r)
@@ -153,132 +152,132 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
     }
   };
 
+  const { width, height } = useWindowDimensions();
+  const containerH = Math.max(33, Math.min(68, height * 0.05));
+  const HORIZONTAL_MARGIN = scale(30);
+  const CONTAINER_WIDTH = width * 0.8;
+  const BUTTON_WIDTH = CONTAINER_WIDTH * 0.9;
+  const BUTTON_HEIGHT = verticalScale(50);
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={{ flex: 1 }}>
       <StatusBar
         barStyle="dark-content"
         translucent
         backgroundColor="transparent"
       />
+      <BackgroundSummary>
+        <SafeAreaView style={styles.safeArea}>
+          {/* Header transparente */}
+          <CustomHeader
+            title="Resumen de encuesta"
+            showBack
+            transparent
+            onLogout={() => setModalVisible(true)}
+          />
 
-      <ImageBackground
-        source={require("../../assets/backgrounds/Resumen_encuesta.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          title="Resumen de encuesta"
-          showBack
-          transparent
-          onLogout={() => setModalVisible(true)}
-        />
-
-        <View style={styles.outerContainer}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
+          <View
+            style={[
+              styles.outerContainer,
+              { paddingHorizontal: HORIZONTAL_MARGIN, marginTop: containerH },
+            ]}
           >
-            <View style={styles.summaryCard}>
-              {/* Bloque de info general (edad, sexo, IMC) */}
-              <View style={styles.section}>
-                <View style={styles.item}>
-                  <Text style={styles.label}>Edad</Text>
-                  <Text style={styles.value}>{edad} años</Text>
-                </View>
-
-                <View style={styles.item}>
-                  <Text style={styles.label}>Sexo</Text>
-                  <Text style={styles.value}>{sexo}</Text>
-                </View>
-
-                {!isNaN(imc) && imc > 0 && (
+            <ScrollView
+              contentContainerStyle={[
+                styles.scrollContent,
+                { top: containerH },
+              ]}
+            >
+              <View style={[styles.summaryCard, { width: CONTAINER_WIDTH }]}>
+                {/* Bloque de info general (edad, sexo, IMC) */}
+                <View style={styles.section}>
                   <View style={styles.item}>
-                    <Text style={styles.label}>IMC Calculado</Text>
-                    <Text style={styles.value}>{imc.toFixed(2)} kg/m²</Text>
+                    <Text style={styles.label}>Edad</Text>
+                    <Text style={styles.value}>{edad} años</Text>
                   </View>
-                )}
-              </View>
 
-              <View style={styles.separator} />
-
-              {/* Bloque de cada respuesta de pregunta */}
-              <View style={styles.section}>
-                {responses.map((r, i) => (
-                  <View key={i} style={styles.item}>
-                    <Text style={styles.label}>Pregunta #{i + 1}</Text>
-                    <Text style={styles.value}>
-                      {typeof r === "object" ? r.texto : r}
-                    </Text>
+                  <View style={styles.item}>
+                    <Text style={styles.label}>Sexo</Text>
+                    <Text style={styles.value}>{sexo}</Text>
                   </View>
-                ))}
+
+                  {!isNaN(imc) && imc > 0 && (
+                    <View style={styles.item}>
+                      <Text style={styles.label}>IMC Calculado</Text>
+                      <Text style={styles.value}>{imc.toFixed(2)} kg/m²</Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.separator} />
+
+                {/* Bloque de cada respuesta de pregunta */}
+                <View style={styles.section}>
+                  {responses.map((r, i) => (
+                    <View key={i} style={styles.item}>
+                      <Text style={styles.label}>Pregunta #{i + 1}</Text>
+                      <Text style={styles.value}>
+                        {typeof r === "object" ? r.texto : r}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
               </View>
-            </View>
-          </ScrollView>
+            </ScrollView>
 
-          {/* Botón fijo en la parte inferior */}
-          <TouchableOpacity
-            style={styles.button}
-            activeOpacity={0.8}
-            onPress={() => setModalVisible(true)}
-            disabled={isSending} // deshabilita si ya está enviando
-          >
-            {isSending ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Enviar Encuesta</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+            {/* Botón fijo en la parte inferior */}
+            <TouchableOpacity
+              style={[
+                styles.button,
+                { width: BUTTON_WIDTH, height: BUTTON_HEIGHT },
+              ]}
+              activeOpacity={0.8}
+              onPress={() => setModalVisible(true)}
+              disabled={isSending} // deshabilita si ya está enviando
+            >
+              {isSending ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Enviar Encuesta</Text>
+              )}
+            </TouchableOpacity>
+          </View>
 
-        {/* RecommendationModal recibe loading={isSending} */}
-        <RecommendationModal
-          visible={modalVisible}
-          recomendacion={obtenerRecomendacion()}
-          loading={isSending} // <--- pasamos el estado
-          onClose={() => setModalVisible(false)}
-          onConfirm={() => {
-            setModalVisible(false);
-            handleSubmit();
-          }}
-        />
-      </ImageBackground>
-    </SafeAreaView>
+          {/* RecommendationModal recibe loading={isSending} */}
+          <RecommendationModal
+            visible={modalVisible}
+            recomendacion={obtenerRecomendacion()}
+            loading={isSending} // <--- pasamos el estado
+            onClose={() => setModalVisible(false)}
+            onConfirm={() => {
+              setModalVisible(false);
+              handleSubmit();
+            }}
+          />
+        </SafeAreaView>
+      </BackgroundSummary>
+    </View>
   );
 };
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const HORIZONTAL_MARGIN = scale(30);
-const CONTAINER_WIDTH = SCREEN_WIDTH - HORIZONTAL_MARGIN * 2;
-const CARD_VERTICAL_MARGIN = verticalScale(10);
-const BUTTON_WIDTH = SCREEN_WIDTH - scale(80);
-const BUTTON_HEIGHT = verticalScale(50);
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.white,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: "transparent",
   },
   outerContainer: {
     flex: 1,
-    paddingHorizontal: HORIZONTAL_MARGIN,
     paddingTop: verticalScale(10),
     paddingBottom: verticalScale(20),
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: verticalScale(10),
-    paddingBottom: BUTTON_HEIGHT + verticalScale(10),
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   summaryCard: {
-    width: CONTAINER_WIDTH,
-    height: SCREEN_HEIGHT * 0.65,
     padding: verticalScale(15),
-    marginVertical: CARD_VERTICAL_MARGIN,
   },
   section: {
     width: "100%",
@@ -298,16 +297,17 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(4),
   },
   separator: {
-    borderStyle: "dashed",
-    width: "100%",
+    borderStyle: "dotted",
+    borderWidth: 2, // <- iOS: habilita el patrón
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
     borderBottomColor: colors.lightGray,
     borderBottomWidth: 1,
     marginVertical: verticalScale(12),
   },
   button: {
     backgroundColor: colors.primary,
-    width: BUTTON_WIDTH,
-    height: BUTTON_HEIGHT,
     borderRadius: moderateScale(50),
     alignItems: "center",
     justifyContent: "center",

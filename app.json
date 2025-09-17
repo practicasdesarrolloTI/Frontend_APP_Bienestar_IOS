@@ -13,9 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.bienestarips.cuidarme",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "icon": "./assets/logos/LogoAppIcono.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false

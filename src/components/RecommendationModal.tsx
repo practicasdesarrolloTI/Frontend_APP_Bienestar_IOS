@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import colors from "../themes/colors";
 import { fonts } from "../themes/fonts";
+import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 
 type Props = {
   visible: boolean;
@@ -67,24 +68,24 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
-    fontSize: 26,
+    fontSize: moderateScale(24),
     fontFamily: fonts.title,
     color: colors.preto,
     marginTop: 10,
     marginBottom: 12,
   },
   text: {
-    fontSize: 18,
+    fontSize: moderateScale(15),
     fontFamily: fonts.body,
     color: colors.preto,
     textAlign: "center",
-    lineHeight: 22,
+
     marginBottom: 30,
   },
   confirmButton: {
     width: "100%",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: verticalScale(14),
     alignItems: "center",
     borderRadius: 50,
     backgroundColor: colors.primary,
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.white,
     fontFamily: fonts.title,
-    fontSize: 18,
+    fontSize: moderateScale(18),
   },
 });
 

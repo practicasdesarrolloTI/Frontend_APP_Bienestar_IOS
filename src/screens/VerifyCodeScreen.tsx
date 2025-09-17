@@ -110,93 +110,96 @@ const VerifyCodeScreen = ({ route, navigation }: Props) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ImageBackground
         source={require("../../assets/backgrounds/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
-        <CustomHeader
-          showBack={true}
-          transparent={true}
-          showProfileIcon={false}
-          onLogout={() => {}}
-        />
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar
+            barStyle="dark-content"
+            translucent
+            backgroundColor="transparent"
+          />
 
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Subheader */}
-            <View style={styles.subheaderContainer}>
-              <Image
-                source={require("../../assets/logos/LogoCuidarMe.png")}
-                resizeMode="contain"
-                style={styles.logo}
+          {/* Header transparente */}
+          <CustomHeader
+            showBack={true}
+            transparent={true}
+            showProfileIcon={false}
+            onLogout={() => {}}
+          />
+
+          <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+            <ScrollView
+              contentContainerStyle={styles.container}
+              keyboardShouldPersistTaps="handled"
+            >
+              {/* Subheader */}
+              <View style={styles.subheaderContainer}>
+                <Image
+                  source={require("../../assets/logos/LogoCuidarMe.png")}
+                  resizeMode="contain"
+                  style={styles.logo}
+                />
+                <Text style={styles.title}>Verificar código</Text>
+                <Text style={styles.subtitle}>
+                  Ingresa el código de verificación{" "}
+                </Text>
+              </View>
+              <CodeField
+                {...props}
+                value={value}
+                onChangeText={setValue}
+                cellCount={CELL_COUNT}
+                rootStyle={styles.codeFieldRoot}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                autoFocus
+                renderCell={({ index, symbol, isFocused }) => (
+                  <View
+                    key={index}
+                    style={[styles.cell, isFocused && styles.cellFocused]}
+                    onLayout={getCellOnLayoutHandler(index)}
+                  >
+                    <Text style={styles.cellText}>
+                      {symbol || (isFocused ? <Cursor /> : null)}
+                    </Text>
+                  </View>
+                )}
               />
-              <Text style={styles.title}>Verificar código</Text>
-              <Text style={styles.subtitle}>
-                Ingresa el código de verificación{" "}
+              <Text style={styles.timerText}>
+                {timer > 0
+                  ? `Código válido por ${formatTime(timer)}`
+                  : "Código expirado"}
               </Text>
-            </View>
-            <CodeField
-              ref={ref}
-              {...props}
-              value={value}
-              onChangeText={setValue}
-              cellCount={CELL_COUNT}
-              rootStyle={styles.codeFieldRoot}
-              keyboardType="number-pad"
-              textContentType="oneTimeCode"
-              renderCell={({ index, symbol, isFocused }) => (
-                <View
-                  key={index}
-                  style={[styles.cell, isFocused && styles.cellFocused]}
-                  onLayout={getCellOnLayoutHandler(index)}
-                >
-                  <Text style={styles.cellText}>
-                    {symbol || (isFocused ? <Cursor /> : null)}
-                  </Text>
-                </View>
-              )}
-            />
-            <Text style={styles.timerText}>
-              {timer > 0
-                ? `Código válido por ${formatTime(timer)}`
-                : "Código expirado"}
-            </Text>
-            <Text style={styles.instructions}>
-              Intento número {resendAttempts} de {maxAttempts}
-            </Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleVerify}
-              disabled={value.length !== 6}
-            >
-              <Text style={styles.buttonText}>Verificar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.buttonReenviar,
-                (timer > 0 || resendAttempts == maxAttempts) &&
-                  styles.buttonDisabled,
-              ]}
-              onPress={handleResendCode}
-              disabled={timer > 0 || resendAttempts >= maxAttempts}
-            >
-              <Text style={styles.buttonReenviarText}>Reenviar código</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Pressable>
+              <Text style={styles.instructions}>
+                Intento número {resendAttempts} de {maxAttempts}
+              </Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleVerify}
+                disabled={value.length !== 6}
+              >
+                <Text style={styles.buttonText}>Verificar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.buttonReenviar,
+                  (timer > 0 || resendAttempts == maxAttempts) &&
+                    styles.buttonDisabled,
+                ]}
+                onPress={handleResendCode}
+                disabled={timer > 0 || resendAttempts >= maxAttempts}
+              >
+                <Text style={styles.buttonReenviarText}>Reenviar código</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </Pressable>
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -217,7 +220,7 @@ const styles = StyleSheet.create({
     height: verticalScale(75),
   },
   title: {
-     fontSize: moderateScale(28),
+    fontSize: moderateScale(28),
     fontFamily: fonts.title,
     color: colors.preto,
     marginBottom: verticalScale(5),
@@ -242,7 +245,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     width: CELL_SIZE - moderateScale(2),
-    height: CELL_SIZE ,
+    height: CELL_SIZE,
     borderRadius: moderateScale(8),
     marginHorizontal: moderateScale(4),
     justifyContent: "center",

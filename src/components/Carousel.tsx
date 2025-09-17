@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import Carousel from "react-native-reanimated-carousel";
 import colors from "../themes/colors";
 import { fetchBanners } from "../services/bannerService";
 import SkeletonLoading from "./SkeletonLoading";
 
-
+function clamp(min: number, v: number, max: number) {
+  return Math.min(max, Math.max(min, v));
+}
 
 const ImageUrlCarousel: React.FC = () => {
   const [banners, setBanners] = useState<
@@ -14,6 +23,22 @@ const ImageUrlCarousel: React.FC = () => {
   >([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  // Responsive dimensions
+  const { width, height } = useWindowDimensions();
+  const isTablet =
+    Platform.OS === "ios" ? (Platform as any).isPad === true : width >= 950;
+  const PADDING_H = isTablet
+    ? Math.round(width * 0.08)
+    : Math.round(width * 0.04);
+  const SLIDE_WIDTH = clamp(
+    isTablet ? 420 : 260, // mínimo razonable
+    Math.min(width - PADDING_H * 1.5, isTablet ? 800 : width * 0.85), // preferido
+    isTablet ? 820 : 380 // máximo
+  );
+  const SLIDE_HEIGHT = Math.round(SLIDE_WIDTH * RATIO);
+  const DOT_SIZE = isTablet ? moderateScale(10) : moderateScale(8);
+  const DOT_SPACING = isTablet ? moderateScale(8) : moderateScale(6);
 
   useEffect(() => {
     const loadBanners = async () => {
@@ -31,7 +56,7 @@ const ImageUrlCarousel: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingHorizontal: PADDING_H }]}>
         <SkeletonLoading
           style={{
             width: SLIDE_WIDTH,
@@ -47,7 +72,7 @@ const ImageUrlCarousel: React.FC = () => {
 
   if (banners.length === 0) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingHorizontal: PADDING_H }]}>
         <SkeletonLoading
           style={{
             width: SLIDE_WIDTH,
@@ -62,9 +87,8 @@ const ImageUrlCarousel: React.FC = () => {
 
   if (banners.length === 1) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingHorizontal: PADDING_H }]}>
         <View style={styles.slide}>
-
           <Image
             source={{ uri: banners[0].imageUrl }}
             style={styles.image}
@@ -72,20 +96,29 @@ const ImageUrlCarousel: React.FC = () => {
           />
         </View>
         {/* Pagination Dots */}
-      <View style={styles.pagination}>
-        {banners.map((_, index) => (
-          <View
-            key={index}
-            style={[styles.dot, activeIndex === index && styles.activeDot]}
-          />
-        ))}
-      </View>
+        <View style={[styles.pagination, { marginTop: verticalScale(8) }]}>
+          {banners.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                {
+                  width: DOT_SIZE,
+                  height: DOT_SIZE,
+                  borderRadius: DOT_SIZE / 2,
+                  marginHorizontal: DOT_SPACING / 2,
+                },
+                activeIndex === index && styles.activeDot,
+              ]}
+            />
+          ))}
+        </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingHorizontal: PADDING_H }]}>
       <Carousel
         width={SLIDE_WIDTH}
         height={SLIDE_HEIGHT}
@@ -96,7 +129,16 @@ const ImageUrlCarousel: React.FC = () => {
         onSnapToItem={(index) => setActiveIndex(index)}
         style={{ borderRadius: moderateScale(15) }}
         renderItem={({ item }) => (
-          <View style={styles.slide}>
+          <View
+            style={[
+              styles.slide,
+              {
+                width: SLIDE_WIDTH,
+                height: SLIDE_HEIGHT,
+                borderRadius: moderateScale(15),
+              },
+            ]}
+          >
             <Image
               source={{ uri: item.imageUrl }}
               style={styles.image}
@@ -111,7 +153,16 @@ const ImageUrlCarousel: React.FC = () => {
         {banners.map((_, index) => (
           <View
             key={index}
-            style={[styles.dot, activeIndex === index && styles.activeDot]}
+            style={[
+              styles.dot,
+              {
+                width: DOT_SIZE,
+                height: DOT_SIZE,
+                borderRadius: DOT_SIZE / 2,
+                marginHorizontal: DOT_SPACING / 2,
+              },
+              activeIndex === index && styles.activeDot,
+            ]}
           />
         ))}
       </View>
@@ -119,19 +170,13 @@ const ImageUrlCarousel: React.FC = () => {
   );
 };
 
-
-const SLIDE_WIDTH = scale(310);
-const SLIDE_HEIGHT = verticalScale(115);
-const DOT_SIZE = moderateScale(8);
-const DOT_SPACING = moderateScale(6);
+const RATIO = 138 / 356;
 
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingVertical: verticalScale(16),  },
+  },
   slide: {
-    width: SLIDE_WIDTH,
-    height: SLIDE_HEIGHT,
     borderRadius: moderateScale(15),
     overflow: "hidden",
     marginHorizontal: scale(2),
@@ -144,14 +189,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: verticalScale(8),
+    marginVertical: verticalScale(8),
   },
   dot: {
-    width: DOT_SIZE,
-    height: DOT_SIZE,
-    borderRadius: DOT_SIZE / 2,
     backgroundColor: "#ccc",
-    marginHorizontal: DOT_SPACING / 2,
   },
   activeDot: {
     backgroundColor: colors.lightGray,

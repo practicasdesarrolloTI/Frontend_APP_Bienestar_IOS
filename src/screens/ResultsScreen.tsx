@@ -7,10 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
-  Platform,
   Linking,
-  ImageBackground,
-  Dimensions,
   Image,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -129,141 +126,142 @@ const ResultsScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) return <LoadingScreen />;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          title="Resultados"
-          showBack
-          transparent
-          showProfileIcon
-          onLogout={() => setModalVisible(true)}
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
         />
-
-        <View style={styles.contentContainer}>
-          {/* Buscador */}
-          <Buscador
-            value={searchQuery}
-            onChange={(text) => {
-              setSearchQuery(text);
-              const lowerText = text.toLowerCase();
-              const filtered = resultados.filter((resultado) =>
-                [resultado.examen, resultado.programa, resultado.medico_remisor]
-                  .join(" ")
-                  .toLowerCase()
-                  .includes(lowerText)
-              );
-              setResultadosFiltrados(filtered);
-            }}
-            placeholder="Buscar resultados"
+    
+          {/* Header transparente */}
+          <CustomHeader
+            title="Resultados"
+            showBack
+            transparent
+            showProfileIcon
+            onLogout={() => setModalVisible(true)}
           />
 
-          <FlatList
-            data={resultadosFiltrados}
-            keyExtractor={(item) => item.id}
-            ListEmptyComponent={
-              <EmptyState message="No se encontraron resultados de momento" />
-            }
-            renderItem={({ item }) => {
-              const fechaValida =
-                item.fechaRealizacion &&
-                !isNaN(new Date(item.fechaRealizacion).getTime());
-              let dt: Date | null = null;
-              if (fechaValida) {
-                dt = new Date(item.fechaRealizacion);
+          <View style={styles.contentContainer}>
+            {/* Buscador */}
+            <Buscador
+              value={searchQuery}
+              onChange={(text) => {
+                setSearchQuery(text);
+                const lowerText = text.toLowerCase();
+                const filtered = resultados.filter((resultado) =>
+                  [
+                    resultado.examen,
+                    resultado.programa,
+                    resultado.medico_remisor,
+                  ]
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(lowerText)
+                );
+                setResultadosFiltrados(filtered);
+              }}
+              placeholder="Buscar resultados"
+            />
+
+            <FlatList
+              data={resultadosFiltrados}
+              keyExtractor={(item) => item.id}
+              ListEmptyComponent={
+                <EmptyState message="No se encontraron resultados de momento" />
               }
-              return (
-                <View style={styles.card}>
-                  <View style={styles.cardContent}>
-                    {/* COLUMNA IZQUIERDA: FECHA */}
-                    <View style={styles.leftColumn}>
-                      {fechaValida && dt ? (
-                        <>
-                          <Text style={styles.dateDay}>{dt.getDate()}</Text>
-                          <Text style={styles.dateMonth}>
-                            {dt.toLocaleDateString("es-CO", {
-                              month: "long",
-                            })}
+              renderItem={({ item }) => {
+                const fechaValida =
+                  item.fechaRealizacion &&
+                  !isNaN(new Date(item.fechaRealizacion).getTime());
+                let dt: Date | null = null;
+                if (fechaValida) {
+                  dt = new Date(item.fechaRealizacion);
+                }
+                return (
+                  <View style={styles.card}>
+                    <View style={styles.cardContent}>
+                      {/* COLUMNA IZQUIERDA: FECHA */}
+                      <View style={styles.leftColumn}>
+                        {fechaValida && dt ? (
+                          <>
+                            <Text style={styles.dateDay}>{dt.getDate()}</Text>
+                            <Text style={styles.dateMonth}>
+                              {dt.toLocaleDateString("es-CO", {
+                                month: "long",
+                              })}
+                            </Text>
+                            <Text style={styles.dateYear}>
+                              {dt.getFullYear()}
+                            </Text>
+                          </>
+                        ) : (
+                          <Text
+                            style={{
+                              color: "white",
+                              textAlign: "center",
+                              fontFamily: fonts.body,
+                              fontSize: moderateScale(14),
+                            }}
+                          >
+                            No{"\n"}Disponible
                           </Text>
-                          <Text style={styles.dateYear}>
-                            {dt.getFullYear()}
-                          </Text>
-                        </>
-                      ) : (
-                        <Text
-                          style={{
-                            color: "white",
-                            textAlign: "center",
-                            fontFamily: fonts.body,
-                            fontSize: moderateScale(14),
-                          }}
-                        >
-                          No{"\n"}Disponible
-                        </Text>
-                      )}
-                    </View>
+                        )}
+                      </View>
 
-                    {/* COLUMNA DERECHA: DETALLES */}
-                    <View style={styles.rightColumn}>
-                      <Text style={styles.text}>
-                        <Text style={styles.label}>
-                          {formatName(item.examen)}
-                        </Text>
-                      </Text>
-                      {item.medico_remisor.trim().length > 0 && (
+                      {/* COLUMNA DERECHA: DETALLES */}
+                      <View style={styles.rightColumn}>
                         <Text style={styles.text}>
-                          <Text style={styles.label}>Médico Remisor: </Text>
-                          {capitalizeName(item.medico_remisor)}
+                          <Text style={styles.label}>
+                            {formatName(item.examen)}
+                          </Text>
                         </Text>
-                      )}
+                        {item.medico_remisor.trim().length > 0 && (
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Médico Remisor: </Text>
+                            {capitalizeName(item.medico_remisor)}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                    <View style={styles.iconWrapper}>
+                      <Image
+                        source={require("../../assets/icons/lab.png")}
+                        style={styles.icon}
+                      />
                     </View>
                   </View>
-                  <View style={styles.iconWrapper}>
-                    <Image
-                      source={require("../../assets/icons/lab.png")}
-                      style={styles.icon}
-                    />
-                  </View>
-                </View>
-              );
-            }}
-          />
+                );
+              }}
+            />
 
-          {/* Modal de Cerrar Sesión */}
-          <LogOutModal
-            text="¿Estás seguro de que deseas cerrar sesión?"
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
-        </View>
+            {/* Modal de Cerrar Sesión */}
+            <LogOutModal
+              text="¿Estás seguro de que deseas cerrar sesión?"
+              visible={modalVisible}
+              onCancel={() => setModalVisible(false)}
+              onConfirm={handleLogout}
+            />
+          </View>
 
-        {/* Botón fijo abajo */}
-        <View style={styles.footerButtonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.footerButton,
-              noHayResultados && styles.footerButtonDisabled,
-            ]}
-            onPress={openLabResultsWeb}
-            disabled={noHayResultados}
-          >
-            <Text style={styles.footerButtonText}>
-              Consultar Resultados en la Web
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-    </SafeAreaView>
+          {/* Botón fijo abajo */}
+          <View style={styles.footerButtonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.footerButton,
+                noHayResultados && styles.footerButtonDisabled,
+              ]}
+              onPress={openLabResultsWeb}
+              disabled={noHayResultados}
+            >
+              <Text style={styles.footerButtonText}>
+                Consultar Resultados en la Web
+              </Text>
+            </TouchableOpacity>
+          </View>
+      </SafeAreaView>
+    </View>
   );
 };
 
@@ -274,7 +272,7 @@ const ICON_SIZE = scale(34);
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: colors.background
   },
   contentContainer: {
     flex: 1,

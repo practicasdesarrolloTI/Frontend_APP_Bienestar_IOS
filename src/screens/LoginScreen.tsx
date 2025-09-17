@@ -122,13 +122,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           return newCount;
         });
       } else {
-        setTimeout(() => 
+        setTimeout(() =>
           // navigation.replace("Home")
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Home" as never }],
-        })
-      );
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" as never }],
+          })
+        );
       }
     } catch (error) {
       Toast.show({
@@ -144,156 +144,166 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio_de_sesion2.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          showBack={true}
-          transparent={true}
-          showProfileIcon={false}
-          onLogout={() => { }}
-          goBackTo="Landing"
-        />
-
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <ImageBackground
+          source={require("../../assets/backgrounds/Inicio_de_sesion2.png")}
+          style={StyleSheet.absoluteFillObject}
+          resizeMode="cover"
         >
-          <View style={styles.subheaderContainer}>
-            <Image
-              source={require("../../assets/logos/LogoCuidarMe.png")}
-              resizeMode="contain"
-              style={styles.logo}
-            />
-            <Text style={styles.title}>Inicio de sesión</Text>
-            <Text style={styles.subtitle}>
-              Ingresa tus datos para inicar sesión
-            </Text>
-          </View>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
+        />
+      
+          {/* Header transparente */}
+          <CustomHeader
+            showBack={true}
+            transparent={true}
+            showProfileIcon={false}
+            onLogout={() => {}}
+            goBackTo="Landing"
+          />
 
-          <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-            <ScrollView
-              contentContainerStyle={styles.container}
-              keyboardShouldPersistTaps="handled"
-            >
-              <View style={styles.formContainer}>
-                <DocumentPicker
-                  selected={documentType}
-                  onSelect={setDocumentType}
-                />
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.subheaderContainer}>
+              <Image
+                source={require("../../assets/logos/LogoCuidarMe.png")}
+                resizeMode="contain"
+                style={styles.logo}
+              />
+              <Text style={styles.title}>Inicio de sesión</Text>
+              <Text style={styles.subtitle}>
+                Ingresa tus datos para inicar sesión
+              </Text>
+            </View>
 
-                {/* Documento */}
-                <TextInput
-                  style={styles.input}
-                  placeholder="Número de documento"
-                  placeholderTextColor={colors.lightGray}
-                  value={document}
-                  onChangeText={setDocument}
-                  keyboardType="numeric"
-                />
-
-                {/* Contraseña */}
-                <View style={styles.passwordContainer}>
-                  <TextInput
-                    style={styles.inputPassword}
-                    placeholder="Contraseña"
-                    placeholderTextColor={colors.lightGray}
-                    secureTextEntry={!showPassword}
-                    value={password}
-                    onChangeText={setPassword}
+            <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+              <ScrollView
+                contentContainerStyle={styles.container}
+                keyboardShouldPersistTaps="handled"
+              >
+                <View style={styles.formContainer}>
+                  <DocumentPicker
+                    selected={documentType}
+                    onSelect={setDocumentType}
                   />
-                  <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                  >
-                    <MaterialIcons
-                      name={showPassword ? "visibility-off" : "visibility"}
-                      style={{ marginRight: 15 }}
-                      size={moderateScale(22)}
-                      color={"#bfbfbf"}
+
+                  {/* Documento */}
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Número de documento"
+                    placeholderTextColor={colors.lightGray}
+                    value={document}
+                    onChangeText={setDocument}
+                    keyboardType="numeric"
+                  />
+
+                  {/* Contraseña */}
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={styles.inputPassword}
+                      placeholder="Contraseña"
+                      placeholderTextColor={colors.lightGray}
+                      secureTextEntry={!showPassword}
+                      value={password}
+                      onChangeText={setPassword}
                     />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <MaterialIcons
+                        name={showPassword ? "visibility-off" : "visibility"}
+                        style={{ marginRight: 15 }}
+                        size={moderateScale(22)}
+                        color={"#bfbfbf"}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.forgotPasswordContainer}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("ForgotPassword")}
+                  >
+                    <Text style={styles.forgotText}>
+                      ¿Olvidaste tu contraseña?
+                    </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-              <View style={styles.forgotPasswordContainer}>
+
+                {/* Terminos y condiciones */}
+                <View style={styles.termsContainer}>
+                  <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                      onPress={() => setAcceptedTerms(!acceptedTerms)}
+                      activeOpacity={0.7}
+                    >
+                      <MaterialIcons
+                        name={
+                          acceptedTerms
+                            ? "check-box"
+                            : "check-box-outline-blank"
+                        }
+                        size={moderateScale(20)}
+                        color={colors.preto}
+                      />
+                    </TouchableOpacity>
+                    <Text style={styles.checkboxLabel}>Acepto los </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        Linking.openURL(
+                          "https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf"
+                        )
+                      }
+                    >
+                      <Text style={styles.termsText}>
+                        términos y condiciones
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Login Button */}
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("ForgotPassword")}
+                  style={styles.loginButton}
+                  onPress={handleLogin}
+                  disabled={isLoading}
                 >
-                  <Text style={styles.forgotText}>
-                    ¿Olvidaste tu contraseña?
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.loginText}>Iniciar sesión</Text>
+                  )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  <Text style={styles.registerText}>
+                    ¿No tienes cuenta?{" "}
+                    <Text style={styles.register}>Regístrate</Text>
                   </Text>
                 </TouchableOpacity>
-              </View>
 
-              {/* Terminos y condiciones */}
-              <View style={styles.termsContainer}>
-                <View style={styles.checkboxContainer}>
-                  <TouchableOpacity
-                    onPress={() => setAcceptedTerms(!acceptedTerms)}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialIcons
-                      name={
-                        acceptedTerms ? "check-box" : "check-box-outline-blank"
-                      }
-                      size={28}
-                      color={colors.preto}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.checkboxLabel}>Acepto los </Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(
-                        "https://bienestarips.com/wp-content/uploads/2024/08/MA-GJ-002-Manual-de-Tratamiento-de-Datos-Personales.pdf"
-                      )
-                    }
-                  >
-                    <Text style={styles.termsText}>términos y condiciones</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Login Button */}
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={handleLogin}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.loginText}>Iniciar sesión</Text>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                <Text style={styles.registerText}>
-                  ¿No tienes cuenta?{" "}
-                  <Text style={styles.register}>Regístrate</Text>
-                </Text>
-              </TouchableOpacity>
-
-              <Snackbar
-                visible={visible}
-                onDismiss={() => setVisible(false)}
-                duration={2000}
-              >
-                {message}
-              </Snackbar>
-            </ScrollView>
-          </Pressable>
-        </ScrollView>
+                <Snackbar
+                  visible={visible}
+                  onDismiss={() => setVisible(false)}
+                  duration={2000}
+                >
+                  {message}
+                </Snackbar>
+              </ScrollView>
+            </Pressable>
+          </ScrollView>
+        
+      </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 };
 

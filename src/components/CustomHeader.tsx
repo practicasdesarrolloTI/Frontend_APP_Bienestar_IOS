@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ViewStyle,
   Image,
+  Platform,
+  useWindowDimensions
 } from "react-native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -39,6 +41,15 @@ const CustomHeader: React.FC<HeaderProps> = ({
   onLogout,
   goBackTo,
 }) => {
+  const { width,height } = useWindowDimensions();
+  const HH = Math.round(Math.max(53, Math.min(110, height * 0.08)));
+
+  const isTablet = Platform.OS === "ios" ? (Platform as any).isPad === true : width >= 768;
+  const PROFILE_SIZE = isTablet ? 70 : 46;               
+  const ICON_SIZE = Math.round(PROFILE_SIZE * 0.55);     
+  const MENU_WIDTH = Math.min(isTablet ? 260 : 180, Math.max(170, width * (isTablet ? 0.3 : 0.5)));
+  const MENU_TOP = PROFILE_SIZE + 8; 
+
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -49,12 +60,13 @@ const CustomHeader: React.FC<HeaderProps> = ({
         transparent
           ? styles.transparent
           : { backgroundColor: backgroundColor || colors.primary },
+        { height: HH}
       ]}
     >
       {/*Botón para atrás */}
       {showBack && (
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { width: PROFILE_SIZE, height: PROFILE_SIZE }]}
           onPress={() => {
             if (goBackTo) {
               // navigation.navigate(goBackTo);
@@ -69,7 +81,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
         >
           <Image
             source={require("../../assets/icons/atras.png")}
-            style={styles.icon}
+            style={[styles.icon , { width: ICON_SIZE, height: ICON_SIZE }]}
             resizeMode="contain"
           />
         </TouchableOpacity>
@@ -92,18 +104,18 @@ const CustomHeader: React.FC<HeaderProps> = ({
       {showProfileIcon && (
         <View style={{ position: "relative" }}>
           <TouchableOpacity
-            style={styles.profileIcon}
+            style={[styles.profileIcon ,{ width: PROFILE_SIZE, height: PROFILE_SIZE }]}
             onPress={() => setMenuVisible(!menuVisible)}
           >
             <Image
               source={require("../../assets/icons/perfil.png")}
-              style={{ width: scale(22), height: scale(22) }}
+              style={{ width: ICON_SIZE, height: ICON_SIZE }}
               resizeMode="contain"
             />
           </TouchableOpacity>
 
           {menuVisible && (
-            <View style={styles.inlineMenu}>
+            <View style={[styles.inlineMenu, { width: MENU_WIDTH, top: MENU_TOP }]}>
               <TouchableOpacity
                 onPress={() => {
                   setMenuVisible(false);
@@ -131,12 +143,9 @@ const CustomHeader: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   header: {
-    height: verticalScale(75),
-    paddingTop: verticalScale(18),
-    paddingBottom: verticalScale(5),
     paddingHorizontal: scale(22),
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     justifyContent: "space-between",
     zIndex: 10,
   },
@@ -158,10 +167,9 @@ const styles = StyleSheet.create({
   },
   profileWrapper: {
     position: "relative",
+    justifyContent: "center",
   },
-  profileIcon: {
-    width: scale(40),
-    height: scale(40),
+  profileIcon: {    
     borderRadius: scale(50),
     backgroundColor: colors.white,
     alignItems: "center",
@@ -182,7 +190,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     padding: verticalScale(4),
-    paddingLeft: scale(10),
+    paddingLeft: scale(15),
+    height: '100%'
   },
   headerTitle: {
     alignContent: "center",
@@ -192,7 +201,7 @@ const styles = StyleSheet.create({
   },
   inlineMenu: {
     position: "absolute",
-    top: verticalScale(45),
+    top: verticalScale(40),
     right: 0,
     width: scale(125),
     backgroundColor: colors.white,

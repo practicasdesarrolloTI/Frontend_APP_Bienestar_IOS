@@ -73,7 +73,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     []
   );
   const [selectedEps, setSelectedEps] = useState<string | null>(null);
-  const [selectedSex, setSelectedSex] = useState<"Masculino" | "Femenino" | null>(null);
+  const [selectedSex, setSelectedSex] = useState<
+    "Masculino" | "Femenino" | null
+  >(null);
 
   useEffect(() => {
     const loadEps = async () => {
@@ -88,7 +90,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const handleRegister = async () => {
-
     if (!documentType) {
       Toast.show({
         type: "error",
@@ -176,14 +177,14 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-
     const paciente = await getPatientByDocument(documentNumber);
 
     if (!paciente) {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "No se encontró el paciente con la información dada. Verifica los datos.",
+        text2:
+          "No se encontró el paciente con la información dada. Verifica los datos.",
       });
       return;
     }
@@ -193,7 +194,6 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     const fechaNaci = paciente?.fecha_nacimiento || null;
     const EPS = paciente?.eps || null;
     const sexoPaciente = paciente?.sexo || null;
-
 
     if (documentType !== docType) {
       Toast.show({
@@ -205,7 +205,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-     if (selectedEps !== EPS) {
+    if (selectedEps !== EPS) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -314,102 +314,104 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ImageBackground
         source={require("../../assets/backgrounds/Inicio_de_sesion2.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
-        <CustomHeader
-          showBack={true}
-          transparent={true}
-          showProfileIcon={false}
-          onLogout={() => {}}
-          goBackTo="Landing"
-        />
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Subheader */}
-          <View style={styles.subheaderContainer}>
-            <Image
-              source={require("../../assets/logos/LogoCuidarMe.png")}
-              resizeMode="contain"
-              style={styles.logo}
-            />
-            <Text style={styles.title}>Registro</Text>
-            <Text style={styles.subtitle}>
-              Ingresa tus datos para registrarse
-            </Text>
-          </View>
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar
+            barStyle="dark-content"
+            translucent
+            backgroundColor="transparent"
+          />
 
-          <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-            <ScrollView
-              contentContainerStyle={styles.container}
-              keyboardShouldPersistTaps="handled"
-            >
-              {/* Documento */}
-              <View style={styles.formContainer}>
-                <DocumentPicker
-                  selected={documentType}
-                  onSelect={setDocumentType}
-                />
+          {/* Header transparente */}
+          <CustomHeader
+            showBack={true}
+            transparent={true}
+            showProfileIcon={false}
+            onLogout={() => {}}
+            goBackTo="Landing"
+          />
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Subheader */}
+            <View style={styles.subheaderContainer}>
+              <Image
+                source={require("../../assets/logos/LogoCuidarMe.png")}
+                resizeMode="contain"
+                style={styles.logo}
+              />
+              <Text style={styles.title}>Registro</Text>
+              <Text style={styles.subtitle}>
+                Ingresa tus datos para registrarse
+              </Text>
+            </View>
 
-                {/*  Número de Documento */}
-                <TextInput
-                  style={styles.input}
-                  placeholder="Número de documento"
-                  placeholderTextColor={colors.lightGray}
-                  keyboardType="numeric"
-                  value={documentNumber}
-                  onChangeText={setDocumentNumber}
-                />
-
-                {/*  Correo */}
-                <TextInput
-                  style={styles.input}
-                  placeholder="Correo electrónico"
-                  placeholderTextColor={colors.lightGray}
-                  keyboardType="email-address"
-                  value={email}
-                  onChangeText={(text) => setEmail(text.toLowerCase())}
-                />
-
-                <TextInput
-                  style={styles.input}
-                  placeholder="Confirmar correo electrónico"
-                  placeholderTextColor={colors.lightGray}
-                  keyboardType="email-address"
-                  value={confirmEmail}
-                  onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
-                />
-
-                <View style={styles.rowContainer}>
-                  {/* EPS */}
-                  <EpsPicker
-                    selected={selectedEps}
-                    options={epsList}
-                    onSelect={setSelectedEps}
+            <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+              <ScrollView
+                contentContainerStyle={styles.container}
+                keyboardShouldPersistTaps="handled"
+              >
+                {/* Documento */}
+                <View style={styles.formContainer}>
+                  <DocumentPicker
+                    selected={documentType}
+                    onSelect={setDocumentType}
                   />
 
-                  {/* Fecha de nacimiento */}
-                  <DatePickerField date={birthDate} onSelect={setBirthDate} />
+                  {/*  Número de Documento */}
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Número de documento"
+                    placeholderTextColor={colors.lightGray}
+                    keyboardType="numeric"
+                    value={documentNumber}
+                    onChangeText={setDocumentNumber}
+                  />
+
+                  {/*  Correo */}
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Correo electrónico"
+                    placeholderTextColor={colors.lightGray}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={(text) => setEmail(text.toLowerCase())}
+                  />
+
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Confirmar correo electrónico"
+                    placeholderTextColor={colors.lightGray}
+                    keyboardType="email-address"
+                    value={confirmEmail}
+                    onChangeText={(text) => setConfirmEmail(text.toLowerCase())}
+                  />
+
+                  <View style={styles.rowContainer}>
+                    {/* EPS */}
+                    <EpsPicker
+                      selected={selectedEps}
+                      options={epsList}
+                      onSelect={setSelectedEps}
+                    />
+
+                    {/* Fecha de nacimiento */}
+                    <DatePickerField date={birthDate} onSelect={setBirthDate} />
+                  </View>
+
+                  {/* Sexo */}
+                  <SexPicker selected={selectedSex} onSelect={setSelectedSex} />
                 </View>
 
-                {/* Sexo */}
-                <SexPicker selected={selectedSex} onSelect={setSelectedSex} />
-              </View>
+                {/* Terminos y condiciones */}
 
-              {/* Terminos y condiciones */}
-      
                 <View style={styles.termsContainer}>
                   <View style={styles.checkboxContainer}>
                     <TouchableOpacity
@@ -460,11 +462,12 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                     <Text style={styles.loginLinkText}> Inicia sesión</Text>
                   </Text>
                 </TouchableOpacity>
-            </ScrollView>
-          </Pressable>
-        </ScrollView>
+              </ScrollView>
+            </Pressable>
+          </ScrollView>
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -480,7 +483,6 @@ const styles = StyleSheet.create({
   },
   subheaderContainer: {
     alignItems: "center",
-    marginBottom: verticalScale(5),
   },
   logo: {
     width: scale(85),
@@ -490,7 +492,6 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(25),
     fontFamily: fonts.title,
     color: colors.preto,
-    marginBottom: verticalScale(5),
   },
   subtitle: {
     fontSize: moderateScale(14),
@@ -565,6 +566,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: scale(6),
   },
-
 });
 export default RegisterScreen;

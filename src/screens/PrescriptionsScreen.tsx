@@ -6,8 +6,6 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
-  Platform,
-  ImageBackground,
   Image,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -113,147 +111,146 @@ const MedicamentScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) return <LoadingScreen />;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          title="Medicamentos"
-          showBack
-          transparent
-          showProfileIcon
-          onLogout={() => setModalVisible(true)}
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
         />
-
-        <View style={styles.contentContainer}>
-          {/* Buscador */}
-          <Buscador
-            value={searchQuery}
-            onChange={(text) => {
-              setSearchQuery(text);
-              const lowerText = text.toLowerCase();
-              const filtered = medicamentos.filter((med) =>
-                med.nombre.toLowerCase().includes(lowerText)
-              );
-              setFilteredMedicamentos(filtered);
-            }}
-            placeholder="Buscar medicamentos"
+        
+          {/* Header transparente */}
+          <CustomHeader
+            title="Medicamentos"
+            showBack
+            transparent
+            showProfileIcon
+            onLogout={() => setModalVisible(true)}
           />
 
-          {filteredMedicamentos.length === 0 ? (
-            <EmptyState message="No se encontraron medicamentos por el momento." />
-          ) : (
-            <FlatList
-              data={filteredMedicamentos}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent:
-                  filteredMedicamentos.length === 0 ? "center" : "flex-start",
-                paddingBottom: verticalScale(14),
-              }}
-              renderItem={({ item }) => {
-                const fechaValida =
-                  item.fechaVencimiento &&
-                  !isNaN(new Date(item.fechaVencimiento).getTime());
-                let dt: Date | null = null;
-                if (fechaValida) dt = new Date(item.fechaVencimiento);
-
-                return (
-                  <View style={styles.card}>
-                    <View style={styles.cardContent}>
-                      {/* COLUMNA IZQUIERDA: FECHA DE VENCIMIENTO */}
-                      <View style={styles.leftColumn}>
-                        {fechaValida && dt ? (
-                          <>
-                            <Text style={styles.dateDay}>{dt.getDate()}</Text>
-                            <Text style={styles.dateMonth}>
-                              {dt.toLocaleDateString("es-CO", {
-                                month: "long",
-                              })}
-                            </Text>
-                            <Text style={styles.dateYear}>
-                              {dt.getFullYear()}
-                            </Text>
-                          </>
-                        ) : (
-                          <Text
-                            style={{
-                              color: "white",
-                              textAlign: "center",
-                              fontFamily: fonts.body,
-                              fontSize: moderateScale(14),
-                            }}
-                          >
-                            No{"\n"}Disponible
-                          </Text>
-                        )}
-                      </View>
-
-                      {/* COLUMNA DERECHA: DETALLES */}
-                      <View style={styles.rightColumn}>
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Nombre: </Text>
-                          <Text style={styles.text}>
-                            {formatName(item.nombre)}
-                          </Text>
-                        </Text>
-                        <Text style={styles.text}>
-                          <Text style={styles.label}>Cantidad: </Text>
-                          {item.cantidad}
-                        </Text>
-                        {item.presentacion &&
-                          item.presentacion.toUpperCase() !== "NINGUNO" && (
-                            <Text style={styles.text}>
-                              <Text style={styles.label}>Presentación: </Text>
-                              {capitalizeSentence(item.presentacion)}
-                            </Text>
-                          )}
-                        {item.dias_tratamiento &&
-                          item.dias_tratamiento !== 0 && (
-                            <Text style={styles.text}>
-                              <Text style={styles.label}>Días de tratamiento: </Text>
-                              {item.dias_tratamiento}
-                            </Text>
-                          )}
-                        {item.indicaciones && item.indicaciones !== "" && (
-                          <Text style={styles.text}>
-                            <Text style={styles.label}>Indicaciones: </Text>
-                            {capitalizeSentence(item.indicaciones)}
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                    <View style={styles.iconWrapper}>
-                      <Image
-                        source={require("../../assets/icons/medicine.png")}
-                        style={styles.icon}
-                      />
-                    </View>
-                  </View>
+          <View style={styles.contentContainer}>
+            {/* Buscador */}
+            <Buscador
+              value={searchQuery}
+              onChange={(text) => {
+                setSearchQuery(text);
+                const lowerText = text.toLowerCase();
+                const filtered = medicamentos.filter((med) =>
+                  med.nombre.toLowerCase().includes(lowerText)
                 );
+                setFilteredMedicamentos(filtered);
               }}
+              placeholder="Buscar medicamentos"
             />
-          )}
 
-          {/* Modal de Cerrar Sesión */}
-          <LogOutModal
-            text="¿Estás seguro de que deseas cerrar sesión?"
-            visible={modalVisible}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
-        </View>
-      </ImageBackground>
-    </SafeAreaView>
+            {filteredMedicamentos.length === 0 ? (
+              <EmptyState message="No se encontraron medicamentos por el momento." />
+            ) : (
+              <FlatList
+                data={filteredMedicamentos}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent:
+                    filteredMedicamentos.length === 0 ? "center" : "flex-start",
+                  paddingBottom: verticalScale(14),
+                }}
+                renderItem={({ item }) => {
+                  const fechaValida =
+                    item.fechaVencimiento &&
+                    !isNaN(new Date(item.fechaVencimiento).getTime());
+                  let dt: Date | null = null;
+                  if (fechaValida) dt = new Date(item.fechaVencimiento);
+
+                  return (
+                    <View style={styles.card}>
+                      <View style={styles.cardContent}>
+                        {/* COLUMNA IZQUIERDA: FECHA DE VENCIMIENTO */}
+                        <View style={styles.leftColumn}>
+                          {fechaValida && dt ? (
+                            <>
+                              <Text style={styles.dateDay}>{dt.getDate()}</Text>
+                              <Text style={styles.dateMonth}>
+                                {dt.toLocaleDateString("es-CO", {
+                                  month: "long",
+                                })}
+                              </Text>
+                              <Text style={styles.dateYear}>
+                                {dt.getFullYear()}
+                              </Text>
+                            </>
+                          ) : (
+                            <Text
+                              style={{
+                                color: "white",
+                                textAlign: "center",
+                                fontFamily: fonts.body,
+                                fontSize: moderateScale(14),
+                              }}
+                            >
+                              No{"\n"}Disponible
+                            </Text>
+                          )}
+                        </View>
+
+                        {/* COLUMNA DERECHA: DETALLES */}
+                        <View style={styles.rightColumn}>
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Nombre: </Text>
+                            <Text style={styles.text}>
+                              {formatName(item.nombre)}
+                            </Text>
+                          </Text>
+                          <Text style={styles.text}>
+                            <Text style={styles.label}>Cantidad: </Text>
+                            {item.cantidad}
+                          </Text>
+                          {item.presentacion &&
+                            item.presentacion.toUpperCase() !== "NINGUNO" && (
+                              <Text style={styles.text}>
+                                <Text style={styles.label}>Presentación: </Text>
+                                {capitalizeSentence(item.presentacion)}
+                              </Text>
+                            )}
+                          {item.dias_tratamiento &&
+                            item.dias_tratamiento !== 0 && (
+                              <Text style={styles.text}>
+                                <Text style={styles.label}>
+                                  Días de tratamiento:{" "}
+                                </Text>
+                                {item.dias_tratamiento}
+                              </Text>
+                            )}
+                          {item.indicaciones && item.indicaciones !== "" && (
+                            <Text style={styles.text}>
+                              <Text style={styles.label}>Indicaciones: </Text>
+                              {capitalizeSentence(item.indicaciones)}
+                            </Text>
+                          )}
+                        </View>
+                      </View>
+                      <View style={styles.iconWrapper}>
+                        <Image
+                          source={require("../../assets/icons/medicine.png")}
+                          style={styles.icon}
+                        />
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            )}
+
+            {/* Modal de Cerrar Sesión */}
+            <LogOutModal
+              text="¿Estás seguro de que deseas cerrar sesión?"
+              visible={modalVisible}
+              onCancel={() => setModalVisible(false)}
+              onConfirm={handleLogout}
+            />
+          </View>
+      </SafeAreaView>
+    </View>
   );
 };
 
@@ -264,7 +261,6 @@ const ICON_SIZE = scale(34);
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   contentContainer: {
     flex: 1,

@@ -6,10 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
-  Platform,
-  ImageBackground,
   Image,
-  Dimensions,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
@@ -101,17 +98,14 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) return <LoadingScreen />;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
+        />
+
         {/* Header transparente */}
         <CustomHeader
           title="Programas"
@@ -148,7 +142,7 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
                 const tieneCita = item.fecha_cita && item.fecha_cita !== "";
-                const dt = new Date(item.fecha_cita.slice(0,10));
+                const dt = new Date(item.fecha_cita.slice(0, 10));
                 console.log("Fecha de cita programa:", dt);
 
                 return (
@@ -224,8 +218,8 @@ const ProgramsScreen: React.FC<Props> = ({ navigation }) => {
             onConfirm={handleLogout}
           />
         </View>
-      </ImageBackground>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 };
 
@@ -235,7 +229,7 @@ const ICON_SIZE = scale(34);
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,

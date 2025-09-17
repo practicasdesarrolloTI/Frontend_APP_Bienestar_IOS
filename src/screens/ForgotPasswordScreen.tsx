@@ -53,7 +53,6 @@ const ForgotPasswordScreen = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendCode = async () => {
-    
     if (documentType === null) {
       Toast.show({
         type: "error",
@@ -141,69 +140,75 @@ const ForgotPasswordScreen = ({
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ImageBackground
         source={require("../../assets/backgrounds/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
-        <CustomHeader
-          showBack={true}
-          transparent={true}
-          showProfileIcon={false}
-          onLogout={() => {}}
-        />
-        <ScrollView
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Subheader */}
-          <View style={styles.subheaderContainer}>
-            <Image
-              source={require("../../assets/logos/LogoCuidarMe.png")}
-              resizeMode="contain"
-              style={styles.logo}
-            />
-            <Text style={styles.title}>Recuperar contraseña</Text>
-            <Text style={styles.subtitle}>
-              Ingresa esta información para verificar la autenticidad de tu
-              cuenta{" "}
-            </Text>
-          </View>
-           <View style={styles.formContainer}>
-          <DocumentPicker selected={documentType} onSelect={setDocumentType} />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Número de documento"
-            placeholderTextColor={colors.lightGray}
-            value={document}
-            onChangeText={setDocument}
-            keyboardType="numeric"
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar
+            barStyle="dark-content"
+            translucent
+            backgroundColor="transparent"
           />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSendCode}
-            disabled={isLoading}
+          {/* Header transparente */}
+          <CustomHeader
+            showBack={true}
+            transparent={true}
+            showProfileIcon={false}
+            onLogout={() => {}}
+          />
+          <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Enviar Código</Text>
-            )}
-          </TouchableOpacity>
-          </View>
-        </ScrollView>
+            {/* Subheader */}
+            <View style={styles.subheaderContainer}>
+              <Image
+                source={require("../../assets/logos/LogoCuidarMe.png")}
+                resizeMode="contain"
+                style={styles.logo}
+              />
+              <Text style={styles.title}>Recuperar contraseña</Text>
+              <Text style={styles.subtitle}>
+                Ingresa esta información para verificar la autenticidad de tu
+                cuenta{" "}
+              </Text>
+            </View>
+            <View style={styles.formContainer}>
+              <DocumentPicker
+                selected={documentType}
+                onSelect={setDocumentType}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Número de documento"
+                placeholderTextColor={colors.lightGray}
+                value={document}
+                onChangeText={setDocument}
+                keyboardType="numeric"
+              />
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleSendCode}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Enviar Código</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -257,7 +262,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     fontFamily: fonts.body,
   },
-   formContainer: {
+  formContainer: {
     gap: verticalScale(10),
   },
   button: {

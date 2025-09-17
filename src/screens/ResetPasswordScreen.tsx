@@ -31,7 +31,8 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 type Props = StackScreenProps<RootStackParamList, "ResetPassword">;
 
 const ResetPasswordScreen = ({ route, navigation }: Props) => {
-  const { document, documentType, mail, value, eps, fechaNacimiento } = route.params;
+  const { document, documentType, mail, value, eps, fechaNacimiento } =
+    route.params;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -65,7 +66,14 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
         return;
       }
       if (documentType) {
-        await registerUser(documentType, Number(document), mail, password, eps, fechaNacimiento);
+        await registerUser(
+          documentType,
+          Number(document),
+          mail,
+          password,
+          eps,
+          fechaNacimiento
+        );
         Toast.show({
           type: "success",
           text1: "Éxito",
@@ -105,118 +113,123 @@ const ResetPasswordScreen = ({ route, navigation }: Props) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ImageBackground
         source={require("../../assets/backgrounds/Pregunta_cuestionario.png")}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
       >
-        {/* Header transparente */}
-        <CustomHeader
-          showBack={true}
-          transparent={true}
-          showProfileIcon={false}
-          onLogout={() => { }}
-        />
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar
+            barStyle="dark-content"
+            translucent
+            backgroundColor="transparent"
+          />
 
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={styles.container}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Subheader */}
-            <View style={styles.subheaderContainer}>
-              <Image
-                source={require("../../assets/logos/LogoCuidarMe.png")}
-                resizeMode="contain"
-                style={styles.logo}
-              />
-              <Text style={styles.title}>Nueva contraseña</Text>
-              <Text style={styles.subtitle}>
-                Ingresa tu nueva contraseña{" "}
-              </Text>
-            </View>
+          {/* Header transparente */}
+          <CustomHeader
+            showBack={true}
+            transparent={true}
+            showProfileIcon={false}
+            onLogout={() => {}}
+          />
 
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={[styles.inputPassword, { flex: 1 }]}
-                placeholder="Nueva contraseña"
-                placeholderTextColor={colors.preto}
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  const regex =
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-                  setPasswordValid(regex.test(text));
-                  setPasswordsMatch(text === confirmPassword);
-                }}
-              />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <MaterialIcons
-                  name={showPassword ? "visibility-off" : "visibility"}
-                  color={"#bfbfbf"}
-                  style={{ marginRight: 15 }}
-                  size={moderateScale(22)}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={[styles.inputPassword, { flex: 1 }]}
-                placeholder="Confirmar contraseña"
-                placeholderTextColor={colors.preto}
-                secureTextEntry={!showConfirmPassword}
-                value={confirmPassword}
-                onChangeText={(text) => {
-                  setConfirmPassword(text);
-                  setPasswordsMatch(password === text);
-                }}
-              />
-              <TouchableOpacity
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                <MaterialIcons
-                  name={showConfirmPassword ? "visibility-off" : "visibility"}
-                  size={25}
-                  color={"#bfbfbf"}
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.warning}>
-              <Text
-                style={[
-                  styles.warningText,
-                  { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
-                ]}
-              >
-                La contraseña debe tener entre 8 y 12 caracteres, una mayúscula,
-                una minúscula y un número.
-              </Text>
-            </View>
-
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleNewPassword}
-              disabled={isLoading}
+          <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+            <ScrollView
+              contentContainerStyle={styles.container}
+              keyboardShouldPersistTaps="handled"
             >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Confirmar</Text>
-              )}
-            </TouchableOpacity>
-          </ScrollView>
-        </Pressable>
+              {/* Subheader */}
+              <View style={styles.subheaderContainer}>
+                <Image
+                  source={require("../../assets/logos/LogoCuidarMe.png")}
+                  resizeMode="contain"
+                  style={styles.logo}
+                />
+                <Text style={styles.title}>Nueva contraseña</Text>
+                <Text style={styles.subtitle}>
+                  Ingresa tu nueva contraseña{" "}
+                </Text>
+              </View>
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[styles.inputPassword, { flex: 1 }]}
+                  placeholder="Nueva contraseña"
+                  placeholderTextColor={colors.preto}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    const regex =
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+                    setPasswordValid(regex.test(text));
+                    setPasswordsMatch(text === confirmPassword);
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <MaterialIcons
+                    name={showPassword ? "visibility-off" : "visibility"}
+                    color={"#bfbfbf"}
+                    style={{ marginRight: 15 }}
+                    size={moderateScale(22)}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[styles.inputPassword, { flex: 1 }]}
+                  placeholder="Confirmar contraseña"
+                  placeholderTextColor={colors.preto}
+                  secureTextEntry={!showConfirmPassword}
+                  value={confirmPassword}
+                  onChangeText={(text) => {
+                    setConfirmPassword(text);
+                    setPasswordsMatch(password === text);
+                  }}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <MaterialIcons
+                    name={showConfirmPassword ? "visibility-off" : "visibility"}
+                    size={25}
+                    color={"#bfbfbf"}
+                    style={{ marginRight: 15 }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.warning}>
+                <Text
+                  style={[
+                    styles.warningText,
+                    { opacity: !passwordValid && password.length > 0 ? 1 : 0 },
+                  ]}
+                >
+                  La contraseña debe tener entre 8 y 12 caracteres, una
+                  mayúscula, una minúscula y un número.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleNewPassword}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Confirmar</Text>
+                )}
+              </TouchableOpacity>
+            </ScrollView>
+          </Pressable>
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -297,7 +310,6 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(18),
     fontFamily: fonts.title,
   },
-
 });
 
 export default ResetPasswordScreen;

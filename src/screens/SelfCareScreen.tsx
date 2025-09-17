@@ -6,8 +6,7 @@ import {
   Dimensions,
   SafeAreaView,
   StatusBar,
-  Platform,
-  ImageBackground,
+
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { scale, verticalScale, moderateScale } from "react-native-size-matters";
@@ -18,7 +17,10 @@ import { findriscSurvey } from "../data/findriscSurvey";
 import { lawtonBrodySurvey } from "../data/lawtonBrodySurvey";
 import { framinghamSurvey } from "../data/fragmiganSurvey";
 import { moriskyGreenSurvey } from "../data/moriskyGreenSurvey";
-import { getPatientAPP, getPatientByDocument } from "../services/patientService";
+import {
+  getPatientAPP,
+  getPatientByDocument,
+} from "../services/patientService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { calcularEdad } from "../utils/dateUtils";
 import { getSurveyResultsByDocument } from "../services/surveyResultService";
@@ -32,6 +34,7 @@ import { fetchAutocuidado } from "../services/surveyService";
 import CustomHeader from "../components/CustomHeader";
 import WarningModal from "../components/WarningModal";
 import SkeletonLoading from "../components/SkeletonLoading";
+import colors from "../themes/colors";
 
 type ResultadoEncuesta = {
   surveyId: string;
@@ -46,17 +49,17 @@ type Survey = {
   descripcion: string;
   preguntas: (
     | {
-      omitida: any;
-      pregunta: string;
-      opciones: { texto: string; valor: number; sexo: any }[];
-      recomendaciones?: string;
-    }
+        omitida: any;
+        pregunta: string;
+        opciones: { texto: string; valor: number; sexo: any }[];
+        recomendaciones?: string;
+      }
     | {
-      omitida: any;
-      pregunta: string;
-      opciones: { texto: string; valor: number; sexo: any }[];
-      recomendaciones?: string;
-    }
+        omitida: any;
+        pregunta: string;
+        opciones: { texto: string; valor: number; sexo: any }[];
+        recomendaciones?: string;
+      }
   )[];
   requiereEdad: boolean;
   requiereSexo: boolean;
@@ -96,7 +99,8 @@ const SelfCareScreen: React.FC = () => {
     null
   );
   const [Paciente, setPatient] = useState<Paciente | null>(null);
-  const [PacienteRegistro, setPacienteRegistro] = useState<PacienteRegistro | null>(null);
+  const [PacienteRegistro, setPacienteRegistro] =
+    useState<PacienteRegistro | null>(null);
   const [indicadores, setIndicadores] = useState<any>(null);
   const [encuestasListas, setEncuestasListas] = useState(false);
   const [estadoEncuestas, setEstadoEncuestas] = useState<
@@ -172,7 +176,10 @@ const SelfCareScreen: React.FC = () => {
         return;
       }
 
-      const pacienteRegistroData = await getPatientAPP(storedTipo, Number(storedDoc));
+      const pacienteRegistroData = await getPatientAPP(
+        storedTipo,
+        Number(storedDoc)
+      );
       setPacienteRegistro(pacienteRegistroData as unknown as PacienteRegistro);
 
       const data = await getPatientByDocument(storedDoc);
@@ -180,8 +187,7 @@ const SelfCareScreen: React.FC = () => {
 
       const indicadoresData = await fetchAutocuidado(storedTipo, storedDoc);
       setIndicadores(indicadoresData);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const loadResultados = async () => {
@@ -228,11 +234,13 @@ const SelfCareScreen: React.FC = () => {
   }, [encuestas, resultados]);
 
   const handleOpenSurvey = (survey: Survey) => {
-    if (!Paciente && !PacienteRegistro) return Toast.show({
-      type: "error",
-      text2: "En el momento no se pueden realizar encuestas. Intentalo más tarde.",
-      position: "bottom",
-    });
+    if (!Paciente && !PacienteRegistro)
+      return Toast.show({
+        type: "error",
+        text2:
+          "En el momento no se pueden realizar encuestas. Intentalo más tarde.",
+        position: "bottom",
+      });
 
     const estado = estadoEncuestas[survey.id];
 
@@ -254,7 +262,9 @@ const SelfCareScreen: React.FC = () => {
       return;
     }
 
-    const edad = calcularEdad(Paciente?.fecha_nacimiento || PacienteRegistro?.fechaNacimiento || " ");
+    const edad = calcularEdad(
+      Paciente?.fecha_nacimiento || PacienteRegistro?.fechaNacimiento || " "
+    );
     const sexo = Paciente?.sexo || PacienteRegistro?.sexo || "Masculino";
 
     navigation.replace("SurveyScreen", {
@@ -299,45 +309,42 @@ const SelfCareScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {/* Header transparente */}
-        <CustomHeader
-          title="Autocuidado"
-          showBack
-          transparent
-          showProfileIcon
-          onLogout={() => setModalVisible(true)}
-          goBackTo="Home"
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar
+          barStyle="dark-content"
+          translucent
+          backgroundColor="transparent"
         />
-
-        <View style={styles.container}>
-          <FlatList
-            data={encuestas}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => renderSurvey(item)}
-            contentContainerStyle={{ paddingBottom: verticalScale(20) }}
+      
+          {/* Header transparente */}
+          <CustomHeader
+            title="Autocuidado"
+            showBack
+            transparent
+            showProfileIcon
+            onLogout={() => setModalVisible(true)}
+            goBackTo="Home"
           />
-        </View>
 
-        {/* Modal de Cerrar Sesión */}
-        <WarningModal
-          text="¿Estás seguro de que deseas cerrar sesión?"
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          onConfirm={handleLogout}
-        />
-      </ImageBackground>
-    </SafeAreaView>
+          <View style={styles.container}>
+            <FlatList
+              data={encuestas}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => renderSurvey(item)}
+              contentContainerStyle={{ paddingBottom: verticalScale(20) }}
+            />
+          </View>
+
+          {/* Modal de Cerrar Sesión */}
+          <WarningModal
+            text="¿Estás seguro de que deseas cerrar sesión?"
+            visible={modalVisible}
+            onCancel={() => setModalVisible(false)}
+            onConfirm={handleLogout}
+          />
+      </SafeAreaView>
+    </View>
   );
 };
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -347,7 +354,6 @@ const CARD_HEIGHT = CARD_WIDTH / ASPECT_RATIO;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   container: {
     flex: 1,

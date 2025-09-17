@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   StatusBar,
   BackHandler,
-  ImageBackground,
   ScrollView,
   Image,
   StyleSheet,
@@ -23,6 +22,7 @@ import HomeHeader from "../components/HomeHeader";
 import LogOutModal from "../components/WarningModal";
 import Carousel from "../components/Carousel";
 import CustomHeader from "../components/CustomHeader";
+import colors from "../themes/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -129,78 +129,75 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) return <LoadingScreen />;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-      <ImageBackground
-        source={require("../../assets/backgrounds/Inicio.png")}
-        style={StyleSheet.absoluteFillObject}
-        resizeMode="cover"
-      >
-        {hasError ? (
-          <CustomHeader
-            title="Inicio"
-            showBack={false}
-            transparent
-            showProfileIcon
-            onLogout={() => setModalVisible(true)}
-          />
-        ) : (
-          nombrePaciente &&
-          sexo && (
-            <HomeHeader
-              nombre={nombrePaciente}
-              sexo={sexo}
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+            <StatusBar
+              barStyle="dark-content"
+              translucent
+              backgroundColor="transparent"
+            />
+      <SafeAreaView style={styles.safeArea}>
+
+          {hasError ? (
+            <CustomHeader
+              title="Inicio"
+              showBack={false}
+              transparent
+              showProfileIcon
               onLogout={() => setModalVisible(true)}
             />
-          )
-        )}
-        <View style={{ zIndex: 1 }}>
-          <Carousel />
-        </View>
-        <View style={styles.container}>
-          <ScrollView
-            contentContainerStyle={styles.grid}
-            showsVerticalScrollIndicator={false}
-          >
-            {menuItems.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.menuItem}
-                onPress={() => navigation.navigate(item.screen as any)}
-              >
-                <Image
-                  source={item.image}
-                  style={styles.menuImage}
-                  resizeMode="cover"
-                />
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <LogOutModal
-            text="¿Estás seguro de que deseas cerrar sesión?"
-            visible={modalVisible && isFocused}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={handleLogout}
-          />
-        </View>
-      </ImageBackground>
-    </SafeAreaView>
+          ) : (
+            nombrePaciente &&
+            sexo && (
+              <HomeHeader
+                nombre={nombrePaciente}
+                sexo={sexo}
+                onLogout={() => setModalVisible(true)}
+              />
+            )
+          )}
+          <View style={{ zIndex: 1 }}>
+            <Carousel />
+          </View>
+          <View style={styles.container}>
+            <ScrollView
+              contentContainerStyle={styles.grid}
+              showsVerticalScrollIndicator={false}
+            >
+              {menuItems.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.menuItem}
+                  onPress={() => navigation.navigate(item.screen as any)}
+                >
+                  <Image
+                    source={item.image}
+                    style={styles.menuImage}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <LogOutModal
+              text="¿Estás seguro de que deseas cerrar sesión?"
+              visible={modalVisible && isFocused}
+              onCancel={() => setModalVisible(false)}
+              onConfirm={handleLogout}
+            />
+          </View>
+      </SafeAreaView>
+    </View>
   );
 };
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const ASPECT_RATIO = 150 / 142;
+const ASPECT_RATIO = 135 / 128;
 
-// SUPONGAMOS que quieres que cada ítem ocupe el 45 % del ancho de pantalla:
-const CARD_WIDTH = SCREEN_WIDTH * 0.42;
+const CARD_WIDTH = SCREEN_WIDTH * 0.38;
 const CARD_HEIGHT = CARD_WIDTH / ASPECT_RATIO;
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   container: {
     flex: 1,

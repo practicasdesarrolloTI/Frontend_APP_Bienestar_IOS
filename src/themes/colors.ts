@@ -4,7 +4,7 @@ const Colors = {
     purple: '#7f076a',
     secondary: '#FF5F3F',
     selected: '#e02702',
-    background: '#F5F5F5',
+    background: '#EAEAEA',
     lightGray: '#a2a4a5',
     gray:"#585858",
     accent: '#505377',
