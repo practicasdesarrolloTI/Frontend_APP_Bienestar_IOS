@@ -260,7 +260,7 @@ const PatientInfoScreen: React.FC<Props> = ({ navigation }) => {
             onConfirm={handleLogout}
           />
           <View style={{height:Math.max(65, Math.min(130, height * 0.10)),justifyContent:'flex-end'}}> 
-            <Text style={{color: colors.lightGray}}>V1.0.0</Text>
+            <Text style={{color: colors.lightGray}}>V1.0.1</Text>
           </View>
         </SafeAreaView>
       </BackgroundPerfil>

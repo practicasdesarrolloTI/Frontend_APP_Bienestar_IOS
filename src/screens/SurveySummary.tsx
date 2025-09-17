@@ -23,6 +23,8 @@ import { submitSurveyResult } from "../services/surveyResultService";
 import CustomHeader from "../components/CustomHeader";
 import { getPatientByDocument } from "../services/patientService";
 import BackgroundSummary from "../components/Backgrounds/BackgroundSummary";
+import CitationBlock from "../components/CitationBlock";
+import { type SurveyKey } from '../data/citations';
 
 type SurveySummaryProps = NativeStackScreenProps<
   RootStackParamList,
@@ -152,12 +154,28 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
     }
   };
 
+  const getSurveyKey = (): SurveyKey | null => {
+    const id = String(surveyId || "").toLowerCase();
+    const name = String(survey?.nombre || "").toLowerCase();
+
+    if (id.includes("findrisc") || name.includes("findrisc")) return "FINDRISC";
+    if (id.includes("framingham") || name.includes("framingham"))
+      return "FRAMINGHAM";
+    if (id.includes("lawton") || name.includes("lawton")) return "LAWTON_BRODY";
+    if (id.includes("morisky") || name.includes("morisky"))
+      return "MORISKY_GREEN";
+
+    return null;
+  };
+
   const { width, height } = useWindowDimensions();
   const containerH = Math.max(33, Math.min(68, height * 0.05));
   const HORIZONTAL_MARGIN = scale(30);
   const CONTAINER_WIDTH = width * 0.8;
   const BUTTON_WIDTH = CONTAINER_WIDTH * 0.9;
   const BUTTON_HEIGHT = verticalScale(50);
+
+  const surveyKey = getSurveyKey();
 
   return (
     <View style={{ flex: 1 }}>
@@ -222,6 +240,12 @@ const SurveySummary: React.FC<SurveySummaryProps> = ({ route, navigation }) => {
                     </View>
                   ))}
                 </View>
+
+                {!!surveyKey && (
+                  <View style={{ marginTop: verticalScale(5) }}>
+                    <CitationBlock surveyKey={surveyKey} /> 
+                  </View>
+                )}
               </View>
             </ScrollView>
 
